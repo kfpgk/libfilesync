@@ -1,0 +1,86 @@
+@startuml libfilesync-curl-option-class
+
+title libfilesync cURL Option Class Diagram
+
+package option {
+    interface "Option" as CurlOption {
+        - curlEasy : Easy&
+        + {abstract} set() : void
+    }
+    class "OptionFactory" as CurlOptionFactory {
+        - curlEasy : Easy&
+        + createCollection() : OptionCollection
+        + createOption1() : Option1
+        + createOption2() : Option2
+        + createOption3() : Option3
+        + createOption4() : Option4
+    }
+    class "OptionInvoker" as CurlOptionInvoker {
+        - undoStack : UndoableOption[]
+        - redoStack : UndoableOption[]
+        + set(Option) : void
+        + undo() : void
+        + redo() : void
+    }
+    abstract class "ResettableOption<T>" as CurlResettableOption {
+        - resetValue : T
+        + reset() : void
+        - {abstract} setTo(T) : void
+    }
+    
+    abstract class "UndoableOption<T>" as CurlUndoableOption {
+        - previous : T
+        + set() : void
+        + undo() : void
+        - {abstract} setTo(T) : void
+        - {abstract} getValue() : T
+    }
+    class "OptionCollection" as CurlOptionCollection {
+        - options : Option[]
+        + set() : void
+        + add(Option) : void
+        + clear() : void
+    }
+    class "Option1" as CurlConcreteOption1 {
+        - value : string
+        + set() : void
+    }
+    class "Option2" as CurlConcreteOption2 {
+        - value : bool
+        + set() : void
+        - setTo(bool) : void
+    }
+    class "Option3" as CurlConcreteOption3 {
+        - value : A
+        - setTo(A) : void
+        - getValue() : A
+    }
+    class "Option4" as CurlConcreteOption4 {
+        - value : string
+        - setTo(string) : void
+        - getValue() : string
+    }
+}
+
+CurlOption <|.. CurlOptionCollection
+CurlOption "*" --o CurlOptionCollection
+
+CurlOption <|.. CurlResettableOption 
+CurlOption <|.. CurlUndoableOption
+
+CurlOption <|.. CurlConcreteOption1
+CurlResettableOption <|-- CurlConcreteOption2
+CurlResettableOption <|-- CurlConcreteOption3
+CurlUndoableOption <|-- CurlConcreteOption3
+CurlUndoableOption <|-- CurlConcreteOption4
+
+CurlOptionCollection <-- "creates" CurlOptionFactory
+CurlConcreteOption1 <-- "creates" CurlOptionFactory
+CurlConcreteOption2 <-- "creates" CurlOptionFactory
+CurlConcreteOption3 <-- "creates" CurlOptionFactory
+CurlConcreteOption4 <-- "creates" CurlOptionFactory
+
+CurlOptionInvoker --> CurlOption
+CurlOptionInvoker o-- "*" CurlUndoableOption
+
+@enduml

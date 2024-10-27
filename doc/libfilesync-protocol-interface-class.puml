@@ -1,0 +1,46 @@
+@startuml libfilesync-protocol-interface-class
+
+title libfilesync Protocol Interface Class Diagram
+
+abstract class FileSyncer {
+    + update(Entry) : void
+}
+
+interface ProtocolClient {
+    + upload(string local, string remote) : void
+    + download(string local, string remote) : void
+    + existsOnServer(string remote) : bool
+    + deleteOnServer(string remote) : void
+}
+
+class Entry {
+    + validate(): void
+    + performOnChanged(): void
+    + hasChanged(): bool
+    + registerObserver(): void
+    - notify() : void
+    - observers[]
+}
+
+package "Protocol client using libcurl" {
+
+    class "ProtocolClient<concrete>" as concreteProtoClient
+
+    interface CurlProtocolClient {
+        + setLocalFileForUpload(string) : void
+        + createLocalFileForDownload(string) : void
+        + setRemoteFile(string) : void
+        + download() : void
+        + upload() : void
+        + remoteFileExists() : bool
+        + deleteRemote() : void
+    }
+}
+
+FileSyncer o- "1" ProtocolClient
+Entry o- "*" FileSyncer
+
+ProtocolClient <|.. concreteProtoClient
+CurlProtocolClient "1" -o "1" concreteProtoClient
+
+@enduml

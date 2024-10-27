@@ -1,0 +1,38 @@
+@startuml libfilesync-abstract-file-syncer-act
+
+title libfilesync Abstract FileSyncer Activity Diagram
+
+start
+
+:update;
+
+if (file exists locally) then (yes)
+
+    if (file exists remote) then (yes)
+        if (local and remote are equal) then (yes)
+
+        else (no)
+            :resolve();
+            note left
+            Implementation Specific
+            endnote
+        end if
+    else (no)
+        :upload;
+    endif
+
+else (no)
+
+    if (file exists remote) then (yes)
+        :download;
+    else (no)
+        :error: syncing not possible;
+        end
+    endif
+
+endif
+
+
+stop
+
+@enduml

@@ -1,0 +1,2 @@
+add_subdirectory(localFirstFileSyncer)
+add_subdirectory(remoteFirstFileSyncer)

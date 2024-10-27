@@ -1,0 +1,9 @@
+#ifndef LIBFILESYNC_CONFIG_CONFIG_H
+#define LIBFILESYNC_CONFIG_CONFIG_H
+
+#define VERSION_MAJOR @libfilesync_VERSION_MAJOR@
+#define VERSION_MINOR @libfilesync_VERSION_MINOR@
+
+#define BUILD_TYPE @libfilesync_BUILD_TYPE@
+
+#endif

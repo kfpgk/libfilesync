@@ -1,0 +1,9 @@
+#ifndef LIBFILESYNC_TEST_CONFIG_H
+#define LIBFILESYNC_TEST_CONFIG_H
+
+#define LIBFILESYNC_TEST_FTP_SERVER "vm1.ubuntu"
+#define LIBFILESYNC_TEST_FTP_SERVER_DIR "test"
+
+#define INTEGRATION_SANDBOX_DIR "integrationtest_sandbox"
+
+#endif

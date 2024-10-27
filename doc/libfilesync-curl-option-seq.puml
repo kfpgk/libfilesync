@@ -1,0 +1,53 @@
+@startuml libfilesync-curl-option-seq
+
+title libfilesync Curl Option Sequence Diagram
+
+box "filesync::curl"
+    actor Client
+end box
+
+box filesync::curl::option #lightblue
+    participant Factory
+    participant Invoker
+    participant "Option<volatile>" as volatileOption
+    participant "Option<persistent>" as persistentOption 
+end box
+
+box external
+    participant libcurl
+end box
+
+Client -> Factory ** : create()
+Client -> Invoker ** : create()
+
+== Volatile Option resets upon destruction ==
+Client -> Factory ++ : createOptionX(setValue, resetValue)
+Factory -> volatileOption ** : create(setValue, resetValue)
+return Object
+Client -> Invoker ++ : set(Option)
+Invoker -> volatileOption ++ : set()
+Invoker -> Invoker : addToUndoStack()
+volatileOption -> libcurl : setopt(setValue)
+deactivate volatileOption
+deactivate Invoker
+... Some other operations ...
+volatileOption -> volatileOption ++ : goesOutOfScope()
+volatileOption -> libcurl : setop(resetValue)
+destroy volatileOption
+
+== Persistent Option keeps libcurl state upon destruction ==
+
+Client -> Factory ++ : createOptionY(setValue)
+Factory -> persistentOption ** : create(setValue)
+return Option
+Client -> Invoker ++ : set(Option)
+Invoker -> persistentOption ++ : set()
+Invoker -> Invoker : addToUndoStack()
+persistentOption -> libcurl : setopt(setValue)
+deactivate persistentOption
+deactivate Invoker
+... Some other operations ...
+persistentOption -> persistentOption ++ : goesOutOfScope()
+destroy persistentOption
+
+@enduml

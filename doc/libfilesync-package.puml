@@ -1,0 +1,36 @@
+@startuml libfilesync-package
+
+title libfilesync Package Diagram
+
+package "facade" {
+    [FileSync]
+}
+
+package "data" {
+    [Directory]
+    [File]
+    [RemoteEntry]
+}
+
+package "curl" {
+    [CurlProtocolClient]
+}
+
+package "protocol" {
+    [ProtocolClient]
+}
+
+package "core" {
+    [FileSyncer]
+}
+
+facade ..> core: <<import>>
+facade ..> protocol: <<import>>
+facade ..> data: <<import>>
+
+core ..> data: <<import>>
+core ..> protocol: <<import>>
+
+protocol ..> curl: <<import>>
+
+@enduml
