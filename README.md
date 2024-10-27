@@ -23,13 +23,13 @@ cmake --build .
 
 ## Examples
 
-Set the `EXAMPLES` option to build example applications.
+Set the `BUILD_EXAMPLES` option to build example applications.
 
 ```shell
 cd libfilesync
 mkdir build
 cd build
-cmake -DEXAMPLES=ON ..
+cmake -DBUILD_EXAMPLES=ON ..
 cmake --build .
 ```
 
@@ -69,6 +69,12 @@ cmake --build .
 
 <pre>
 (root)
++- doc                      # Plant UML diagrams
+|   +- *.puml
++- examples                 # Examples using libfilesync
+|   +- <em>example1</em>
+|       +- CMakeLists.txt
+|       +- *.cpp
 +- libfilesync              # File sync library 
 |   +- CMakeLists.txt
 |   +- *.cpp
@@ -85,11 +91,10 @@ cmake --build .
 |       +- *.hpp
 |       +- *.test.cpp
 |       +- *.test.hpp
-+- doc                      # Plant UML diagrams
-|   +- *.puml
 +- tests                    # Integration tests
 |   +- CMakeLists.txt
 |   +- <em>test1</em>               # Integration test sub directory
+|       +- CMakeLists.txt
 |       +- *.cpp                    # Integration test source file
 |       +- *.hpp                    # Integration test header file
 +- CMakeLists.txt
