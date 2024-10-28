@@ -8,7 +8,7 @@ target_sources(libfilesync
         RemoteEntry.cpp
 )
 
-if(BUILD_TESTING)
+if(BUILD_UNIT_TESTS)
     enable_testing()
     add_executable(Directory_test
         Directory.test.cpp

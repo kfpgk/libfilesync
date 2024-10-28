@@ -35,13 +35,13 @@ cmake --build .
 
 ## Tests
 
-Set the `BUILD_TESTING` option to build tests.
+Set the `BUILD_UNIT_TESTS` and/or the `BUILD_INTEGRATION_TESTS` options to build tests.
 
 ```shell
 cd libfilesync
 mkdir build
 cd build
-cmake -DBUILD_TESTING=ON ..
+cmake -DBUILD_UNIT_TESTS=ON -DBUILD_INTEGRATION_TESTS=ON ..
 cmake --build .
 ```
 
@@ -50,8 +50,7 @@ Run the tests using `ctest`
 make test
 ```
 
-Unit test names are preceded by `UT`.
-Integration test names are preceded by `IT`. Integration tests potentially require an available test server that must be configured in `tests/config/config.h` in order to run.
+Unit test names are preceded by `UT` and untegration test names are preceded by `IT` in the result view. Integration tests potentially require an available test server that must be configured in `tests/config/config.h` in order to run. This test server is expected to have a certain configuration (e.g. allow creation of directories, refer to the integration test objects for details).
 
 ## Debug build
 

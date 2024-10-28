@@ -12,7 +12,7 @@ target_sources(libfilesync
 add_subdirectory(option)
 add_subdirectory(interface)
 
-if(BUILD_TESTING)
+if(BUILD_UNIT_TESTS)
     enable_testing()
     add_executable(ProtocolClient_test
         interface/EasyStub.test.cpp

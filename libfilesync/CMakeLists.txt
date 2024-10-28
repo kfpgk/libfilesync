@@ -20,7 +20,7 @@ add_subdirectory(protocol)
 add_subdirectory(curl)
 add_subdirectory(utility)
 
-if(BUILD_TESTING)
+if(BUILD_UNIT_TESTS)
     enable_testing()
     add_executable(FileSyncException_test
         FileSyncException.test.cpp
