@@ -3,14 +3,31 @@ add_library(libfilesync
     FileSync.cpp
 )
 
-target_include_directories(libfilesync 
+set(PUBLIC_INCLUDE_DIR ${CMAKE_BINARY_DIR}/libfilesync/include)
+
+configure_file(
+    FileSync.hpp ${PUBLIC_INCLUDE_DIR}/libfilesync/FileSync.hpp COPYONLY
+)
+configure_file(
+    FileSyncException.hpp ${PUBLIC_INCLUDE_DIR}/libfilesync/FileSyncException.hpp COPYONLY
+)
+
+target_include_directories(libfilesync
     PUBLIC
+        ${PUBLIC_INCLUDE_DIR}
+    PRIVATE
         ${CMAKE_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}
 )
 target_link_libraries(libfilesync 
     PRIVATE
         curl
+)
+target_sources(libfilesync
+    PUBLIC FILE_SET public_headers TYPE HEADERS
+    FILES
+        FileSync.hpp
+        FileSyncException.hpp
 )
 
 add_subdirectory(core)
@@ -24,6 +41,11 @@ if(BUILD_UNIT_TESTS)
     enable_testing()
     add_executable(FileSyncException_test
         FileSyncException.test.cpp
+    )
+    target_include_directories(FileSyncException_test 
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}
+            ${CMAKE_BINARY_DIR}
     )
     target_link_libraries(FileSyncException_test
         PRIVATE

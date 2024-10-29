@@ -17,6 +17,11 @@ if(BUILD_UNIT_TESTS)
         PRIVATE
             libfilesync
     )
+    target_include_directories(Directory_test 
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}
+            ${CMAKE_BINARY_DIR}
+    )
     add_test(
         NAME "UT Directory"
         COMMAND Directory_test
