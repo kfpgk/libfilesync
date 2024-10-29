@@ -11,34 +11,91 @@
 #include <libfilesync/utility/Debug.hpp>
 
 #include <iostream>
+#include <thread>
+#include <vector>
+#include <atomic>
 
+using namespace std::chrono_literals;
 using namespace filesync::utility;
 
 namespace filesync {
 
-    FileSync::~FileSync() {
+    /**
+     * @brief Facade class for the file sync library.
+     * 
+     * Patterns:
+     *  - Facade
+     *  - Implementation of PIMPL
+     */
+    class FileSync::Impl {
+
+        public:
+            Impl() = default;
+            ~Impl();
+            Impl(const Impl&) = delete;
+            Impl(Impl&&) = default;
+            Impl operator=(Impl) = delete;
+
+            void setProtocol(enum ProtocolType protocolType);
+            void setServer(const std::string& address);
+            void setRemoteRoot(const std::string& address);
+            void setConflictResolveStrategy(enum ConflictResolveStrategy conflictResolveStrategy);
+            void setSyncContent(const std::filesystem::path& path);
+            void setSyncInvertal(std::chrono::milliseconds seconds);
+            void startSyncing();
+            void stopSyncing();
+
+        private:
+            std::string serverAddress = "";
+            std::string remoteRoot = "";
+            enum ProtocolType protocolType = ProtocolType::None;
+            enum ConflictResolveStrategy conflictResolveStrategy = ConflictResolveStrategy::None;
+            std::chrono::milliseconds interval = 5s;
+            std::shared_ptr<ProtocolClient> protocolClient = nullptr;
+            std::unique_ptr<Entry> entry = nullptr;
+            std::unique_ptr<core::FileSyncer> fileSyncer = nullptr;
+
+            std::thread syncThread;
+            std::atomic<bool> syncing = false;
+            std::atomic<bool> stopSyncThread = false;
+
+            void createProtocol();
+            void createFileSyncer();
+
+            void validateProtocol() const;
+            void validateEntry() const;
+
+            /**
+             * @brief Endless loop syncing for use 
+             * in separate thread.
+             */
+            void endlessSync(const std::atomic<bool>& stop);
+
+    };
+
+    FileSync::Impl::~Impl() {
         if (syncing) {
             stopSyncing();
         }
     }
 
-    void FileSync::setProtocol(enum ProtocolType protocolType) {
+    void FileSync::Impl::setProtocol(enum ProtocolType protocolType) {
         this->protocolType = protocolType;     
     }
 
-    void FileSync::setServer(const std::string& address) {
+    void FileSync::Impl::setServer(const std::string& address) {
         this->serverAddress = address;     
     }
 
-    void FileSync::setRemoteRoot(const std::string& remoteRoot) {
+    void FileSync::Impl::setRemoteRoot(const std::string& remoteRoot) {
         this->remoteRoot = remoteRoot;
     }
 
-    void FileSync::setConflictResolveStrategy(enum ConflictResolveStrategy conflictResolveStrategy) {
+    void FileSync::Impl::setConflictResolveStrategy(enum ConflictResolveStrategy conflictResolveStrategy) {
         this->conflictResolveStrategy = conflictResolveStrategy;
     }
 
-    void FileSync::setSyncContent (const std::filesystem::path& path) {
+    void FileSync::Impl::setSyncContent (const std::filesystem::path& path) {
         try {
             std::filesystem::path normalizedPath = path;
             normalizedPath.make_preferred();
@@ -57,11 +114,11 @@ namespace filesync {
         }     
     }
 
-    void FileSync::setSyncInvertal(std::chrono::milliseconds interval) {
+    void FileSync::Impl::setSyncInvertal(std::chrono::milliseconds interval) {
         this->interval = interval;
     }
 
-    void FileSync::startSyncing() {
+    void FileSync::Impl::startSyncing() {
         if (syncing) {
             throw FileSyncException("Already syncing!",
                 __FILE__, __LINE__);            
@@ -74,11 +131,11 @@ namespace filesync {
         createFileSyncer();
 
         stopSyncThread = false;
-        syncThread = std::thread(&FileSync::endlessSync, this, std::cref(stopSyncThread));
+        syncThread = std::thread(&FileSync::Impl::endlessSync, this, std::cref(stopSyncThread));
 
     }
 
-    void FileSync::stopSyncing() {
+    void FileSync::Impl::stopSyncing() {
         if (!syncing) {
             throw FileSyncException("Cannot stop, since sync has not been started!",
                 __FILE__, __LINE__);            
@@ -87,7 +144,7 @@ namespace filesync {
         syncThread.join();
     }
 
-    void FileSync::createProtocol() {
+    void FileSync::Impl::createProtocol() {
         DEBUG_ENTER();
 
         switch (protocolType) {
@@ -99,7 +156,7 @@ namespace filesync {
         DEBUG_EXIT();       
     }
 
-    void FileSync::createFileSyncer() {
+    void FileSync::Impl::createFileSyncer() {
         DEBUG_ENTER();
 
         validateProtocol();
@@ -113,7 +170,7 @@ namespace filesync {
         DEBUG_EXIT();
     }
 
-    void FileSync::validateProtocol() const {
+    void FileSync::Impl::validateProtocol() const {
         if (!protocolClient) {
             throw FileSyncException("Need protocol client setup in order to create FileSyncer object. "\
                 "Call setProtocol(...)",
@@ -121,7 +178,7 @@ namespace filesync {
         }
     }
 
-    void FileSync::validateEntry() const {
+    void FileSync::Impl::validateEntry() const {
         if (!entry) {
             throw FileSyncException("Need sync content setup in order to create FileSyncer object. "\
                 "Call setSyncContent(...)",
@@ -129,7 +186,7 @@ namespace filesync {
         }
     }
 
-    void FileSync::endlessSync(const std::atomic<bool>& stop) {
+    void FileSync::Impl::endlessSync(const std::atomic<bool>& stop) {
         syncing = true;
         constexpr std::chrono::duration pollInterval = 10ms;
         const int loopsPerSync = interval / pollInterval;
@@ -143,6 +200,49 @@ namespace filesync {
             std::this_thread::sleep_for(pollInterval);
         }
         syncing = false;        
+    }
+
+    FileSync::FileSync() :
+        pImpl{std::make_unique<FileSync::Impl>()} {
+
+    }
+
+    FileSync::~FileSync() = default;
+
+    FileSync::FileSync(FileSync&&) = default;
+
+    void FileSync::setProtocol(enum ProtocolType protocolType) {
+        pImpl->setProtocol(protocolType);
+    }
+
+    void FileSync::setServer(const std::string& address) {
+        pImpl->setServer(address);
+    }
+
+    void FileSync::setRemoteRoot(const std::string& address) {
+        pImpl->setRemoteRoot(address);
+    }
+
+    void FileSync::setConflictResolveStrategy(
+        enum ConflictResolveStrategy conflictResolveStrategy) {
+        
+        pImpl->setConflictResolveStrategy(conflictResolveStrategy);
+    }
+    
+    void FileSync::setSyncContent(const std::filesystem::path& path) {
+        pImpl->setSyncContent(path);
+    }
+
+    void FileSync::setSyncInvertal(std::chrono::milliseconds seconds) {
+        pImpl->setSyncInvertal(seconds);
+    }
+
+    void FileSync::startSyncing() {
+        pImpl->startSyncing();
+    }
+
+    void FileSync::stopSyncing() {
+        pImpl->stopSyncing();
     }
 
 }

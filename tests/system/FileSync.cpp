@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <thread>
 
 using namespace std::chrono_literals;
 namespace filesync::integrationtest::system {
