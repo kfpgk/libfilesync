@@ -7,12 +7,12 @@
 #include <string>
 #include <memory>
 
-namespace filesync::integrationtest::data {
+namespace filesync::integrationtest::data::file {
 
-    class FileChanged : public IntegrationTest {
+    class Changed : public IntegrationTest {
 
         public:
-            FileChanged(const std::string& testName);
+            explicit Changed(const std::string& testName);
 
         private:
             std::unique_ptr<File> file;

@@ -17,7 +17,6 @@ int main(int argc, char* argv[]) {
     test.setUploadFileName(absoluteUploadFilePath);
     test.setDownloadFileName(absoluteDownloadFilePath);
     
-    test.setExitOnFail(true);
     test.run();
 
     return 0;

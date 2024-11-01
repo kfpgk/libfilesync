@@ -11,7 +11,6 @@ int main(int argc, char* argv[]) {
     test.setUploadFileName("test_file_1");
     test.setDownloadFileName("test_file_2");
     
-    test.setExitOnFail(true);
     test.run();
 
     return 0;

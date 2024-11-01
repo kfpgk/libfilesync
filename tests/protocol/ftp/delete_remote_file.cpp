@@ -11,7 +11,6 @@ int main(int argc, char* argv[]) {
     test.setUploadFileName("test_file_1");
     test.setRemoteFileName("to_be_deleted");
     
-    test.setExitOnFail(true);
     test.run();
 
     return 0;

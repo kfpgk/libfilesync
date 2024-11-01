@@ -9,7 +9,6 @@ int main(int argc, char* argv[]) {
         LIBFILESYNC_TEST_FTP_SERVER,
         LIBFILESYNC_TEST_FTP_SERVER_DIR);
 
-    test.setExitOnFail(true);
     test.run();
 
     return 0;

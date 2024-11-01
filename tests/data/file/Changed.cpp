@@ -1,4 +1,4 @@
-#include <tests/data/FileChanged.hpp>
+#include <tests/data/File/Changed.hpp>
 #include <libfilesync/data/Data.hpp>
 #include <libfilesync/FileSyncException.hpp>
 
@@ -7,14 +7,14 @@
 #include <iomanip>
 #include <fstream>
 
-namespace filesync::integrationtest::data {
+namespace filesync::integrationtest::data::file {
 
-    FileChanged::FileChanged(const std::string& testName) :
+    Changed::Changed(const std::string& testName) :
         IntegrationTest(testName) {
 
     }
 
-    void FileChanged::setup() {
+    void Changed::setup() {
         std::ofstream fileStream(fileName);
         if (!fileStream.is_open()) {
             throw FileSyncException("Cannot open local file for writing.",
@@ -24,7 +24,7 @@ namespace filesync::integrationtest::data {
         file = std::make_unique<File>(fileName);
     }
 
-    void FileChanged::perform() {
+    void Changed::perform() {
         evaluateFileChanged(false);
         modifyFile();
         evaluateFileChanged(true);
@@ -33,7 +33,7 @@ namespace filesync::integrationtest::data {
         evaluateFileChanged(false);
     }
 
-    void FileChanged::modifyFile() {
+    void Changed::modifyFile() {
         std::ofstream fileStream(fileName, std::ios_base::app);
         if (!fileStream.is_open()) {
             throw FileSyncException("Cannot open local file for writing.",
@@ -42,7 +42,7 @@ namespace filesync::integrationtest::data {
         fileStream << "consetetur sadipscing elitr" << std::endl;
     }
 
-    void FileChanged::evaluateFileChanged(bool expected) {
+    void Changed::evaluateFileChanged(bool expected) {
         if (file->hasChanged() != expected) {
             std::stringstream message;
             message << "File changed state did not match expected value '";

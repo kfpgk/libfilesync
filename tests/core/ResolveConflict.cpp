@@ -28,7 +28,7 @@ namespace filesync::integrationtest::core {
     /**
      * @brief Setup for conflict resolving tests
      * 
-     * This methods creates a local file and uploads
+     * This method creates a local file and uploads
      * a remote file to the server. These two have
      * different contents.
      * After complition, the "entry" member holds

@@ -34,7 +34,7 @@ namespace filesync::integrationtest {
             }
             wrapCleanUp();
         } catch (const std::exception& e) {
-            std::cerr << e.what();
+            std::cerr << e.what() << std::endl;
             Logger::getInstance().log(LogDomain::TestResult, 
                 std::string("Integration test '" + name + "' failed."));
             wrapCleanUp();

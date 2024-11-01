@@ -54,7 +54,7 @@ namespace filesync::integrationtest {
 
         private:
             std::string name = "";
-            bool exitOnFail = false;
+            bool exitOnFail = true;
             bool keepSandBox = false;
             bool keepOldSandBox = false;
             bool skipCleanUp = false;
