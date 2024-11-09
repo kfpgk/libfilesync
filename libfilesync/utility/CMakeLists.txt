@@ -1,5 +1,6 @@
 target_sources(libfilesync 
     PRIVATE
+        Debug.cpp
         Logger.cpp
         TimeFormat.cpp
     PUBLIC FILE_SET public_headers TYPE HEADERS

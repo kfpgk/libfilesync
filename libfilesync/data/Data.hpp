@@ -1,23 +1,22 @@
-#ifndef LIBFILESYNC_DATA_HPP
-#define LIBFILESYNC_DATA_HPP
-
-#include <libfilesync/data/Entry.hpp>
+#ifndef LIBFILESYNC_DATA_DATA_HPP
+#define LIBFILESYNC_DATA_DATA_HPP
 
 #include <filesystem>
 #include <memory>
 
-namespace filesync {
+namespace filesync::data {
 
-    namespace data {
+    enum class EntryType { none, file, dir };
 
-        enum class EntryType { none, file, dir };
+    void createFile(const std::filesystem::path& path);
 
-        void createFile(const std::filesystem::path& path);
+    bool haveEqualSize(
+        const std::filesystem::path& lhs,
+        const std::filesystem::path& rhs);
 
-        std::unique_ptr<Entry> createEntryRecursively(
-            const std::filesystem::path& path);
-
-    }
+    bool areEqual(
+        const std::filesystem::path& lhs,
+        const std::filesystem::path& rhs);
 
 }
 

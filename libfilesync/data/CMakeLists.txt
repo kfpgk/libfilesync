@@ -1,11 +1,11 @@
 target_sources(libfilesync 
     PRIVATE
         Data.cpp
-        DataException.cpp
         Directory.cpp
         Entry.cpp
+        EntryFactory.cpp
+        Exception.cpp
         File.cpp
-        RemoteEntry.cpp
 )
 
 if(BUILD_UNIT_TESTS)

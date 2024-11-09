@@ -1,58 +1,36 @@
 #include <libfilesync/core/FileSyncer.hpp>
-#include <libfilesync/data/Entry.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
-#include <libfilesync/utility/Logger.hpp>
+#include <libfilesync/utility/Debug.hpp>
 
-#include <memory>
-#include <iostream>
-
-using namespace filesync::utility;
+#include <filesystem>
 
 namespace filesync::core {
 
     FileSyncer::FileSyncer(
-        Entry& syncContent,
-        ProtocolClient& protocolClient) :
-            protocolClient{protocolClient} {
+        sync_data::Entry& syncContent,
+        ProtocolClient& protocolClient,
+        conflict::Resolver& resolver) :
+            protocolClient{protocolClient},
+            resolver{resolver} {
 
+        DEBUG(syncContent.getPath());
+        DEBUG(this);
         syncContent.registerObserver(*this);
     }
 
-    void FileSyncer::doUpdate(Entry* entry) {
-        if (entry) {
-            if (fileExistsLocally(entry)) {
-                if (fileExistsRemotely(entry)) {
-                    resolve(entry);
-                } else {
-                    protocolClient.get().upload(entry->getPath(), entry->getRemotePath());
-                }
-            } else {
-                if (fileExistsRemotely(entry)) {
-                    protocolClient.get().download(entry->getPath(), entry->getRemotePath());
-                } else {
-                    Logger::getInstance().log(LogDomain::Warning, 
-                        "File '" + entry->getPath().string() + "' does \
-                        neither exist locally nor remotely.");
-                }
-            }
-            entry->resetChanged();
-        }
-    }
-
-    void FileSyncer::resolve(Entry* entry) {
-        doResolve(entry);
-    }
-
-    bool FileSyncer::fileExistsLocally(Entry* entry) {
+    bool FileSyncer::fileExistsLocally(sync_data::Entry* entry) {
         return entry->validate();
     }
 
-    bool FileSyncer::fileExistsRemotely(Entry* entry) {
-        return protocolClient.get().existsOnServer(entry->getRemotePath());
+    bool FileSyncer::fileExistsRemotely(sync_data::Entry* entry) {
+        return getProtocolClient().existsOnServer(entry->getRemotePath());
     }
 
     ProtocolClient& FileSyncer::getProtocolClient() {
         return protocolClient;
+    }
+
+    conflict::Resolver& FileSyncer::getResolver() {
+        return resolver;
     }
 
 }

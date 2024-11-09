@@ -245,7 +245,7 @@ namespace filesync::curl {
     void ProtocolClient::setInputFileSizeFromFile(const std::filesystem::path& path) {
         std::uintmax_t fileSize = std::filesystem::file_size(path);
         if (fileSize < 0) {
-            throw Exception(std::string("could not get file size of '" \
+            throw Exception(std::string("Could not get file size of '" \
                 + path.string()), __FILE__, __LINE__);  
         }
         setInputFileSize(fileSize);

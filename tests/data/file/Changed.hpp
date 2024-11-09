@@ -15,7 +15,7 @@ namespace filesync::integrationtest::data::file {
             explicit Changed(const std::string& testName);
 
         private:
-            std::unique_ptr<File> file;
+            std::unique_ptr<filesync::data::File> file;
             std::string fileName = "file1";
 
             void setup() override;

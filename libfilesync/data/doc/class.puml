@@ -1,0 +1,77 @@
+@startuml data-class-diagram
+
+title Data Class Diagram\n---\nCRTP
+
+package "<<external>>\nobserver" {
+    abstract class "Observer<T>" as Observer
+    abstract class "Subject<T>" as Subject
+}
+
+package data {
+    abstract class "EntryBase<T>" as EntryBase {
+        - path : filesystem::path
+        - lastWriteTime : filesystem::file_time_type 
+        + performOnChange() : void
+        + getPath() : filesystem::path
+        + getAbsolutePath() : filesystem::path
+        + getEntry(filesystem::path&) : T* 
+        + hasChanged() : bool
+        + resetChanged() : void
+        + performOnChange() : void
+        + validate() : bool
+        + print() : void
+    }
+    abstract class "DirectoryBase<T>" as DirectoryBase {
+        - components : T*[]
+        + addEntry(T) : void
+        + removeEntry(T) : void
+        - getEntry(filesystem::path) : T
+        - performOnChange() : void
+        - validate() : bool
+        - print() : void
+    }
+    abstract class "FileBase<T>" as FileBase {
+
+    }
+
+    class "Entry" as Entry {
+
+    }
+    class "Directory" as Directory {
+
+    }
+    class "File" as File {
+
+    }
+}
+package "<<external>>\nclient package" {
+    class "<<Customizable>>\nClientEntry" as ClientEntry {
+        + customMethod() : void
+    }
+    class "<<Customizable>>\nClientDirectory" as ClientDirectory {
+        + customMethod() : void
+    }
+    class "<<Customizable>>\nClientFile" as ClientFile {
+        + customMethod() : void
+    }   
+}
+
+Subject o- "*" Observer
+Subject <|-- EntryBase : T=T
+EntryBase <|-- DirectoryBase : virtual\nT=T
+EntryBase "*" --o DirectoryBase
+EntryBase <|-- FileBase : virtual \nT=T
+
+EntryBase <|-- Entry : virtual\nT=Entry
+DirectoryBase <|-- Directory : T=Entry
+Entry <|-- Directory
+FileBase <|-- File : T=Entry
+Entry <|-- File
+
+EntryBase <|-- ClientEntry : virtual\nT=ClientEntry
+DirectoryBase <|-- ClientDirectory : T=ClientEntry
+ClientEntry <|-- ClientDirectory
+FileBase <|-- ClientFile : T=ClientEntry
+ClientEntry <|-- ClientFile
+ 
+@enduml

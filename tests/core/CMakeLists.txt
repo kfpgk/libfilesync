@@ -1,2 +1,1 @@
-add_subdirectory(localFirstFileSyncer)
-add_subdirectory(remoteFirstFileSyncer)
+add_subdirectory(conflict)

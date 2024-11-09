@@ -1,11 +1,16 @@
 #include <libfilesync/FileSync.hpp>
 #include <libfilesync/FileSyncException.hpp>
-#include <libfilesync/core/LocalFirstFileSyncer.hpp>
-#include <libfilesync/core/RemoteFirstFileSyncer.hpp>
+#include <libfilesync/core/sync_data/Entry.hpp>
+#include <libfilesync/core/sync_data/EntryFactory.hpp>
+#include <libfilesync/core/FileSyncer.hpp>
+#include <libfilesync/core/BufferedSyncer.hpp>
+#include <libfilesync/core/UnBufferedSyncer.hpp>
+#include <libfilesync/core/OneWaySyncer.hpp>
+#include <libfilesync/core/conflict/Resolver.hpp>
+#include <libfilesync/core/conflict/LocalFirstResolver.hpp>
+#include <libfilesync/core/conflict/RemoteFirstResolver.hpp>
+#include <libfilesync/data/Exception.hpp>
 #include <libfilesync/data/Data.hpp>
-#include <libfilesync/data/File.hpp>
-#include <libfilesync/data/Directory.hpp>
-#include <libfilesync/data/DataException.hpp>
 #include <libfilesync/protocol/FtpClient.hpp>
 #include <libfilesync/utility/Logger.hpp>
 #include <libfilesync/utility/Debug.hpp>
@@ -40,6 +45,7 @@ namespace filesync {
             void setServer(const std::string& address);
             void setRemoteRoot(const std::string& address);
             void setConflictResolveStrategy(enum ConflictResolveStrategy conflictResolveStrategy);
+            void setSyncStrategy(enum SyncStrategy syncStrategy);
             void setSyncContent(const std::filesystem::path& path);
             void setSyncInvertal(std::chrono::milliseconds seconds);
             void startSyncing();
@@ -50,9 +56,11 @@ namespace filesync {
             std::string remoteRoot = "";
             enum ProtocolType protocolType = ProtocolType::None;
             enum ConflictResolveStrategy conflictResolveStrategy = ConflictResolveStrategy::None;
+            enum SyncStrategy syncStrategy = SyncStrategy::None;
             std::chrono::milliseconds interval = 5s;
             std::shared_ptr<ProtocolClient> protocolClient = nullptr;
-            std::unique_ptr<Entry> entry = nullptr;
+            std::unique_ptr<core::sync_data::Entry> entry = nullptr;
+            std::unique_ptr<core::conflict::Resolver> resolver = nullptr;
             std::unique_ptr<core::FileSyncer> fileSyncer = nullptr;
 
             std::thread syncThread;
@@ -60,13 +68,15 @@ namespace filesync {
             std::atomic<bool> stopSyncThread = false;
 
             void createProtocol();
+            void createConflictResolver();
             void createFileSyncer();
 
             void validateProtocol() const;
             void validateEntry() const;
+            void validateConflictResolver() const;
 
             /**
-             * @brief Endless loop syncing for use 
+             * @brief Endless syncing loop for use 
              * in separate thread.
              */
             void endlessSync(const std::atomic<bool>& stop);
@@ -95,16 +105,13 @@ namespace filesync {
         this->conflictResolveStrategy = conflictResolveStrategy;
     }
 
-    void FileSync::Impl::setSyncContent (const std::filesystem::path& path) {
+    void FileSync::Impl::setSyncStrategy(enum SyncStrategy syncStrategy) {
+        this->syncStrategy = syncStrategy;
+    }
+
+    void FileSync::Impl::setSyncContent(const std::filesystem::path& path) {
         try {
-            std::filesystem::path normalizedPath = path;
-            normalizedPath.make_preferred();
-            entry = filesync::data::createEntryRecursively(normalizedPath);
-            if (path.string().back() == std::filesystem::path::preferred_separator) {
-                entry->setRemote(normalizedPath.parent_path().filename());
-            } else {
-                entry->setRemote(normalizedPath.filename());
-            }           
+            entry = filesync::core::sync_data::createSyncEntryRecursively(path);       
             Logger::getInstance().log(LogDomain::Info, "Added following files for syncing:");
             entry->print();
             Logger::getInstance().log(LogDomain::Info, "----------------------------------");  
@@ -127,7 +134,8 @@ namespace filesync {
             throw FileSyncException("Protocol and Server must be set, before we start syncing!",
                 __FILE__, __LINE__);
         }
-        createProtocol();    
+        createProtocol();
+        createConflictResolver();    
         createFileSyncer();
 
         stopSyncThread = false;
@@ -156,15 +164,46 @@ namespace filesync {
         DEBUG_EXIT();       
     }
 
+    void FileSync::Impl::createConflictResolver() {
+        DEBUG_ENTER();
+
+        switch (conflictResolveStrategy) {
+            case ConflictResolveStrategy::LocalFirst:
+                this->resolver = std::make_unique<core::conflict::LocalFirstResolver>(*protocolClient);
+                break;
+            case ConflictResolveStrategy::RemoteFirst:
+                this->resolver = std::make_unique<core::conflict::RemoteFirstResolver>(*protocolClient);
+                break;                                
+        }
+
+        DEBUG_EXIT();
+    }
+
     void FileSync::Impl::createFileSyncer() {
         DEBUG_ENTER();
 
         validateProtocol();
         validateEntry();
-        switch (conflictResolveStrategy) {
-            case ConflictResolveStrategy::LocalFirst:
-                this->fileSyncer = std::make_unique<core::LocalFirstFileSyncer>(*entry, *protocolClient);
-                break;                
+
+        switch (syncStrategy) {
+            case SyncStrategy::UnBuffered:
+                validateConflictResolver();
+                this->fileSyncer = std::make_unique<core::UnbufferedSyncer>(
+                    *entry, *protocolClient, *resolver);
+                break;
+            case SyncStrategy::Buffered:
+                validateConflictResolver();
+                this->fileSyncer = std::make_unique<core::BufferedSyncer>(
+                    *entry, *protocolClient, *resolver);
+                break;
+            case SyncStrategy::OneWay:
+                validateConflictResolver();
+                this->fileSyncer = std::make_unique<core::OneWaySyncer>(
+                    *entry, *protocolClient, *resolver);
+                break;            
+            default:
+                throw FileSyncException("Unsupported FileSyncer type. Call setSyncStrategy()",
+                    __FILE__, __LINE__);                
         }
 
         DEBUG_EXIT();
@@ -182,6 +221,14 @@ namespace filesync {
         if (!entry) {
             throw FileSyncException("Need sync content setup in order to create FileSyncer object. "\
                 "Call setSyncContent(...)",
+            __FILE__, __LINE__);           
+        }
+    }
+
+    void FileSync::Impl::validateConflictResolver() const {
+        if (!resolver) {
+            throw FileSyncException("Need conflict resolver setup in order to create FileSyncer object. "\
+                "Call setConflictResolveStrategy(...)",
             __FILE__, __LINE__);           
         }
     }
@@ -227,6 +274,12 @@ namespace filesync {
         enum ConflictResolveStrategy conflictResolveStrategy) {
         
         pImpl->setConflictResolveStrategy(conflictResolveStrategy);
+    }
+
+    void FileSync::setSyncStrategy(
+        enum SyncStrategy syncStrategy) {
+        
+        pImpl->setSyncStrategy(syncStrategy);
     }
     
     void FileSync::setSyncContent(const std::filesystem::path& path) {

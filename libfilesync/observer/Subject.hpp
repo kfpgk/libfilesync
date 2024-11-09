@@ -10,6 +10,10 @@ namespace filesync {
 
     /**
      * @brief Generic base subject interface class
+     * 
+     * Patterns:
+     *  - Subject of the Observer pattern
+     *  - CRTP
      */
     template <class T>
     class Subject {
@@ -24,9 +28,16 @@ namespace filesync {
             virtual void unregisterObserver(Observer<T>& observer) {
                 observers.remove(observer);
             }
+            /**
+             * @brief Notify observers
+             * 
+             * dynamic_cast allows virtual inheritance.
+             * Can use static_cast or 'deduced this' feature
+             * (C++23) if no virtual inheritance is needed.
+             */
             virtual void notify() {
                 for (auto const& i : observers) {
-                    i.get().update(static_cast<T*>(this));
+                    i.get().update(dynamic_cast<T*>(this));
                 }
             }
 

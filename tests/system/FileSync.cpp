@@ -42,6 +42,7 @@ namespace filesync::integrationtest::system {
 
         fileSync.setConflictResolveStrategy(ConflictResolveStrategy::LocalFirst);
         fileSync.setProtocol(ProtocolType::FTP);
+        fileSync.setSyncStrategy(SyncStrategy::UnBuffered);
         fileSync.setSyncInvertal(1s);
 
         fileSync.startSyncing();

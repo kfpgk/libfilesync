@@ -6,7 +6,10 @@ namespace filesync {
     /**
      * @brief Generic base observer interface class
      * 
-     * Non-virtual interface
+     * Patterns:
+     *  - Subject of the Observer pattern
+     *  - CRTP
+     *  - Non-virtual interface
      */
     template <class T>
     class Observer {

@@ -1,6 +1,6 @@
 #include <tests/data/CreateRecursiveEntries.hpp>
-#include <libfilesync/data/Data.hpp>
-#include <libfilesync/data/DataException.hpp>
+#include <libfilesync/data/EntryFactory.hpp>
+#include <libfilesync/data/Exception.hpp>
 
 #include <stack>
 #include <cassert>
@@ -48,7 +48,7 @@ namespace filesync::integrationtest::data {
             std::string singleEntry = entryStack.top();
             entryStack.pop();
             if (!entry->getEntry(singleEntry)) {
-                throw DataException("'" + singleEntry + "' not part of entry data structure.",
+                throw filesync::data::Exception("'" + singleEntry + "' not part of entry data structure.",
                     __FILE__, __LINE__);
             }            
         }

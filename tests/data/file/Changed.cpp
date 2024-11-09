@@ -21,7 +21,7 @@ namespace filesync::integrationtest::data::file {
                 __FILE__, __LINE__);
         }
         fileStream << "Lorem ipsum dolor sit amet" << std::endl;
-        file = std::make_unique<File>(fileName);
+        file = std::make_unique<filesync::data::File>(fileName);
     }
 
     void Changed::perform() {

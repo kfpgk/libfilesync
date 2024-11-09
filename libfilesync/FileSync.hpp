@@ -10,6 +10,7 @@ namespace filesync {
 
     enum class ProtocolType {None, FTP};
     enum class ConflictResolveStrategy {None, LocalFirst, RemoteFirst};
+    enum class SyncStrategy {None, UnBuffered, Buffered, OneWay};
 
     /**
      * @brief File Sync Client Interface Class
@@ -30,6 +31,7 @@ namespace filesync {
             void setServer(const std::string& address);
             void setRemoteRoot(const std::string& address);
             void setConflictResolveStrategy(enum ConflictResolveStrategy conflictResolveStrategy);
+            void setSyncStrategy(enum SyncStrategy syncStrategy);
             void setSyncContent(const std::filesystem::path& path);
             void setSyncInvertal(std::chrono::milliseconds seconds);
             void startSyncing();

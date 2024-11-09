@@ -1,11 +1,9 @@
 #ifndef LIBFILESYNC_CORE_FILE_SYNCER_HPP
 #define LIBFILESYNC_CORE_FILE_SYNCER_HPP
 
-#include <libfilesync/data/Entry.hpp>
+#include <libfilesync/core/sync_data/Entry.hpp>
+#include <libfilesync/core/conflict/Resolver.hpp>
 #include <libfilesync/protocol/ProtocolClient.hpp>
-
-#include <functional>
-#include <vector>
 
 namespace filesync::core {
 
@@ -16,26 +14,27 @@ namespace filesync::core {
      *  - Template
      *  - Observer
      */  
-    class FileSyncer : public Observer<Entry> {
+    class FileSyncer : public Observer<sync_data::Entry> {
 
         public:     
             FileSyncer(
-                Entry& syncContent,
-                ProtocolClient& protocolClient);
+                sync_data::Entry& syncContent,
+                ProtocolClient& protocolClient,
+                conflict::Resolver& resolver);
 
-        protected:
+        protected:           
             ProtocolClient& getProtocolClient();
+            conflict::Resolver& getResolver();
+        
+            [[nodiscard]] bool fileExistsLocally(sync_data::Entry* entry);
+            [[nodiscard]] bool fileExistsRemotely(sync_data::Entry* entry);
 
-        private:
-            std::reference_wrapper<ProtocolClient> protocolClient;
-
-            void doUpdate(Entry* entry = nullptr) override;
+        private: 
+            ProtocolClient& protocolClient;
+            conflict::Resolver& resolver;
             
-            void resolve(Entry* entry);
-            virtual void doResolve(Entry* entry) = 0;
+            void doUpdate(sync_data::Entry* entry = nullptr) override = 0;
 
-            [[nodiscard]] bool fileExistsLocally(Entry* entry);
-            [[nodiscard]] bool fileExistsRemotely(Entry* entry); 
     };
 
 }

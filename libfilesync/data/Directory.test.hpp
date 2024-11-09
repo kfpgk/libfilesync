@@ -1,8 +1,7 @@
-#ifndef LIBFILESYNC_DIRECTORY_TEST_HPP
-#define LIBFILESYNC_DIRECTORY_TEST_HPP
+#ifndef LIBFILESYNC_DATA_DIRECTORY_TEST_HPP
+#define LIBFILESYNC_DATA_DIRECTORY_TEST_HPP
 
-namespace filesync {
-namespace unittest {
+namespace filesync::data::unittest {
 
     class DirectoryTest {
 
@@ -12,13 +11,8 @@ namespace unittest {
             void remove_file();
             void remove_directory();
 
-            void set_remotes_with_relative_local_paths();
-            void set_remotes_with_deep_hierarchy();
-            void set_remotes_with_gap_hierarchy();
-
     };
 
-}
 }
 
 #endif

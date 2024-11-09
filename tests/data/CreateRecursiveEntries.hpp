@@ -15,7 +15,7 @@ namespace filesync::integrationtest::data {
             CreateRecursiveEntries(const std::string& testName);
 
         private:
-            std::unique_ptr<Entry> entry;
+            std::unique_ptr<filesync::data::Entry> entry;
 
             void setup() override;
             void perform() override;

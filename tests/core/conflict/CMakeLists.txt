@@ -1,0 +1,2 @@
+add_subdirectory(local_first_resolver)
+add_subdirectory(remote_first_resolver)

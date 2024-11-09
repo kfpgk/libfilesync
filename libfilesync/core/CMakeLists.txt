@@ -1,6 +1,10 @@
+add_subdirectory(conflict)
+add_subdirectory(sync_data)
+
 target_sources(libfilesync 
     PRIVATE
         FileSyncer.cpp
-        LocalFirstFileSyncer.cpp
-        RemoteFirstFileSyncer.cpp
+        BufferedSyncer.cpp
+        OneWaySyncer.cpp
+        UnbufferedSyncer.cpp
 )

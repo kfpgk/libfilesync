@@ -1,62 +1,71 @@
-#ifndef LIBFILESYNC_ENTRY_HPP
-#define LIBFILESYNC_ENTRY_HPP
+#ifndef LIBFILESYNC_DATA_ENTRY_HPP
+#define LIBFILESYNC_DATA_ENTRY_HPP
 
 #include <libfilesync/observer/Subject.hpp>
 #include <libfilesync/observer/Observer.hpp>
-#include <libfilesync/data/RemoteEntry.hpp>
 
 #include <string>
 #include <filesystem>
-#include <optional>
 
-namespace filesync 
+
+namespace filesync::data 
 {
 
     /** 
-     * Class representing one or multiple file system 
-     * entries (file or directory) which can be synced.
+     * @brief File System Entry CRTP base class template
+     * 
+     * Object representing one or multiple file system 
+     * entries (file or directory).
      * 
      * Patterns: 
      *  - Component object of the Composite pattern
      *  - Subject object of the Observer pattern
      *  - Non virtual interface
+     *  - CRTP
      */
-    class Entry : public Subject<Entry> {
+    template<typename T>
+    class EntryBase : public Subject<T> {
 
         public:
-            virtual ~Entry() = default;
-            Entry(const Entry&) = delete;
-            Entry& operator=(const Entry&) = delete;
+            virtual ~EntryBase() = default;
+            EntryBase(const EntryBase&) = delete;
+            EntryBase& operator=(const EntryBase&) = delete;
             
             [[nodiscard]] std::filesystem::path getPath() const;
             [[nodiscard]] std::filesystem::path getAbsolutePath() const;
-            [[nodiscard]] Entry* getEntry(const std::filesystem::path& path); 
+            [[nodiscard]] T* getEntry(const std::filesystem::path& path); 
             [[nodiscard]] bool hasChanged() const;
-            [[nodiscard]] bool hasRemote() const;
             [[nodiscard]] bool validate() const;
-            [[nodiscard]] std::string getRemotePath() const;
-            
+            [[nodiscard]] bool isEqualTo(const std::filesystem::path& path) const;
+
             void resetChanged();
             void performOnChange();
-            void setRemote(const std::string& path); 
             void print() const;
 
         protected:
-            explicit Entry(const std::filesystem::path& path);
+            explicit EntryBase(const std::filesystem::path& path);
 
-            [[nodiscard]]  virtual Entry* doGetEntry(const std::filesystem::path& path);
+            [[nodiscard]]  virtual T* doGetEntry(const std::filesystem::path& path);
             virtual void doPerformOnChange();
-            virtual void doSetRemote(const std::string& path);
             [[nodiscard]] virtual bool doValidate() const;
             virtual void doPrint() const;
 
         private:
             std::filesystem::path path;
             std::filesystem::file_time_type lastWriteTime;
-            std::optional<RemoteEntry> remote;
 
             [[nodiscard]] std::string notFoundMessage() const;
             void onChange();
+
+    };
+
+    /**
+     * @brief File system entry concrete class
+     */
+    class Entry : virtual public EntryBase<Entry> {
+
+        public:
+            explicit Entry(const std::filesystem::path& path);
 
     };
 
@@ -75,5 +84,7 @@ namespace filesync
     }
 
 }
+
+#include <libfilesync/data/Entry.tpp>
 
 #endif

@@ -25,7 +25,7 @@ namespace filesync {
         DEBUG_ENTER(); 
 
         std::stringstream message;
-        message << "Download: " << local.string() << " << " << getCompleteRemoteFilePath(remote); 
+        message << "Download: '" << local.string() << "' << " << getCompleteRemoteFilePath(remote); 
         Logger::getInstance().log(LogDomain::Info, message.str());
 
         doDownload(local, remote);
@@ -44,7 +44,7 @@ namespace filesync {
         DEBUG_ENTER();
 
         std::stringstream message;
-        message << "Upload: " << local.string() << " >> " << getCompleteRemoteFilePath(remote); 
+        message << "Upload: '" << local.string() << "' >> " << getCompleteRemoteFilePath(remote); 
         Logger::getInstance().log(LogDomain::Info, message.str());
 
         doUpload(local, remote);

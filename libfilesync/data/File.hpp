@@ -1,11 +1,11 @@
-#ifndef LIBFILESYNC_FILE_HPP
-#define LIBFILESYNC_FILE_HPP
+#ifndef LIBFILESYNC_DATA_FILE_HPP
+#define LIBFILESYNC_DATA_FILE_HPP
 
 #include <libfilesync/data/Entry.hpp>
 
 #include <filesystem>
 
-namespace filesync {
+namespace filesync::data {
 
     /**
      * Class representing a `file` file system entry which
@@ -14,13 +14,23 @@ namespace filesync {
      * Patterns:
      *  - Leaf object of the Composite pattern
      */
-    class File : public Entry {
+    template<typename T>
+    class FileBase : virtual public EntryBase<T> {
+
+        protected:
+            explicit FileBase(const std::filesystem::path& path);
+
+    };
+
+    class File : public Entry, public FileBase<Entry> {
 
         public:
-            explicit File(const std::filesystem::path& path);
+            explicit File(const std::filesystem::path& path); 
 
     };
 
 }
+
+#include <libfilesync/data/File.tpp>
 
 #endif
