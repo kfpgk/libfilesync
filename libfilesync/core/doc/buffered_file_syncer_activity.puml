@@ -20,10 +20,10 @@ repeat
             if (remote == prev) then (yes)
                 :push local;
             else (no)
-                    #palegreen:<b>resolver.resolve()</b>;
-                    note right
-                    Custom
-                    endnote
+                #palegreen:<b>resolver.resolve()</b>;
+                note right
+                Custom
+                endnote
             endif   
         endif
 
