@@ -1,0 +1,36 @@
+@startuml one-way-file-syncer-activity-diagram
+
+title One Way File Syncer Activity Diagram
+
+start
+
+repeat
+
+    partition Update {
+
+        if (local exists) then (yes)
+            if (remote exists) then (yes)
+                #palegreen:<b>resolver.resolve()</b>;
+                note left
+                Custom
+                endnote
+            else (no)
+                :push local;
+            endif
+        else (no)
+            if (remote exists) then (yes)
+                :pull remote;
+            endif
+        endif
+        :reset local changed;
+
+    }
+
+:Wait syncinterval;
+
+repeat while (stopSyncing) is (no)
+->yes;
+
+stop
+
+@enduml

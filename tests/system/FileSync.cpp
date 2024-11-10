@@ -45,7 +45,7 @@ namespace filesync::integrationtest::system {
         fileSync.setSyncStrategy(SyncStrategy::UnBuffered);
         fileSync.setSyncInvertal(1s);
 
-        fileSync.startSyncing();
+        fileSync.startSyncing(nullptr);
 
         std::this_thread::sleep_for(3s);
         

@@ -31,4 +31,12 @@ namespace filesync::core::sync_data {
             std::string(getPath().string() + " <-> <server>/<rootPath>/" + remotePath));        
     }
 
+    void Entry::setSyncInProgress() {
+        syncInProgress = true;
+    }
+
+    bool Entry::getSyncInProgress() const {
+        return syncInProgress;
+    }
+
 }

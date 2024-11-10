@@ -55,11 +55,7 @@ namespace filesync {
     bool ProtocolClient::existsOnServer(
         const std::filesystem::path& remote) {
 
-        DEBUG_ENTER();
-
         return doExistsOnServer(remote);
-
-        DEBUG_EXIT(); 
     }
 
     void ProtocolClient::deleteOnServer(

@@ -147,11 +147,12 @@ namespace filesync::curl {
                 optionFactory.createVolatileNobody();
             option->set();
             curlEasy->run();
-            return true;
         } catch(Exception& e) {
+            DEBUG_EXIT();
             return false;
         }
-        DEBUG_EXIT();       
+        DEBUG_EXIT();
+        return true;       
     }
 
 }

@@ -1,10 +1,14 @@
 #include <libfilesync/FileSync.hpp>
+#include <libfilesync/FileSyncLocks.hpp>
 #include <libfilesync/FileSyncException.hpp>
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <memory>
+#include <thread>
+#include <chrono>
 
 struct CmdLineArgs {
     static std::string localSyncPath;
@@ -61,16 +65,30 @@ int main(int argc, char* argv[]) {
     try {
         FileSync syncer;
 
+        auto locks = std::make_shared<FileSyncLocks>();
+        auto cinMutex = std::make_shared<std::mutex>();
+
         syncer.setProtocol(ProtocolType::FTP);
-        syncer.setConflictResolveStrategy(ConflictResolveStrategy::LocalFirst);
+        syncer.setConflictResolveStrategy(ConflictResolveStrategy::Interactive);
+        syncer.setSyncStrategy(SyncStrategy::UnBuffered);
 
         syncer.setServer(CmdLineArgs::server);
         syncer.setRemoteRoot(CmdLineArgs::serverRoot);
         syncer.setSyncContent(CmdLineArgs::localSyncPath);
 
-        syncer.startSyncing();
+        locks->addMutex(MutexType::stdCin, cinMutex);
+
+        syncer.startSyncing(locks);
         
-        std::cin.ignore();
+        using namespace std::chrono_literals;
+        while(true) {
+            std::this_thread::sleep_for(2s);
+            {
+                std::scoped_lock lock(*cinMutex);
+                std::cin.ignore();
+                if (std::cin.get() == '\n') break;
+            }
+        }
         syncer.stopSyncing();
 
     } catch (const FileSyncException& e) {

@@ -29,7 +29,9 @@ namespace filesync::core::sync_data {
             explicit Entry(const std::filesystem::path& path);
 
             void setRemoteEntry(const std::filesystem::path& path);
-            std::filesystem::path getRemotePath() const;
+            [[nodiscard]] std::filesystem::path getRemotePath() const;
+            void setSyncInProgress();
+            [[nodiscard]] bool getSyncInProgress() const;
             bool localChanged() const;
             bool remoteChanged() const;
             void writeCache();
@@ -40,6 +42,8 @@ namespace filesync::core::sync_data {
             virtual void doSetRemoteEntry(const std::filesystem::path& path);
 
         private:
+            bool syncInProgress = false;
+
             std::unique_ptr<RemoteEntry> remoteEntry;
             std::unique_ptr<Buffer> remoteBuffer;
             std::unique_ptr<Buffer> previousBuffer;

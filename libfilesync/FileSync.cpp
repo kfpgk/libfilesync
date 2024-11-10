@@ -1,5 +1,6 @@
 #include <libfilesync/FileSync.hpp>
 #include <libfilesync/FileSyncException.hpp>
+#include <libfilesync/FileSyncLocks.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
 #include <libfilesync/core/sync_data/EntryFactory.hpp>
 #include <libfilesync/core/FileSyncer.hpp>
@@ -9,6 +10,7 @@
 #include <libfilesync/core/conflict/Resolver.hpp>
 #include <libfilesync/core/conflict/LocalFirstResolver.hpp>
 #include <libfilesync/core/conflict/RemoteFirstResolver.hpp>
+#include <libfilesync/core/conflict/InteractiveResolver.hpp>
 #include <libfilesync/data/Exception.hpp>
 #include <libfilesync/data/Data.hpp>
 #include <libfilesync/protocol/FtpClient.hpp>
@@ -19,6 +21,7 @@
 #include <thread>
 #include <vector>
 #include <atomic>
+#include <mutex>
 
 using namespace std::chrono_literals;
 using namespace filesync::utility;
@@ -49,6 +52,7 @@ namespace filesync {
             void setSyncContent(const std::filesystem::path& path);
             void setSyncInvertal(std::chrono::milliseconds seconds);
             void startSyncing();
+            void startSyncing(std::shared_ptr<FileSyncLocks> locks);
             void stopSyncing();
 
         private:
@@ -65,10 +69,10 @@ namespace filesync {
 
             std::thread syncThread;
             std::atomic<bool> syncing = false;
-            std::atomic<bool> stopSyncThread = false;
+            std::atomic<bool> stopSyncingFlag = false;
 
             void createProtocol();
-            void createConflictResolver();
+            void createConflictResolver(std::shared_ptr<FileSyncLocks> locks);
             void createFileSyncer();
 
             void validateProtocol() const;
@@ -135,11 +139,29 @@ namespace filesync {
                 __FILE__, __LINE__);
         }
         createProtocol();
-        createConflictResolver();    
+        createConflictResolver(nullptr);    
         createFileSyncer();
 
-        stopSyncThread = false;
-        syncThread = std::thread(&FileSync::Impl::endlessSync, this, std::cref(stopSyncThread));
+        stopSyncingFlag = false;
+        endlessSync(stopSyncingFlag);
+
+    }
+
+    void FileSync::Impl::startSyncing(std::shared_ptr<FileSyncLocks> locks) {
+        if (syncing) {
+            throw FileSyncException("Already syncing!",
+                __FILE__, __LINE__);            
+        }
+        if (serverAddress.empty() || protocolType == ProtocolType::None) {
+            throw FileSyncException("Protocol and Server must be set, before we start syncing!",
+                __FILE__, __LINE__);
+        }
+        createProtocol();
+        createConflictResolver(locks);    
+        createFileSyncer();
+
+        stopSyncingFlag = false;
+        syncThread = std::thread(&FileSync::Impl::endlessSync, this, std::cref(stopSyncingFlag));
 
     }
 
@@ -148,7 +170,7 @@ namespace filesync {
             throw FileSyncException("Cannot stop, since sync has not been started!",
                 __FILE__, __LINE__);            
         }
-        stopSyncThread = true;
+        stopSyncingFlag = true;
         syncThread.join();
     }
 
@@ -159,12 +181,15 @@ namespace filesync {
             case ProtocolType::FTP:
                 protocolClient = std::make_unique<FtpClient>(serverAddress, remoteRoot); 
                 break;
+            default:
+                throw FileSyncException("Unsupported protocol type.",
+                    __FILE__, __LINE__); 
         }
 
         DEBUG_EXIT();       
     }
 
-    void FileSync::Impl::createConflictResolver() {
+    void FileSync::Impl::createConflictResolver(std::shared_ptr<FileSyncLocks> locks) {
         DEBUG_ENTER();
 
         switch (conflictResolveStrategy) {
@@ -173,7 +198,20 @@ namespace filesync {
                 break;
             case ConflictResolveStrategy::RemoteFirst:
                 this->resolver = std::make_unique<core::conflict::RemoteFirstResolver>(*protocolClient);
-                break;                                
+                break;
+            case ConflictResolveStrategy::Interactive:
+                if (locks) {
+                    this->resolver = std::make_unique<core::conflict::InteractiveResolver>(
+                        *protocolClient, locks);
+                } else {
+                    this->resolver = std::make_unique<core::conflict::InteractiveResolver>(
+                        *protocolClient);
+                }
+                
+                break;
+            default:
+                throw FileSyncException("Unsupported conflict resolve strategy.",
+                    __FILE__, __LINE__);                                                     
         }
 
         DEBUG_EXIT();
@@ -292,6 +330,10 @@ namespace filesync {
 
     void FileSync::startSyncing() {
         pImpl->startSyncing();
+    }
+
+    void FileSync::startSyncing(std::shared_ptr<FileSyncLocks> locks) {
+        pImpl->startSyncing(std::move(locks));
     }
 
     void FileSync::stopSyncing() {

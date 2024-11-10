@@ -1,12 +1,16 @@
 add_library(libfilesync
-    FileSyncException.cpp
     FileSync.cpp
+    FileSyncException.cpp
+    FileSyncLocks.cpp  
 )
 
 set(PUBLIC_INCLUDE_DIR ${CMAKE_BINARY_DIR}/libfilesync/include)
 
 configure_file(
     FileSync.hpp ${PUBLIC_INCLUDE_DIR}/libfilesync/FileSync.hpp COPYONLY
+)
+configure_file(
+    FileSyncLocks.hpp ${PUBLIC_INCLUDE_DIR}/libfilesync/FileSyncLocks.hpp COPYONLY
 )
 configure_file(
     FileSyncException.hpp ${PUBLIC_INCLUDE_DIR}/libfilesync/FileSyncException.hpp COPYONLY
@@ -28,6 +32,7 @@ target_sources(libfilesync
     FILES
         FileSync.hpp
         FileSyncException.hpp
+        FileSyncLocks.hpp
 )
 
 add_subdirectory(core)

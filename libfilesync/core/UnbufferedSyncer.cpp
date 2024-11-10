@@ -21,14 +21,13 @@ namespace filesync::core {
                         DEBUG("Local file changed. Uploading...");
                         getProtocolClient().upload(entry->getPath(), entry->getRemotePath());
                     } else {
-                        if (false) {
-                            DEBUG("Initial sync. Local and remote file exist. Resolve...");
-                            getResolver().resolve(entry);
-                        } else {
+                        if (entry->getSyncInProgress()) {
                             DEBUG("Local file unchanged. Downloading...");
                             getProtocolClient().download(entry->getPath(), entry->getRemotePath()); 
-                        }
-                        
+                        } else {
+                            DEBUG("Initial sync. Local and remote file exist. Resolve...");
+                            getResolver().resolve(entry);
+                        }                       
                     }
                 } else {
                     DEBUG("Local file not present at remote. Uploading...");
@@ -43,6 +42,7 @@ namespace filesync::core {
                     /* Do nothing */                       
                 }                  
             }
+            entry->setSyncInProgress();;
             entry->resetChanged();
         }
 

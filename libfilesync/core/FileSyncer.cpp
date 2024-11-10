@@ -1,5 +1,4 @@
 #include <libfilesync/core/FileSyncer.hpp>
-#include <libfilesync/utility/Debug.hpp>
 
 #include <filesystem>
 
@@ -9,11 +8,22 @@ namespace filesync::core {
         sync_data::Entry& syncContent,
         ProtocolClient& protocolClient,
         conflict::Resolver& resolver) :
-            protocolClient{protocolClient},
-            resolver{resolver} {
+            FileSyncer{syncContent,
+                protocolClient,
+                resolver,
+                std::make_shared<FileSyncLocks>()} {
 
-        DEBUG(syncContent.getPath());
-        DEBUG(this);
+    }
+
+    FileSyncer::FileSyncer(
+        sync_data::Entry& syncContent,
+        ProtocolClient& protocolClient,
+        conflict::Resolver& resolver,
+        std::shared_ptr<FileSyncLocks> locks) :
+            protocolClient{protocolClient},
+            resolver{resolver},
+            locks{std::move(locks)} {
+
         syncContent.registerObserver(*this);
     }
 
@@ -31,6 +41,10 @@ namespace filesync::core {
 
     conflict::Resolver& FileSyncer::getResolver() {
         return resolver;
+    }
+
+    FileSyncLocks& FileSyncer::getLocks() {
+        return *locks;
     }
 
 }

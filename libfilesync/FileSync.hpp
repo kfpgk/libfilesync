@@ -9,14 +9,13 @@
 namespace filesync {
 
     enum class ProtocolType {None, FTP};
-    enum class ConflictResolveStrategy {None, LocalFirst, RemoteFirst};
+    enum class ConflictResolveStrategy {None, LocalFirst, RemoteFirst, Interactive};
     enum class SyncStrategy {None, UnBuffered, Buffered, OneWay};
+
+    class FileSyncLocks;
 
     /**
      * @brief File Sync Client Interface Class
-     * 
-     * Patterns:
-     *  - PIMPL
      */
     class FileSync {
 
@@ -34,7 +33,19 @@ namespace filesync {
             void setSyncStrategy(enum SyncStrategy syncStrategy);
             void setSyncContent(const std::filesystem::path& path);
             void setSyncInvertal(std::chrono::milliseconds seconds);
+            /**
+             * @brief Start syncing blocking
+             */
             void startSyncing();
+            /**
+             * @brief Start syncing non-blocking
+             * 
+             * This will start a new sync thread and returns.
+             * The syncing thread may be using resources to which
+             * access must be managed, so a set of mutexes can 
+             * be provided via the FileSyncLocks object.
+             */
+            void startSyncing(std::shared_ptr<FileSyncLocks> locks);
             void stopSyncing();
 
         private:
