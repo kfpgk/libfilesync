@@ -45,13 +45,17 @@ package "sync_data" {
     class "File" as File {
     }
     class "RemoteEntry" as RemoteEntry {
+        - path : filesystem::path
+        + getPath() : filesystem::path
     }
     abstract class "Buffer" as Buffer {
+        + {abstract} store() : void
+        + {abstract} isEqualTo() : bool 
     }
     class "FileBuffer" as FileBuffer {
-    }
-    class "MemoryBuffer" as MemoryBuffer {
-    }   
+        + store() : void
+        + isEqualTo() : bool 
+    }  
 }
 
 EntryBase <|-- DirectoryBase : virtual\nT=T
@@ -67,6 +71,4 @@ Entry o-- "1" RemoteEntry
 Entry o-- "2" Buffer
 
 Buffer <|-- FileBuffer
-Buffer <|-- MemoryBuffer
- 
 @enduml

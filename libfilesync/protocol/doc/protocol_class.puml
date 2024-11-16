@@ -1,6 +1,6 @@
-@startuml libfilesync-protocol-interface-class
+@startuml protocol-class-diagram
 
-title libfilesync Protocol Interface Class Diagram
+title Protocol Class Diagram
 
 abstract class FileSyncer {
     + update(Entry) : void

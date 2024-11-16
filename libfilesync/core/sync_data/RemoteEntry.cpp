@@ -20,12 +20,4 @@ namespace filesync::core::sync_data {
         return path.filename();
     }
 
-    std::optional<std::size_t> RemoteEntry::savedHash() const {
-        return hash;
-    }
-
-    void RemoteEntry::saveHash(std::size_t hash) {
-        this->hash = hash;
-    }
-
 }

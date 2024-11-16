@@ -15,13 +15,9 @@ namespace filesync::core::sync_data {
             [[nodiscard]] std::string getPath() const;
             [[nodiscard]] std::string getLocation() const;
             [[nodiscard]] std::string getFileName() const;
-            [[nodiscard]] std::optional<std::size_t> savedHash() const;
-
-            void saveHash(std::size_t hash);
 
         private:
             std::filesystem::path path;
-            std::optional<std::size_t> hash;
 
     };
 

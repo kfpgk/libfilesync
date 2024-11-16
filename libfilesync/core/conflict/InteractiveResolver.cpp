@@ -1,6 +1,7 @@
 #include <libfilesync/core/conflict/InteractiveResolver.hpp>
 #include <libfilesync/FileSyncException.hpp>
 #include <libfilesync/FileSyncMutex.hpp>
+#include <libfilesync/utility/Debug.hpp>
 
 #include <iostream>
 #include <string>
@@ -42,8 +43,10 @@ namespace filesync::core::conflict {
 
     char InteractiveResolver::readUserInput() {
         char input;
+        DEBUG("Retrieving mutex for 'std::cin'");
         std::scoped_lock lock(getLocks().getMutex(MutexType::stdCin));
         std::cin >> input;
+        DEBUG("Releasing mutex for 'std::cin'");
         return input;
     }
 

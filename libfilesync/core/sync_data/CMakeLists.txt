@@ -1,11 +1,12 @@
 target_sources(libfilesync 
     PRIVATE
-        Buffer.cpp
-        Directory.cpp
         Entry.cpp
-        EntryFactory.cpp
         File.cpp
+        Directory.cpp
+        EntryFactory.cpp
         RemoteEntry.cpp
+        Buffer.cpp
+        FileBuffer.cpp
 )
 
 if(BUILD_UNIT_TESTS)

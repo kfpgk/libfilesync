@@ -6,11 +6,7 @@ package "facade" {
     [FileSync]
 }
 
-package "data" {
-    [Directory]
-    [File]
-    [RemoteEntry]
-}
+
 
 package "curl" {
     [CurlProtocolClient]
@@ -22,15 +18,29 @@ package "protocol" {
 
 package "core" {
     [FileSyncer]
+    [Resolver]
+    package "sync_data" {
+        [Directory] as SyncDir
+        [File] as SyncFile
+        [Entry] as SyncEntry
+        [RemoteEntry]
+    }
 }
 
-facade ..> core: <<import>>
-facade ..> protocol: <<import>>
-facade ..> data: <<import>>
+package "data" {
+    [Directory]
+    [File]
+    [Entry]   
+}
 
-core ..> data: <<import>>
+facade ..> core: <<access>>
+facade ..> protocol: <<access>>
+facade ..> sync_data: <<access>>
+
 core ..> protocol: <<import>>
 
-protocol ..> curl: <<import>>
+protocol ..> curl: <<access>>
+
+sync_data ..> data: <<import>>
 
 @enduml
