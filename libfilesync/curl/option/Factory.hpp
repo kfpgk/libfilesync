@@ -17,7 +17,7 @@ namespace filesync::curl::option {
     class Factory {
 
         public:
-            explicit Factory(wrapper::Easy& curlEasy);
+            explicit Factory(wrapper::Easy& interface);
 
             template <typename... Args>
             std::unique_ptr<Option> createGeneric(CURLoption curlOption, Args&&... args) const;
@@ -39,7 +39,7 @@ namespace filesync::curl::option {
             std::unique_ptr<Verbose> createVolatileVerbose() const;
 
         private:
-            wrapper::Easy& curlEasy;
+            wrapper::Easy& interface;
 
     };
 

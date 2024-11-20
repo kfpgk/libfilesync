@@ -5,17 +5,17 @@
 
 namespace filesync::curl::option {
 
-    Nobody::Nobody(wrapper::Easy& curlEasy,
+    Nobody::Nobody(wrapper::Easy& interface,
         bool value) :
-            Option(curlEasy),
+            Option(interface),
             value{value} {
 
     }
 
-    Nobody::Nobody(wrapper::Easy& curlEasy,
+    Nobody::Nobody(wrapper::Easy& interface,
         bool value,
         bool resetValue) :
-            Option(curlEasy),
+            Option(interface),
             value{value},
             ResettableOption(resetValue) {
 
@@ -31,9 +31,9 @@ namespace filesync::curl::option {
 
     void Nobody::setTo(bool value) {
         if (value) {
-            curlEasy.get().setOption(CURLOPT_NOBODY, 1L);
+            interface.get().setOption(CURLOPT_NOBODY, 1L);
         } else {
-            curlEasy.get().setOption(CURLOPT_NOBODY, 0L);
+            interface.get().setOption(CURLOPT_NOBODY, 0L);
         }        
     }
 

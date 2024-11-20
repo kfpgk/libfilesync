@@ -3,18 +3,18 @@
 
 namespace filesync::curl::option {
 
-    Quote::Quote(wrapper::Easy& curlEasy,
+    Quote::Quote(wrapper::Easy& interface,
         const std::string& command) :
-            Option(curlEasy),
+            Option(interface),
             commands{new wrapper::SList()} {
         
         addCommand(command);
     }
 
-    Quote::Quote(wrapper::Easy& curlEasy,
+    Quote::Quote(wrapper::Easy& interface,
         const std::string& command,
         wrapper::SList* resetValue) :
-            Option(curlEasy),
+            Option(interface),
             ResettableOption(resetValue),
             commands{new wrapper::SList()}  {
 
@@ -38,9 +38,9 @@ namespace filesync::curl::option {
 
     void Quote::setTo(wrapper::SList* value) {
         if (value) {
-            curlEasy.get().setOption(CURLOPT_QUOTE, value->getSListPointer()); 
+            interface.get().setOption(CURLOPT_QUOTE, value->getSListPointer()); 
         } else {
-            curlEasy.get().setOption(CURLOPT_QUOTE, NULL); 
+            interface.get().setOption(CURLOPT_QUOTE, NULL); 
         }
     }
 

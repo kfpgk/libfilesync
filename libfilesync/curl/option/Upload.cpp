@@ -3,17 +3,17 @@
 
 namespace filesync::curl::option {
 
-    Upload::Upload(wrapper::Easy& curlEasy,
+    Upload::Upload(wrapper::Easy& interface,
         bool value) :
-            Option(curlEasy),
+            Option(interface),
             value{value} {
 
     }
 
-    Upload::Upload(wrapper::Easy& curlEasy,
+    Upload::Upload(wrapper::Easy& interface,
         bool value,
         bool resetValue) :
-            Option(curlEasy),
+            Option(interface),
             value{value},
             ResettableOption(resetValue) {
 
@@ -29,9 +29,9 @@ namespace filesync::curl::option {
 
     void Upload::setTo(bool value) {
         if (value) {
-            curlEasy.get().setOption(CURLOPT_UPLOAD, 1L);
+            interface.get().setOption(CURLOPT_UPLOAD, 1L);
         } else {
-            curlEasy.get().setOption(CURLOPT_UPLOAD, 0L);
+            interface.get().setOption(CURLOPT_UPLOAD, 0L);
         }
         
     }

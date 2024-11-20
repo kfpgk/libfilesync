@@ -19,14 +19,14 @@ namespace filesync::curl::option {
     class Option {
 
         public:
-            Option(wrapper::Easy& curlEasy);
+            Option(wrapper::Easy& interface);
             virtual ~Option() = default;
-            void setEasy(wrapper::Easy& curlEasy);
+            void setEasy(wrapper::Easy& interface);
 
             void set();
 
         protected:
-            std::reference_wrapper<wrapper::Easy> curlEasy;
+            std::reference_wrapper<wrapper::Easy> interface;
 
         private:
             virtual void doSet() = 0;

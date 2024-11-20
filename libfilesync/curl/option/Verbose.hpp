@@ -20,14 +20,14 @@ namespace filesync::curl::option {
              * @brief Constructs a persistent option, which
              * is not being reset upon object destruction.
              */
-            explicit Verbose(wrapper::Easy& curlEasy,
+            explicit Verbose(wrapper::Easy& interface,
                 bool value);
 
             /**
              * @brief Constructs a volatile option, which is
              * being reset to "resetValue" upon object destruction.
              */
-            Verbose(wrapper::Easy& curlEasy,
+            Verbose(wrapper::Easy& interface,
                 bool value,
                 bool resetValue);
 

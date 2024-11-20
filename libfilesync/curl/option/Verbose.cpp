@@ -5,17 +5,17 @@
 
 namespace filesync::curl::option {
 
-    Verbose::Verbose(wrapper::Easy& curlEasy,
+    Verbose::Verbose(wrapper::Easy& interface,
         bool value) :
-        Option(curlEasy),
+        Option(interface),
         value{value} {
 
     }
 
-    Verbose::Verbose(wrapper::Easy& curlEasy,
+    Verbose::Verbose(wrapper::Easy& interface,
         bool value,
         bool resetValue) :
-        Option(curlEasy),
+        Option(interface),
         value{value},
         ResettableOption(resetValue) {
 
@@ -31,9 +31,9 @@ namespace filesync::curl::option {
 
     void Verbose::setTo(bool value) {
         if (value) {
-            curlEasy.get().setOption(CURLOPT_VERBOSE, 1L);
+            interface.get().setOption(CURLOPT_VERBOSE, 1L);
         } else {
-            curlEasy.get().setOption(CURLOPT_VERBOSE, 0L);
+            interface.get().setOption(CURLOPT_VERBOSE, 0L);
         }        
     }
 

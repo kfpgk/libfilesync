@@ -7,9 +7,9 @@ namespace filesync::curl::option {
      * to a tuple for later usage.
      */
     template<typename... Args> 
-    Generic<Args...>::Generic(filesync::curl::wrapper::Easy& curlEasy,
+    Generic<Args...>::Generic(filesync::curl::wrapper::Easy& interface,
         CURLoption curlOption, Args&&... args) :
-            Option(curlEasy),
+            Option(interface),
             curlOption{curlOption},
             args{std::make_tuple(std::forward<Args>(args)...)} {
 
@@ -26,9 +26,9 @@ namespace filesync::curl::option {
     void Generic<Args...>::doSet() {
         auto optionAndArgs = std::tuple_cat(std::make_tuple(curlOption), args);
         std::apply([this](auto &&... args) 
-            -> decltype(curlEasy.get().setOption(std::forward<decltype(args)>(args)...))
+            -> decltype(interface.get().setOption(std::forward<decltype(args)>(args)...))
             { 
-                curlEasy.get().setOption(std::forward<decltype(args)>(args)...); 
+                interface.get().setOption(std::forward<decltype(args)>(args)...); 
             },
             optionAndArgs);
     }

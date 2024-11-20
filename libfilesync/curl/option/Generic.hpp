@@ -21,7 +21,7 @@ namespace filesync::curl::option {
     class Generic : public Option {
 
         public:
-            Generic(wrapper::Easy& curlEasy,
+            Generic(wrapper::Easy& interface,
                 CURLoption curlOption, Args&&... args);
 
         private:

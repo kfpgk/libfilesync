@@ -30,12 +30,12 @@ namespace filesync::curl {
 
         public:
             ProtocolClient();
-            explicit ProtocolClient(std::unique_ptr<wrapper::Easy> curlEasy);
+            explicit ProtocolClient(std::unique_ptr<wrapper::Easy> interface);
             virtual ~ProtocolClient();
 
             [[nodiscard]] bool remoteEntryExists() const;
 
-            void setInterface(std::unique_ptr<wrapper::Easy> curlEasy);
+            void setInterface(std::unique_ptr<wrapper::Easy> interface);
             void setRemoteFile(const std::filesystem::path& path);
             void setLocalFileForUpload(const std::filesystem::path& path);
             void setRemoteDir(const std::filesystem::path& path);
@@ -55,7 +55,7 @@ namespace filesync::curl {
             void deleteRemoteDir();
     
         protected:
-            std::unique_ptr<wrapper::Easy> curlEasy;
+            std::unique_ptr<wrapper::Easy> interface;
             option::Factory optionFactory;
             wrapper::Url coreUrl;
             wrapper::Url activeUrl;

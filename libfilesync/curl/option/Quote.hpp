@@ -24,14 +24,14 @@ namespace filesync::curl::option {
              * @brief Constructs a persistent option, which
              * is not being reset upon object destruction.
              */
-            explicit Quote(wrapper::Easy& curlEasy,
+            explicit Quote(wrapper::Easy& interface,
                 const std::string& command);
 
             /**
              * @brief Constructs a volatile option, which is
              * being reset to "resetValue" upon object destruction.
              */
-            Quote(wrapper::Easy& curlEasy,               
+            Quote(wrapper::Easy& interface,               
                 const std::string& command,
                 wrapper::SList* resetValue);
                 

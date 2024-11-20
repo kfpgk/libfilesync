@@ -12,8 +12,8 @@
 namespace filesync::curl {
 
     FtpClient::FtpClient(const std::string& serverAddress,
-        std::unique_ptr<wrapper::Easy> curlEasy) :
-            ProtocolClient(std::move(curlEasy)) {
+        std::unique_ptr<wrapper::Easy> interface) :
+            ProtocolClient(std::move(interface)) {
     
         init(serverAddress);
     }
@@ -38,7 +38,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            curlEasy->run();
+            interface->run();
 
             DEBUG("Successfully connected to '" << activeUrl.getUrl() << "'");
 
@@ -68,7 +68,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            curlEasy->run();      
+            interface->run();      
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -105,7 +105,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            curlEasy->run();      
+            interface->run();      
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -132,7 +132,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            curlEasy->run();      
+            interface->run();      
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -146,7 +146,7 @@ namespace filesync::curl {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileNobody();
             option->set();
-            curlEasy->run();
+            interface->run();
         } catch(Exception& e) {
             DEBUG_EXIT();
             return false;

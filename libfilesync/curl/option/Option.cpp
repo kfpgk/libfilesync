@@ -3,13 +3,13 @@
 
 namespace filesync::curl::option {
 
-    Option::Option(wrapper::Easy& curlEasy) :
-        curlEasy{curlEasy} {
+    Option::Option(wrapper::Easy& interface) :
+        interface{interface} {
 
     }
 
-    void Option::setEasy(wrapper::Easy& curlEasy) {
-        this->curlEasy = curlEasy;
+    void Option::setEasy(wrapper::Easy& interface) {
+        this->interface = interface;
     }
 
     void Option::set() {

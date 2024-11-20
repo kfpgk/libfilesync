@@ -18,7 +18,7 @@ namespace filesync::curl::option {
     class Collection : public Option {
 
         public:
-            explicit Collection(wrapper::Easy& curlEasy);
+            explicit Collection(wrapper::Easy& interface);
             void add(std::shared_ptr<Option> option);
             void clear();
 

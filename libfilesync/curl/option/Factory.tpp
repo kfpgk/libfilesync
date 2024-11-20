@@ -7,7 +7,7 @@ namespace filesync::curl::option {
         CURLoption curlOption, Args&&... args) const {
 
         return std::make_unique<option::Generic<Args...>>(
-            curlEasy, curlOption, std::forward<Args>(args)...);
+            interface, curlOption, std::forward<Args>(args)...);
     }    
 
 }

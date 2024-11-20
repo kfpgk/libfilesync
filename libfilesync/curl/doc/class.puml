@@ -31,11 +31,27 @@ package curl {
         + deleteRemoteDir() : void       
     }
     class "CurlFtpClient" as CurlFtpClient {
-        createRemoteDir() : void
-        deleteRemoteFile() : void
-        setCreateMissingDirs(bool) : void
-        deleteRemoteDir() : void
-        remoteEntryExists() : bool
+        + createRemoteDir() : void
+        + deleteRemoteFile() : void
+        + setCreateMissingDirs(bool) : void
+        + deleteRemoteDir() : void
+        + remoteEntryExists() : bool
+        + init() : void
+    }
+    interface Storage {
+        - interface : Easy&
+        + {abstract} setupWrite() : void
+        + {abstract} setupRead() : void
+    }
+    class "FileStorage" as FileStorage {
+        - path : string
+        - filePointer : FILE*
+        + setupWrite() : void
+        + setupRead() : void
+    }
+    class "MemoryStorage" as MemoryStorage {
+        + setupWrite() : void
+        + setupRead() : void
     }
     package wrapper {
         class "Url" as CurlUrl {
@@ -71,7 +87,10 @@ package curl {
     }
 
     package option {
-        interface "Option" as CurlOption
+        interface "Option" as CurlOption {
+            - interface : Easy&
+            + set() : void
+        }
     }
 
 }
@@ -84,14 +103,18 @@ package "<<external/third_party>>\nlibcurl" as libcurl {
 CurlBase <|-- CurlEasy  
 CurlBase <|-- CurlUrl
 CurlBase <|-- CurlSList
-CurlBase -> CurlGlobalSetup : calls init()
+CurlBase -> CurlGlobalSetup : init()
 
 ProtocolClient <|-- FtpClient
 
 FtpClient "1" o-- "1" CurlFtpClient
 CurlFtpClient --|> CurlProtocolClient
 CurlProtocolClient "1" o-- "1" CurlUrl
+CurlProtocolClient -> Storage
+Storage <|.. MemoryStorage
+Storage <|.. FileStorage
 
+Storage -> CurlEasy
 CurlOption --> CurlEasy
 CurlProtocolClient "1" o-- "*" CurlOption
 

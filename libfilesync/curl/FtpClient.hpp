@@ -19,7 +19,7 @@ namespace filesync::curl {
         public:
             explicit FtpClient(const std::string& serverAddress);
             FtpClient(const std::string& serverAddress,
-                std::unique_ptr<wrapper::Easy> curlEasy);
+                std::unique_ptr<wrapper::Easy> interface);
 
         private:
             void doCreateRemoteDir() override;

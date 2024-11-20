@@ -20,9 +20,9 @@ namespace filesync::curl {
 
     }
 
-    ProtocolClient::ProtocolClient(std::unique_ptr<wrapper::Easy> curlEasy) :
-        curlEasy{std::move(curlEasy)},
-        optionFactory{*this->curlEasy} {
+    ProtocolClient::ProtocolClient(std::unique_ptr<wrapper::Easy> interface) :
+        interface{std::move(interface)},
+        optionFactory{*this->interface} {
 
         std::unique_ptr<option::Collection> options = optionFactory.createCollection();
 
@@ -49,9 +49,9 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::setInterface(
-        std::unique_ptr<wrapper::Easy> curlEasy) {
+        std::unique_ptr<wrapper::Easy> interface) {
 
-        this->curlEasy = std::move(curlEasy);
+        this->interface = std::move(interface);
     }
 
     void ProtocolClient::setCreateMissingDirs(bool value) {
@@ -128,7 +128,7 @@ namespace filesync::curl {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileUpload(true);
             option->set();
-            curlEasy->run();
+            interface->run();
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -150,7 +150,7 @@ namespace filesync::curl {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileUpload(false);
             option->set();
-            curlEasy->run();
+            interface->run();
             if (getFilePointer(false)) {
                 std::fflush(getFilePointer());
             }           
@@ -178,7 +178,7 @@ namespace filesync::curl {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileNobody();
             option->set();
-            curlEasy->run();
+            interface->run();
             return true;
         } catch(Exception& e) {
             if (e.getCurlCode() == CURLE_REMOTE_FILE_NOT_FOUND) {

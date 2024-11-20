@@ -12,8 +12,8 @@ namespace filesync::curl::unittest {
 
         public:
             ProtocolClientConcrete(const std::string& serverAddress,
-                std::unique_ptr<wrapper::Easy> curlEasy) :
-                    ProtocolClient(std::move(curlEasy)) {
+                std::unique_ptr<wrapper::Easy> interface) :
+                    ProtocolClient(std::move(interface)) {
 
                 activeUrl.setHost(serverAddress);
                 activeUrl.setScheme("http");
