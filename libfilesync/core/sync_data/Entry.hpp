@@ -45,8 +45,8 @@ namespace filesync::core::sync_data {
             bool syncInProgress = false;
 
             std::unique_ptr<RemoteEntry> remoteEntry;
-            std::unique_ptr<Buffer> remoteBuffer;
-            std::unique_ptr<Buffer> previousBuffer;
+            std::unique_ptr<Buffer> bufferForRemote;
+            std::unique_ptr<Buffer> bufferForPrevious;
 
     };
 
