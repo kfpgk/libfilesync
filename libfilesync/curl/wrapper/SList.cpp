@@ -1,7 +1,7 @@
-#include <libfilesync/curl/SList.hpp>
+#include <libfilesync/curl/wrapper/SList.hpp>
 #include <libfilesync/curl/Exception.hpp>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
     SList::SList(const std::string& content) {
         append(content);

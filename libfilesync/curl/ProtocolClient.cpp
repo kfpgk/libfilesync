@@ -4,24 +4,23 @@
 #include <libfilesync/curl/option/Upload.hpp>
 #include <libfilesync/utility/Debug.hpp>
 #include <libfilesync/utility/Literals.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
 
 #include <curl/curl.h>
 
-#include <sstream>
 #include <cstdio>
 #include <cstring>
+#include <sstream>
 
 using namespace filesync::utility;
 
 namespace filesync::curl {
 
     ProtocolClient::ProtocolClient() :
-        ProtocolClient{std::make_unique<interface::Easy>()} {
+        ProtocolClient{std::make_unique<wrapper::Easy>()} {
 
     }
 
-    ProtocolClient::ProtocolClient(std::unique_ptr<interface::Easy> curlEasy) :
+    ProtocolClient::ProtocolClient(std::unique_ptr<wrapper::Easy> curlEasy) :
         curlEasy{std::move(curlEasy)},
         optionFactory{*this->curlEasy} {
 
@@ -50,7 +49,7 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::setInterface(
-        std::unique_ptr<interface::Easy> curlEasy) {
+        std::unique_ptr<wrapper::Easy> curlEasy) {
 
         this->curlEasy = std::move(curlEasy);
     }

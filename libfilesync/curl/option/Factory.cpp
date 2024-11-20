@@ -4,7 +4,7 @@
 
 namespace filesync::curl::option {
 
-    Factory::Factory(interface::Easy& curlEasy) :
+    Factory::Factory(wrapper::Easy& curlEasy) :
         curlEasy{curlEasy} {
 
     }

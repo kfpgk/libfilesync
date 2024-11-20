@@ -1,6 +1,6 @@
 #include <libfilesync/curl/FtpClient.hpp>
 #include <libfilesync/curl/Exception.hpp>
-#include <libfilesync/curl/Url.hpp>
+#include <libfilesync/curl/wrapper/Url.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
 #include <libfilesync/curl/option/Generic.hpp>
 #include <libfilesync/curl/option/Option.hpp>
@@ -12,7 +12,7 @@
 namespace filesync::curl {
 
     FtpClient::FtpClient(const std::string& serverAddress,
-        std::unique_ptr<interface::Easy> curlEasy) :
+        std::unique_ptr<wrapper::Easy> curlEasy) :
             ProtocolClient(std::move(curlEasy)) {
     
         init(serverAddress);
@@ -60,7 +60,7 @@ namespace filesync::curl {
             volatileQuote->addCommand("DELE " + getRemoteFilePath());
             options->add(std::move(volatileQuote));
 
-            Url url;
+            wrapper::Url url;
             url.setHost(activeUrl.getHost());
             url.setScheme(activeUrl.getScheme());            
             options->add(optionFactory.createGeneric(CURLOPT_URL, url.getUrl()));
@@ -97,7 +97,7 @@ namespace filesync::curl {
             volatileQuote->addCommand("MKD " + getRemoteDirPath());
             options->add(std::move(volatileQuote));
 
-            Url url;
+            wrapper::Url url;
             url.setHost(activeUrl.getHost());
             url.setScheme(activeUrl.getScheme());      
             options->add(optionFactory.createGeneric(CURLOPT_URL, url.getUrl()));
@@ -124,7 +124,7 @@ namespace filesync::curl {
             volatileQuote->addCommand("RMD " + getRemoteDirPath());
             options->add(std::move(volatileQuote));
 
-            Url url;
+            wrapper::Url url;
             url.setHost(activeUrl.getHost());
             url.setScheme(activeUrl.getScheme());            
             options->add(optionFactory.createGeneric(CURLOPT_URL, url.getUrl()));

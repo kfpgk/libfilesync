@@ -1,14 +1,14 @@
-#ifndef LIBFILESYNC_CURL_SLIST_HPP
-#define LIBFILESYNC_CURL_SLIST_HPP
+#ifndef LIBFILESYNC_CURL_WRAPPER_SLIST_HPP
+#define LIBFILESYNC_CURL_WRAPPER_SLIST_HPP
 
-#include <libfilesync/curl/Base.hpp>
+#include <libfilesync/curl/wrapper/Base.hpp>
 
 #include <curl/curl.h>
 
 #include <string>
 #include <vector>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
     /**
      * @brief Wrapper for curl_slist

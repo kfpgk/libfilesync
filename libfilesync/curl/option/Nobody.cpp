@@ -5,14 +5,14 @@
 
 namespace filesync::curl::option {
 
-    Nobody::Nobody(interface::Easy& curlEasy,
+    Nobody::Nobody(wrapper::Easy& curlEasy,
         bool value) :
             Option(curlEasy),
             value{value} {
 
     }
 
-    Nobody::Nobody(interface::Easy& curlEasy,
+    Nobody::Nobody(wrapper::Easy& curlEasy,
         bool value,
         bool resetValue) :
             Option(curlEasy),

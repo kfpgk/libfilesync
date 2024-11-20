@@ -1,14 +1,14 @@
-#ifndef LIBFILESYNC_CURL_URL_HPP
-#define LIBFILESYNC_CURL_URL_HPP
+#ifndef LIBFILESYNC_CURL_WRAPPER_URL_HPP
+#define LIBFILESYNC_CURL_WRAPPER_URL_HPP
 
-#include <libfilesync/curl/Base.hpp>
+#include <libfilesync/curl/wrapper/Base.hpp>
 
 #include <curl/curl.h>
 
-#include <string>
 #include <filesystem>
+#include <string>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
     /**
      * @brief Wrapper for curl_url
@@ -44,6 +44,6 @@ namespace filesync::curl {
 
 }
 
-#include <libfilesync/curl/Url.tpp>
+#include <libfilesync/curl/wrapper/Url.tpp>
 
 #endif

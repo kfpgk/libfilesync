@@ -3,8 +3,8 @@
 
 #include <libfilesync/curl/option/ResettableOption.hpp>
 #include <libfilesync/curl/option/UndoableOptionImpl.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
-#include <libfilesync/curl/SList.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
+#include <libfilesync/curl/wrapper/SList.hpp>
 
 #include <string>
 
@@ -16,7 +16,7 @@ namespace filesync::curl::option {
      * Patterns:
      *  - Command
      */
-    class Quote : public ResettableOption<SList*>, public UndoableOptionImpl<SList*> {
+    class Quote : public ResettableOption<wrapper::SList*>, public UndoableOptionImpl<wrapper::SList*> {
 
         public:
 
@@ -24,26 +24,26 @@ namespace filesync::curl::option {
              * @brief Constructs a persistent option, which
              * is not being reset upon object destruction.
              */
-            explicit Quote(interface::Easy& curlEasy,
+            explicit Quote(wrapper::Easy& curlEasy,
                 const std::string& command);
 
             /**
              * @brief Constructs a volatile option, which is
              * being reset to "resetValue" upon object destruction.
              */
-            Quote(interface::Easy& curlEasy,               
+            Quote(wrapper::Easy& curlEasy,               
                 const std::string& command,
-                SList* resetValue);
+                wrapper::SList* resetValue);
                 
             ~Quote();
 
             void addCommand(const std::string& command);
 
         private:
-            SList* commands;
+            wrapper::SList* commands;
 
-            [[nodiscard]] SList* getValue() override;
-            void setTo(SList* value) override;
+            [[nodiscard]] wrapper::SList* getValue() override;
+            void setTo(wrapper::SList* value) override;
 
     };
 

@@ -2,7 +2,7 @@
 #define LIBFILESYNC_CURL_OPTION_COLLECTION_HPP
 
 #include <libfilesync/curl/option/Option.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 
 #include <memory>
 #include <deque>
@@ -18,7 +18,7 @@ namespace filesync::curl::option {
     class Collection : public Option {
 
         public:
-            explicit Collection(interface::Easy& curlEasy);
+            explicit Collection(wrapper::Easy& curlEasy);
             void add(std::shared_ptr<Option> option);
             void clear();
 

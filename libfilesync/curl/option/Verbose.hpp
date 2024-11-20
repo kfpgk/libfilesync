@@ -3,7 +3,7 @@
 
 #include <libfilesync/curl/option/ResettableOption.hpp>
 #include <libfilesync/curl/option/UndoableOptionImpl.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 
 namespace filesync::curl::option {
 
@@ -20,14 +20,14 @@ namespace filesync::curl::option {
              * @brief Constructs a persistent option, which
              * is not being reset upon object destruction.
              */
-            explicit Verbose(interface::Easy& curlEasy,
+            explicit Verbose(wrapper::Easy& curlEasy,
                 bool value);
 
             /**
              * @brief Constructs a volatile option, which is
              * being reset to "resetValue" upon object destruction.
              */
-            Verbose(interface::Easy& curlEasy,
+            Verbose(wrapper::Easy& curlEasy,
                 bool value,
                 bool resetValue);
 

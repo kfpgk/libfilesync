@@ -1,7 +1,7 @@
 #ifndef LIBFILESYNC_CURL_OPTION_FACTORY_HPP
 #define LIBFILESYNC_CURL_OPTION_FACTORY_HPP
 
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 #include <libfilesync/curl/option/Option.hpp>
 #include <libfilesync/curl/option/Collection.hpp>
 #include <libfilesync/curl/option/Generic.hpp>
@@ -17,7 +17,7 @@ namespace filesync::curl::option {
     class Factory {
 
         public:
-            explicit Factory(interface::Easy& curlEasy);
+            explicit Factory(wrapper::Easy& curlEasy);
 
             template <typename... Args>
             std::unique_ptr<Option> createGeneric(CURLoption curlOption, Args&&... args) const;
@@ -39,7 +39,7 @@ namespace filesync::curl::option {
             std::unique_ptr<Verbose> createVolatileVerbose() const;
 
         private:
-            interface::Easy& curlEasy;
+            wrapper::Easy& curlEasy;
 
     };
 

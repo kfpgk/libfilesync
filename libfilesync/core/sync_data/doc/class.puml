@@ -35,12 +35,12 @@ package "sync_data" {
         - remoteEntry : RemoteEntry
         - remoteBuffer : Buffer
         - previousBuffer : Buffer
-        + setRemoteEntry(std::filesystem::path) : void
-        + getRemotePath() : std::filesystem::path
+        + setRemoteEntry(filesystem::path) : void
+        + getRemotePath() : filesystem::path
     }
     class "Directory" as Directory {
-        + setRemoteEntry(std::filesystem::path) : void
-        + getRemotePath() : std::filesystem::path 
+        + setRemoteEntry(filesystem::path) : void
+        + getRemotePath() : filesystem::path 
     }
     class "File" as File {
     }
@@ -48,14 +48,21 @@ package "sync_data" {
         - path : filesystem::path
         + getPath() : filesystem::path
     }
-    abstract class "Buffer" as Buffer {
-        + {abstract} store() : void
-        + {abstract} isEqualTo() : bool 
+    interface "Buffer" as Buffer {
+        + {abstract} store(istream&) : void
+        + {abstract} writeContentTo(ostream&) : bool 
+        + {abstract} isEqualTo(istream&) : bool
     }
     class "FileBuffer" as FileBuffer {
-        + store() : void
-        + isEqualTo() : bool 
+        - filePath : string
+        + store(istream&) : void
+        + writeContentTo(ostream&) : bool
+        + isEqualTo(istream&) : bool 
     }  
+}
+
+package client {
+    class FileSyncer
 }
 
 EntryBase <|-- DirectoryBase : virtual\nT=T
@@ -70,5 +77,8 @@ Entry <|-- File
 Entry o-- "1" RemoteEntry
 Entry o-- "2" Buffer
 
-Buffer <|-- FileBuffer
+Buffer <|.. FileBuffer
+
+FileSyncer --> Entry : "<<observes>>"
+
 @enduml

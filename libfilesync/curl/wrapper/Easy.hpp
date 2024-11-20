@@ -1,20 +1,21 @@
-#ifndef LIBFILESYNC_CURL_INTERFACE_EASY_HPP
-#define LIBFILESYNC_CURL_INTERFACE_EASY_HPP
+#ifndef LIBFILESYNC_CURL_WRAPPER_EASY_HPP
+#define LIBFILESYNC_CURL_WRAPPER_EASY_HPP
 
-#include <libfilesync/curl/Base.hpp>
+#include <libfilesync/curl/wrapper/Base.hpp>
 #include <libfilesync/curl/Exception.hpp>
 
 #include <curl/curl.h>
 
-#include <string>
 #include <array>
-#include <cstdio>
 #include <cstdarg>
+#include <cstdio>
+#include <string>
 
-namespace filesync::curl::interface {
+namespace filesync::curl::wrapper {
 
     /**
-     * @brief Callback function for cURL WRITEFUNCTION option.
+     * @brief Callback function for cURL WRITEFUNCTION option
+     * which writes downloaded content to a file.
      * 
      * Data received via cURL is handed to this function
      * for processing (e.g. storing).
@@ -29,7 +30,8 @@ namespace filesync::curl::interface {
     extern "C" size_t writeToFile(char *contents, size_t size, size_t count, FILE *target);
 
     /**
-     * @brief Callback function for cURL READFUNCTION option.
+     * @brief Callback function for cURL READFUNCTION option
+     * which reads content to be uploaded from a file.
      * 
      * Data received via cURL is handed to this function
      * for processing (e.g. storing).
@@ -42,7 +44,39 @@ namespace filesync::curl::interface {
      * class definition.
      */
     extern "C" size_t readFromFile(char *buffer, size_t size, size_t count, FILE *contents);
-    
+
+    /**
+     * @brief Callback function for cURL WRITEFUNCTION option
+     * which writes downloaded content to memory.
+     * 
+     * Data received via cURL is handed to this function
+     * for processing (e.g. storing).
+     *
+     * This function must be callable from C code (libcurl).
+     * 
+     * This is why we forwared declare it using 'extern "C"'
+     * because 'extern "C"' cannot be used inside class. The 
+     * function is declared a friend function inside the
+     * class definition.
+     */
+    extern "C" size_t writeToMemory(char *contents, size_t size, size_t count, void *target);
+
+    /**
+     * @brief Callback function for cURL READFUNCTION option
+     * which reads content to be uploaded from memory.
+     * 
+     * Data received via cURL is handed to this function
+     * for processing (e.g. storing).
+     *
+     * This function must be callable from C code (libcurl).
+     * 
+     * This is why we forwared declare it using 'extern "C"'
+     * because 'extern "C"' cannot be used inside class. The 
+     * function is declared a friend function inside the
+     * class definition.
+     */
+    extern "C" size_t readFromMemory(char *buffer, size_t size, size_t count, void *contents);
+
     /**
      * @brief Wrapper for the cURL easy interface
      * 
@@ -65,6 +99,12 @@ namespace filesync::curl::interface {
             friend size_t readFromFile(
                 char *buffer, size_t size, size_t count, FILE *contents);
 
+            friend size_t writeToMemory(
+                char *contents, size_t size, size_t count, void *target);  
+
+            friend size_t readFromMemory(
+                char *buffer, size_t size, size_t count, void *contents);
+
             template<typename... Args> 
             void setOption(CURLoption option, Args&&... args);
 
@@ -79,6 +119,6 @@ namespace filesync::curl::interface {
 
 }
 
-#include <libfilesync/curl/interface/Easy.tpp>
+#include <libfilesync/curl/wrapper/Easy.tpp>
 
 #endif

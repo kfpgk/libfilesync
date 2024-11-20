@@ -1,4 +1,4 @@
-#include <libfilesync/curl/Setup.hpp>
+#include <libfilesync/curl/wrapper/GlobalSetup.hpp>
 #include <libfilesync/curl/Exception.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
@@ -6,9 +6,9 @@
 #include <fstream>
 #include <stdexcept>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
-    Setup::Setup() {
+    GlobalSetup::GlobalSetup() {
         DEBUG("Running curl_global_init()");
         CURLcode ret = curl_global_init(CURL_GLOBAL_DEFAULT);       
         if (ret != 0) {
@@ -16,7 +16,7 @@ namespace filesync::curl {
         }
     }
 
-    Setup::~Setup() {
+    GlobalSetup::~GlobalSetup() {
         DEBUG("Running curl_global_cleanup()");
         curl_global_cleanup();
     }
@@ -25,8 +25,8 @@ namespace filesync::curl {
      * Instantiate the static singleton object to run
      * global curl setup (exactly once).
      */
-    void Setup::init() {
-        static Setup setup;
+    void GlobalSetup::init() {
+        static GlobalSetup setup;
     }
 
 }

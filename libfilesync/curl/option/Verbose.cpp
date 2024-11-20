@@ -5,14 +5,14 @@
 
 namespace filesync::curl::option {
 
-    Verbose::Verbose(interface::Easy& curlEasy,
+    Verbose::Verbose(wrapper::Easy& curlEasy,
         bool value) :
         Option(curlEasy),
         value{value} {
 
     }
 
-    Verbose::Verbose(interface::Easy& curlEasy,
+    Verbose::Verbose(wrapper::Easy& curlEasy,
         bool value,
         bool resetValue) :
         Option(curlEasy),

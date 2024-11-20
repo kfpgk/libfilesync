@@ -1,21 +1,17 @@
 target_sources(libfilesync 
     PRIVATE
-        Base.cpp
         Exception.cpp
-        Url.cpp
-        SList.cpp
-        Setup.cpp
         ProtocolClient.cpp
         FtpClient.cpp
 )
 
 add_subdirectory(option)
-add_subdirectory(interface)
+add_subdirectory(wrapper)
 
 if(BUILD_UNIT_TESTS)
     enable_testing()
     add_executable(ProtocolClient_test
-        interface/EasyStub.test.cpp
+        wrapper/EasyStub.test.cpp
         ProtocolClient.test.cpp
     )
     target_link_libraries(ProtocolClient_test

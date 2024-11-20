@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-namespace filesync::curl::interface {
+namespace filesync::curl::wrapper {
 
     /**
      * Sets a CURLoption to the value specified in 'args'

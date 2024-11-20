@@ -2,7 +2,7 @@
 #define LIBFILESYNC_CURL_OPTION_GENERIC_HPP
 
 #include <libfilesync/curl/option/Option.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 
 #include <curl/curl.h>
 
@@ -21,7 +21,7 @@ namespace filesync::curl::option {
     class Generic : public Option {
 
         public:
-            Generic(interface::Easy& curlEasy,
+            Generic(wrapper::Easy& curlEasy,
                 CURLoption curlOption, Args&&... args);
 
         private:

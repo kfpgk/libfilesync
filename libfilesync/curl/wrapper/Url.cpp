@@ -1,10 +1,10 @@
-#include <libfilesync/curl/Url.hpp>
+#include <libfilesync/curl/wrapper/Url.hpp>
 #include <libfilesync/curl/Exception.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
 #include <cstring>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
     Url::Url() {
         handle = curl_url();

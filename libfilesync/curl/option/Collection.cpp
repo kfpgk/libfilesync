@@ -2,7 +2,7 @@
 
 namespace filesync::curl::option {
 
-    Collection::Collection(interface::Easy& curlEasy) :
+    Collection::Collection(wrapper::Easy& curlEasy) :
             Option(curlEasy) {
 
     }

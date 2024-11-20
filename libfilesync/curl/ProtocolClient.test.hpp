@@ -2,7 +2,7 @@
 #define LIBFILESYNC_CURL_UNIT_TEST_PROTOCOL_CLIENT_HPP
 
 #include <libfilesync/curl/ProtocolClient.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 
 #include <memory>
 
@@ -12,7 +12,7 @@ namespace filesync::curl::unittest {
 
         public:
             ProtocolClientConcrete(const std::string& serverAddress,
-                std::unique_ptr<interface::Easy> curlEasy) :
+                std::unique_ptr<wrapper::Easy> curlEasy) :
                     ProtocolClient(std::move(curlEasy)) {
 
                 activeUrl.setHost(serverAddress);

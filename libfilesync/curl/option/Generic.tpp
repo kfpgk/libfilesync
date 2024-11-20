@@ -7,7 +7,7 @@ namespace filesync::curl::option {
      * to a tuple for later usage.
      */
     template<typename... Args> 
-    Generic<Args...>::Generic(filesync::curl::interface::Easy& curlEasy,
+    Generic<Args...>::Generic(filesync::curl::wrapper::Easy& curlEasy,
         CURLoption curlOption, Args&&... args) :
             Option(curlEasy),
             curlOption{curlOption},

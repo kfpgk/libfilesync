@@ -1,4 +1,4 @@
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 #include <libfilesync/curl/Exception.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
@@ -7,7 +7,7 @@
 #include <cstdarg>
 #include <cstdio>
 
-namespace filesync::curl::interface {
+namespace filesync::curl::wrapper {
 
     Easy::Easy() {
         DEBUG("Running curl_easy_init()");

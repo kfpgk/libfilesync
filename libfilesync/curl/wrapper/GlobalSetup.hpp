@@ -1,9 +1,9 @@
-#ifndef LIBFILESYNC_CURL_SETUP_HPP
-#define LIBFILESYNC_CURL_SETUP_HPP
+#ifndef LIBFILESYNC_CURL_WRAPPER_GLOBAL_SETUP_HPP
+#define LIBFILESYNC_CURL_WRAPPER_GLOBAL_SETUP_HPP
 
 #include <curl/curl.h>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
     /**
      * @brief Global cURL setup class which makes sure
@@ -13,17 +13,17 @@ namespace filesync::curl {
      * Patterns:
      *  - Singleton
      */
-    class Setup {
+    class GlobalSetup {
 
         public:            
-            Setup(const Setup&) = delete;
-            void operator=(const Setup&) = delete;
+            GlobalSetup(const GlobalSetup&) = delete;
+            void operator=(const GlobalSetup&) = delete;
 
             void static init();
 
         private:
-            Setup();
-            ~Setup();
+            GlobalSetup();
+            ~GlobalSetup();
                         
 
     };

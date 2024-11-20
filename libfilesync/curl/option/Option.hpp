@@ -1,7 +1,7 @@
 #ifndef LIBFILESYNC_CURL_OPTION_OPTION_HPP
 #define LIBFILESYNC_CURL_OPTION_OPTION_HPP
 
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 
 #include <functional>
 
@@ -19,14 +19,14 @@ namespace filesync::curl::option {
     class Option {
 
         public:
-            Option(interface::Easy& curlEasy);
+            Option(wrapper::Easy& curlEasy);
             virtual ~Option() = default;
-            void setEasy(interface::Easy& curlEasy);
+            void setEasy(wrapper::Easy& curlEasy);
 
             void set();
 
         protected:
-            std::reference_wrapper<interface::Easy> curlEasy;
+            std::reference_wrapper<wrapper::Easy> curlEasy;
 
         private:
             virtual void doSet() = 0;

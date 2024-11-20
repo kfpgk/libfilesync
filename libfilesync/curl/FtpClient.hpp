@@ -2,12 +2,12 @@
 #define LIBFILESYNC_CURL_FTP_CLIENT_HPP
 
 #include <libfilesync/curl/ProtocolClient.hpp>
-#include <libfilesync/curl/interface/Easy.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
 
 #include <curl/curl.h>
 
-#include <string>
 #include <memory>
+#include <string>
 
 namespace filesync::curl {
 
@@ -19,7 +19,7 @@ namespace filesync::curl {
         public:
             explicit FtpClient(const std::string& serverAddress);
             FtpClient(const std::string& serverAddress,
-                std::unique_ptr<interface::Easy> curlEasy);
+                std::unique_ptr<wrapper::Easy> curlEasy);
 
         private:
             void doCreateRemoteDir() override;

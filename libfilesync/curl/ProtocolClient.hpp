@@ -1,16 +1,16 @@
 #ifndef LIBFILESYNC_CURL_PROTOCOL_CLIENT_HPP
 #define LIBFILESYNC_CURL_PROTOCOL_CLIENT_HPP
 
-#include <libfilesync/curl/interface/Easy.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
-#include <libfilesync/curl/Url.hpp>
+#include <libfilesync/curl/wrapper/Easy.hpp>
+#include <libfilesync/curl/wrapper/Url.hpp>
 
 #include <curl/curl.h>
 
 #include <string>
 #include <filesystem>
-#include <cstdio>
 #include <memory>
+#include <string>
 
 namespace filesync::curl {
 
@@ -30,12 +30,12 @@ namespace filesync::curl {
 
         public:
             ProtocolClient();
-            explicit ProtocolClient(std::unique_ptr<interface::Easy> curlEasy);
+            explicit ProtocolClient(std::unique_ptr<wrapper::Easy> curlEasy);
             virtual ~ProtocolClient();
 
             [[nodiscard]] bool remoteEntryExists() const;
 
-            void setInterface(std::unique_ptr<interface::Easy> curlEasy);
+            void setInterface(std::unique_ptr<wrapper::Easy> curlEasy);
             void setRemoteFile(const std::filesystem::path& path);
             void setLocalFileForUpload(const std::filesystem::path& path);
             void setRemoteDir(const std::filesystem::path& path);
@@ -55,10 +55,10 @@ namespace filesync::curl {
             void deleteRemoteDir();
     
         protected:
-            std::unique_ptr<interface::Easy> curlEasy;
+            std::unique_ptr<wrapper::Easy> curlEasy;
             option::Factory optionFactory;
-            Url coreUrl;
-            Url activeUrl;
+            wrapper::Url coreUrl;
+            wrapper::Url activeUrl;
 
             [[nodiscard]] std::string getLocalDownloadFilePath() const;
             [[nodiscard]] std::string getLocalUploadFilePath() const;

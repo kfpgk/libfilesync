@@ -3,14 +3,14 @@
 
 namespace filesync::curl::option {
 
-    Upload::Upload(interface::Easy& curlEasy,
+    Upload::Upload(wrapper::Easy& curlEasy,
         bool value) :
             Option(curlEasy),
             value{value} {
 
     }
 
-    Upload::Upload(interface::Easy& curlEasy,
+    Upload::Upload(wrapper::Easy& curlEasy,
         bool value,
         bool resetValue) :
             Option(curlEasy),

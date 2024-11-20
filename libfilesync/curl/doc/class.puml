@@ -2,21 +2,74 @@
 
 title CURL Class Diagram
 
-package libfilesync {
+package client {
 
-    class FileSyncException
     interface ProtocolClient
-    class "ProtocolClient<concrete>" as concreteProtoClient 
+    class FtpClient
 
 }
 
 package curl {
-    class "Exception" as CurlException
-    abstract class "ProtocolClient" as CurlProtocolClient
-    class "ProtocolClient<concrete>" as CurlConcreteProtocolClient
-    class "Url" as CurlUrl
-    class "Easy" as CurlEasy
-    class "Setup" as CurlSetup
+    abstract class "ProtocolClient" as CurlProtocolClient {
+        - localDownloadFilePath : filesystem::path
+        - localUploadFilePath : filesystem::path 
+        - remoteFilePath : filesystem::path 
+        - remoteDirPath : filesystem::path
+        - filePointer : FILE*
+        + remoteEntryExists() : bool
+        + setInterface(interface::Easy*) : void
+        + setRemoteFile(filesystem::path) : void
+        + setLocalFileForUpload(filesystem::path) : void
+        + setRemoteDir(filesystem::path) : void
+        + createLocalFileForDownload(filesystem::path) : void
+        + setCreateMissingDirs(bool) : void
+        + resetPaths() : void
+        + upload() : void
+        + download() : void
+        + deleteRemoteFile() : void
+        + createRemoteDir() : void
+        + deleteRemoteDir() : void       
+    }
+    class "CurlFtpClient" as CurlFtpClient {
+        createRemoteDir() : void
+        deleteRemoteFile() : void
+        setCreateMissingDirs(bool) : void
+        deleteRemoteDir() : void
+        remoteEntryExists() : bool
+    }
+    package wrapper {
+        class "Url" as CurlUrl {
+            - handle : CURLU*
+            - urlPointer : char*
+            + getUrl() : char*
+            + getHost() : char*
+            + getScheme() : char*
+            + getPath() : char*
+            + setHost(string) : void
+            + setScheme(string) : void
+            + setPath(string) : void
+            + validate() : void
+        }
+        class "SList" as CurlSList {
+            - handle : curl_slist*
+            - contents : string[]
+            + isEmpty() : bool
+            + getSListPointer() : curl_slist*
+            + append(string) : void
+        }
+        class "Easy" as CurlEasy {
+            - handle : CURL*
+            - rc : CURLcode
+            - errorBuffer char[];
+            + setOption(CURLoption, Args&&...) : void
+            + run() : void
+        }
+        class "GlobalSetup\n<<Singleton>>" as CurlGlobalSetup {
+            + init() : void static
+        }
+        class "Base" as CurlBase
+    }
+
     package option {
         interface "Option" as CurlOption
     }
@@ -28,23 +81,25 @@ package "<<external/third_party>>\nlibcurl" as libcurl {
 
 }
 
-ProtocolClient <|-- concreteProtoClient
+CurlBase <|-- CurlEasy  
+CurlBase <|-- CurlUrl
+CurlBase <|-- CurlSList
+CurlBase -> CurlGlobalSetup : calls init()
 
-concreteProtoClient "1" o-- "1" CurlConcreteProtocolClient
-CurlConcreteProtocolClient --|> CurlProtocolClient
+ProtocolClient <|-- FtpClient
+
+FtpClient "1" o-- "1" CurlFtpClient
+CurlFtpClient --|> CurlProtocolClient
 CurlProtocolClient "1" o-- "1" CurlUrl
 
-FileSyncException <|-- CurlException
 CurlOption --> CurlEasy
 CurlProtocolClient "1" o-- "*" CurlOption
 
 CurlProtocolClient "1" o-- "1" CurlEasy
 
-CurlUrl -> CurlSetup
-CurlSetup <- CurlEasy
-
 CurlUrl --> libcurl
+CurlSList --> libcurl
 CurlEasy --> libcurl
-CurlSetup --> libcurl
+CurlGlobalSetup --> libcurl : curl_global_init()\ncurl_global_cleanup()
 
 @enduml

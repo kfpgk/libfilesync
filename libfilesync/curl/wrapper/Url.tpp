@@ -1,6 +1,6 @@
 #include <libfilesync/curl/Exception.hpp>
 
-namespace filesync::curl {
+namespace filesync::curl::wrapper {
 
     template<typename... Args>
     void Url::setPart(CURLUPart part, Args&&... args) {
