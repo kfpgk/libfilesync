@@ -1,12 +1,12 @@
-#ifndef LIBFILESYNC_CURL_UNIT_TEST_PROTOCOL_CLIENT_HPP
-#define LIBFILESYNC_CURL_UNIT_TEST_PROTOCOL_CLIENT_HPP
+#ifndef LIBFILESYNC_CURL_PROTOCOL_CLIENT_TEST_HPP
+#define LIBFILESYNC_CURL_PROTOCOL_CLIENT_TEST_HPP
 
 #include <libfilesync/curl/ProtocolClient.hpp>
 #include <libfilesync/curl/wrapper/Easy.hpp>
 
 #include <memory>
 
-namespace filesync::curl::unittest {
+namespace filesync::curl::unit_test {
 
     class ProtocolClientConcrete : public curl::ProtocolClient {
 
@@ -31,17 +31,10 @@ namespace filesync::curl::unittest {
             
     };
 
-    class ProtocolClient {
+    class ProtocolClientTest {
 
         public:
             void set_bad_host_name();
-
-            void set_input_filesize_to_0();
-            void set_input_filesize_to_1KB();         
-            void set_input_filesize_to_2047MB();
-            void set_input_filesize_to_2GB();
-            void set_input_filesize_to_99TB();
-            void set_input_filesize_to_n1KB();
 
             void set_valid_remote_file();
             void set_remote_file_with_special_chars();

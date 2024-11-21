@@ -3,7 +3,7 @@
 
 #include <libfilesync/curl/wrapper/Easy.hpp>
 
-namespace filesync::curl::wrapper::unittest {
+namespace filesync::curl::wrapper::unit_test {
 
     class EasyStub : public Easy {
 

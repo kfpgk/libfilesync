@@ -8,7 +8,7 @@
 #include <cassert>
 
 using namespace filesync;
-using namespace filesync::unittest;
+using namespace filesync::unit_test;
 using namespace filesync::utility;
 
 int main(int argc, char* argv[]) {
@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 
 }
 
-namespace filesync::unittest {
+namespace filesync::unit_test {
 
     void FileSyncExceptionTest::add_multiple_contexts() {
 

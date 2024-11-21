@@ -20,8 +20,10 @@ package curl {
         + setInterface(interface::Easy*) : void
         + setRemoteFile(filesystem::path) : void
         + setLocalFileForUpload(filesystem::path) : void
+        + setInMemoryDataForUpload(MemoryStorage&) : void
         + setRemoteDir(filesystem::path) : void
         + createLocalFileForDownload(filesystem::path) : void
+        + prepareDownloadToMemory(MemoryStorage&) : void
         + setCreateMissingDirs(bool) : void
         + resetPaths() : void
         + upload() : void
@@ -39,19 +41,21 @@ package curl {
         + init() : void
     }
     interface Storage {
-        - interface : Easy&
-        + {abstract} setupWrite() : void
-        + {abstract} setupRead() : void
+        - {abstract} setupWrite(option::Factory&) : void
+        - {abstract} setupRead(option::Factory&) : void
+        - {abstract} flush() : void
     }
     class "FileStorage" as FileStorage {
         - path : string
         - filePointer : FILE*
-        + setupWrite() : void
-        + setupRead() : void
+        - setupWrite(option::Factory&) : void
+        - setupRead(option::Factory&) : void
+        - flush() : void
     }
     class "MemoryStorage" as MemoryStorage {
-        + setupWrite() : void
-        + setupRead() : void
+        - setupWrite(option::Factory&) : void
+        - setupRead(option::Factory&) : void
+        - flush() : void
     }
     package wrapper {
         class "Url" as CurlUrl {
@@ -110,7 +114,7 @@ ProtocolClient <|-- FtpClient
 FtpClient "1" o-- "1" CurlFtpClient
 CurlFtpClient --|> CurlProtocolClient
 CurlProtocolClient "1" o-- "1" CurlUrl
-CurlProtocolClient -> Storage
+CurlProtocolClient -> Storage : <<Friend>>
 Storage <|.. MemoryStorage
 Storage <|.. FileStorage
 

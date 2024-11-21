@@ -8,7 +8,7 @@
 #include <cassert>
 
 using namespace filesync;
-using namespace filesync::data::unittest;
+using namespace filesync::data::unit_test;
 using namespace filesync::utility;
 
 int main(int argc, char* argv[]) {
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
 }
 
-namespace filesync::data::unittest {
+namespace filesync::data::unit_test {
 
     void DirectoryTest::add_file() {
         Logger::getInstance().log(LogDomain::TestResult,

@@ -1,7 +1,7 @@
 #ifndef LIBFILESYNC_FILE_SYNC_EXCEPTION_TEST_HPP
 #define LIBFILESYNC_FILE_SYNC_EXCEPTION_TEST_HPP
 
-namespace filesync::unittest {
+namespace filesync::unit_test {
 
     class FileSyncExceptionTest {
 

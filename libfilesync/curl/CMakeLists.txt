@@ -6,6 +6,7 @@ target_sources(libfilesync
 )
 
 add_subdirectory(option)
+add_subdirectory(storage)
 add_subdirectory(wrapper)
 
 if(BUILD_UNIT_TESTS)
@@ -14,17 +15,17 @@ if(BUILD_UNIT_TESTS)
         wrapper/EasyStub.test.cpp
         ProtocolClient.test.cpp
     )
-    target_link_libraries(ProtocolClient_test
-        PRIVATE
-            libfilesync
-    )
     target_include_directories(ProtocolClient_test
         PRIVATE
             ${CMAKE_SOURCE_DIR}
             ${CMAKE_BINARY_DIR}
     )
+    target_link_libraries(ProtocolClient_test
+        PRIVATE
+            libfilesync
+    )
     add_test(
-        NAME "UT CurlProtocolClient"
+        NAME "UT curl::ProtocolClient"
         COMMAND ProtocolClient_test
     )
 endif()

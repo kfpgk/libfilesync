@@ -4,9 +4,6 @@
 
 #include <curl/curl.h>
 
-#include <cstdarg>
-#include <cstdio>
-
 namespace filesync::curl::wrapper {
 
     Easy::Easy() {
@@ -20,8 +17,6 @@ namespace filesync::curl::wrapper {
             throw Exception("curl_easy_setopt(CURLOPT_ERRORBUFFER) failed:", rc, \
                 __FILE__, __LINE__);
         }
-        setOption(CURLOPT_WRITEFUNCTION, &writeToFile);
-        setOption(CURLOPT_READFUNCTION, &readFromFile);
     }
 
     Easy::~Easy() {
@@ -63,28 +58,6 @@ namespace filesync::curl::wrapper {
                 rc, errorBuffer.data(), \
                 __FILE__, __LINE__);
         }        
-    }
-
-    /**
-     * @brief Write callback function which writes incoming
-     * data to a file.
-     * 
-     * @param[in] target Target file to which the recieved data
-     * is written to. If it is NULL, we discard the received
-     * data.
-     */
-    extern "C" size_t writeToFile(char *contents,
-        size_t size, size_t count, FILE *target) {
-        if (target) {
-            return std::fwrite(contents, size, count, target);
-        } else {
-            return count;
-        }
-    }
-
-    extern "C" size_t readFromFile(char *buffer,
-        size_t size, size_t count, FILE *contents) {
-        return std::fread(buffer, size, count, contents);  
     }
 
 }

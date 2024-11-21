@@ -4,6 +4,8 @@ add_library(libfilesync
     FileSyncLocks.cpp  
 )
 
+set_target_properties(libfilesync PROPERTIES PREFIX "")
+
 set(PUBLIC_INCLUDE_DIR ${CMAKE_BINARY_DIR}/libfilesync/include)
 
 configure_file(

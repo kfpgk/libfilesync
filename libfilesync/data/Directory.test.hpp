@@ -1,7 +1,7 @@
 #ifndef LIBFILESYNC_DATA_DIRECTORY_TEST_HPP
 #define LIBFILESYNC_DATA_DIRECTORY_TEST_HPP
 
-namespace filesync::data::unittest {
+namespace filesync::data::unit_test {
 
     class DirectoryTest {
 
