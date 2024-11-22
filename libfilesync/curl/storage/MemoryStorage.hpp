@@ -20,7 +20,7 @@ namespace filesync::curl::storage {
      * function is declared a friend function inside the
      * class definition.
      */
-    extern "C" size_t writeToMemory(char *contents, size_t size, size_t count, void *target);
+    extern "C" size_t memoryStorageWriteCallback(char *contents, size_t size, size_t count, void *target);
 
     /**
      * @brief Callback function for cURL READFUNCTION option
@@ -36,7 +36,7 @@ namespace filesync::curl::storage {
      * function is declared a friend function inside the
      * class definition.
      */
-    extern "C" size_t readFromMemory(char *buffer, size_t size, size_t count, void *contents);
+    extern "C" size_t memoryStorageReadCallback(char *buffer, size_t size, size_t count, void *contents);
 
     class MemoryStorage : public Storage {
 
@@ -45,10 +45,10 @@ namespace filesync::curl::storage {
             void doSetupWrite(const option::Factory& optionFactory) override;
             void doFlush() override;
 
-            friend size_t writeToMemory(
+            friend size_t memoryStorageWriteCallback(
                 char *contents, size_t size, size_t count, void* target);  
 
-            friend size_t readFromMemory(
+            friend size_t memoryStorageReadCallback(
                 char *buffer, size_t size, size_t count, void* contents);
 
 

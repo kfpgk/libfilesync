@@ -17,6 +17,8 @@ namespace filesync::curl::wrapper {
             throw Exception("curl_easy_setopt(CURLOPT_ERRORBUFFER) failed:", rc, \
                 __FILE__, __LINE__);
         }
+        setOption(CURLOPT_WRITEFUNCTION, &easyDefaultWriteCallback);
+        setOption(CURLOPT_READFUNCTION, &easyDefaultReadCallback);
     }
 
     Easy::~Easy() {
@@ -58,6 +60,41 @@ namespace filesync::curl::wrapper {
                 rc, errorBuffer.data(), \
                 __FILE__, __LINE__);
         }        
+    }
+
+    /**
+     * @brief Default write callback function which writes incoming
+     * data to a file.
+     * 
+     * Clients of this class may change behavior via setting their
+     * own callback via the CURLOPT_WRITEFUNCTION option.
+     * 
+     * @param[in] target Target file to which the recieved data
+     * is written to. If it is NULL, we discard the received
+     * data.
+     */
+    extern "C" size_t easyDefaultWriteCallback(char *contents,
+        size_t size, size_t count, FILE *target) {
+        if (target) {
+            return std::fwrite(contents, size, count, target);
+        } else {
+            return count;
+        }
+    }
+
+    /**
+     * @brief Default read callback function which reads outgoing
+     * data from a file.
+     * 
+     * Clients of this class may change behavior via setting their
+     * own callback via the CURLOPT_READFUNCTION option.
+     * 
+     * @param[in] contents Source file which the outgoing data
+     * is read from.
+     */
+    extern "C" size_t easyDefaultReadCallback(char *buffer,
+        size_t size, size_t count, FILE *contents) {
+        return std::fread(buffer, size, count, contents);  
     }
 
 }
