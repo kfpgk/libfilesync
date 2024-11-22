@@ -193,14 +193,14 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::validateLocalDownloadFile() const {
-        if (downloadFileStorage) {
+        if (!downloadFileStorage) {
             throw Exception("Local download file storage not set up.", \
                 __FILE__, __LINE__); 
         }
     }
 
     void ProtocolClient::validateLocalUploadFile() const {
-        if (uploadFileStorage) {
+        if (!uploadFileStorage) {
             throw Exception("Local upload file storage not set up.", \
                 __FILE__, __LINE__); 
         }
