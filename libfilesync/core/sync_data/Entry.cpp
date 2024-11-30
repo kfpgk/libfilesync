@@ -1,12 +1,24 @@
 #include <libfilesync/core/sync_data/Entry.hpp>
+#include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/visitor/GetLocation.hpp>
+#include <libfilesync/core/sync_data/buffer/visitor/IsEqualTo.hpp>
+#include <libfilesync/core/sync_data/buffer/visitor/Store.hpp>
+#include <libfilesync/core/sync_data/buffer/visitor/WriteContentTo.hpp>
+#include <libfilesync/data/Exception.hpp>
 #include <libfilesync/utility/Logger.hpp>
+
+#include <fstream>
+#include <utility>
 
 using namespace filesync::utility;
 
 namespace filesync::core::sync_data {
 
     Entry::Entry(const std::filesystem::path& path) :
-        EntryBase{path} {
+        EntryBase{path},
+        bufferForRemote{std::in_place_type<buffer::FileBuffer>},
+        bufferForPrevious{std::in_place_type<buffer::FileBuffer>},
+        remoteEntry{std::make_unique<RemoteEntry>(path)} {
 
     }
 
@@ -23,20 +35,93 @@ namespace filesync::core::sync_data {
     }
 
     void Entry::doPrint() const {
-        std::string remotePath = "undefined";
-        if (remoteEntry) {
-            remotePath = remoteEntry->getPath();
-        }
         Logger::getInstance().log(LogDomain::Info,
-            std::string(getPath().string() + " <-> <server>/<rootPath>/" + remotePath));        
+            std::string(getPath().string() + " <-> <server>/<rootPath>/" + remoteEntry->getPath()));        
     }
 
     void Entry::setSyncInProgress() {
+        doSetSyncInProgress();
+    }
+
+    void Entry::doSetSyncInProgress() {
         syncInProgress = true;
     }
 
+    void Entry::resetSyncInProgress() {
+        doResetSyncInProgress();
+    }
+
+    void Entry::doResetSyncInProgress() {
+        syncInProgress = false;
+    }
+
     bool Entry::getSyncInProgress() const {
+        return doGetSyncInProgress();
+    }
+
+    bool Entry::doGetSyncInProgress() const {
         return syncInProgress;
+    }
+
+    void Entry::setPrevious() {
+        doSetPrevious();
+    }
+
+    void Entry::doSetPrevious() {
+        std::ifstream file(getPath());
+        if (!file.is_open()) {
+            throw data::Exception("Cannot open file '" + getPath().string() + "' for storing.",
+                __FILE__, __LINE__);
+        }
+        std::visit(buffer::visitor::Store{file}, bufferForPrevious);
+    }
+
+    bool Entry::localDifferentThanPrev() const {
+        return doLocalDifferentThanPrev();
+    }
+
+    bool Entry::doLocalDifferentThanPrev() const {
+        std::ifstream file(getPath());
+        if (!file.is_open()) {
+            throw data::Exception("Cannot open file '" + getPath().string() + "' for comparing.",
+                __FILE__, __LINE__);
+        }
+        return !std::visit(buffer::visitor::IsEqualTo{file}, bufferForPrevious);
+    }
+
+    buffer::DataLocation Entry::getRemoteBufferLocation() const {
+        return std::visit(buffer::visitor::GetLocation{}, bufferForRemote);
+    }
+
+    bool Entry::remoteDifferentThanPrev() const {
+        return doRemoteDifferentThanPrev();
+    }
+
+    bool Entry::doRemoteDifferentThanPrev() const {
+        std::ifstream file(std::get<std::filesystem::path>(
+            std::visit(buffer::visitor::GetLocation{}, bufferForRemote)));
+
+        if (!file.is_open()) {
+            throw data::Exception("Cannot open file '" + getPath().string() + "' for comparing.",
+                __FILE__, __LINE__);
+        }
+
+        return !std::visit(buffer::visitor::IsEqualTo{file}, bufferForPrevious);
+    }
+
+    void Entry::writeRemoteBufferToLocal() {
+        doWriteRemoteBufferToLocal();
+    }
+
+    void Entry::doWriteRemoteBufferToLocal() {
+        std::ofstream file(getPath());
+
+        if (!file.is_open()) {
+            throw data::Exception("Cannot open file '" + getPath().string() + "' to write to.",
+                __FILE__, __LINE__);
+        }
+
+        std::visit(buffer::visitor::WriteContentTo{file}, bufferForRemote);
     }
 
 }

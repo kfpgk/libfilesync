@@ -10,22 +10,34 @@ repeat
 
     partition Update {
 
-        if (local == prev) then (yes)
-            if (remote == prev) then (yes)
-                :do nothing;
+        if (local exists) then (yes)
+            if (remote exists) then (yes)
+                if (local == prev) then (yes)
+                    if (remote == prev) then (yes)
+                        :do nothing;
+                    else (no)
+                        :pull remote;
+                    endif
+                else (no)
+                    if (remote == prev) then (yes)
+                        :push local;
+                    else (no)
+                        #palegreen:<b>resolver.resolve()</b>;
+                        note right
+                        Custom
+                        endnote
+                    endif   
+                endif
             else (no)
-                :pull remote;
+                :push local;
             endif
         else (no)
-            if (remote == prev) then (yes)
-                :push local;
-            else (no)
-                #palegreen:<b>resolver.resolve()</b>;
-                note right
-                Custom
-                endnote
-            endif   
+            if (remote exists) then (yes)
+                :pull remote;
+            endif
         endif
+
+
 
     :Save file state to <b>prev</b>;
 

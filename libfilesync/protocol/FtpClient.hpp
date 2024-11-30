@@ -1,14 +1,14 @@
 #ifndef LIBFILESYNC_PROTOCOL_FTP_CLIENT_HPP
 #define LIBFILESYNC_PROTOCOL_FTP_CLIENT_HPP
 
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 #include <libfilesync/curl/FtpClient.hpp>
 #include <libfilesync/data/Data.hpp>
 
 #include <string>
 #include <filesystem>
 
-namespace filesync {
+namespace filesync::protocol {
 
     /**
      * FTP adapter class
@@ -16,7 +16,7 @@ namespace filesync {
      * Patterns:
      *  - Adapter
      */
-    class FtpClient : public ProtocolClient {
+    class FtpClient : public Client {
 
         public:
             explicit FtpClient(const std::string& serverAddress);

@@ -7,7 +7,7 @@
 #include <functional>
 #include <filesystem>
 
-namespace filesync::integrationtest::curl::ftp {
+namespace filesync::integration_test::curl::ftp {
 
     constexpr auto separator = std::filesystem::path::preferred_separator;
 

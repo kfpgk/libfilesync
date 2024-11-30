@@ -3,7 +3,7 @@
 
 #include <tests/template/IntegrationTest.hpp>
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     /**
      * @brief Abstract integration test class

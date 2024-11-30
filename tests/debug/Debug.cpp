@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace filesync::integrationtest::debug {
+namespace filesync::integration_test::debug {
 
     Debug::Debug(const std::string& testName,
         const std::string& server,

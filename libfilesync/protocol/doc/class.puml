@@ -6,11 +6,15 @@ abstract class FileSyncer {
     + update(Entry) : void
 }
 
-interface ProtocolClient {
-    + upload(string local, string remote) : void
-    + download(string local, string remote) : void
-    + existsOnServer(string remote) : bool
-    + deleteOnServer(string remote) : void
+package protocol {
+    interface Client {
+        + upload(string local, string remote) : void
+        + download(string local, string remote) : void
+        + existsOnServer(string remote) : bool
+        + deleteOnServer(string remote) : void
+    }
+
+    class "FtpClient" as FtpClient
 }
 
 class Entry {
@@ -22,9 +26,7 @@ class Entry {
     - observers[]
 }
 
-package "Protocol client using libcurl" {
-
-    class "ProtocolClient<concrete>" as concreteProtoClient
+package "curl" {
 
     interface CurlProtocolClient {
         + setLocalFileForUpload(string) : void
@@ -37,10 +39,10 @@ package "Protocol client using libcurl" {
     }
 }
 
-FileSyncer o- "1" ProtocolClient
+FileSyncer o- "1" Client
 Entry o- "*" FileSyncer
 
-ProtocolClient <|.. concreteProtoClient
-CurlProtocolClient "1" -o "1" concreteProtoClient
+Client <|.. FtpClient
+CurlProtocolClient "1" -o "1" FtpClient
 
 @enduml

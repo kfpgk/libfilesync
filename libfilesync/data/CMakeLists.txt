@@ -23,7 +23,7 @@ if(BUILD_UNIT_TESTS)
             ${CMAKE_BINARY_DIR}
     )
     add_test(
-        NAME "UT Directory"
+        NAME "UT data::Directory"
         COMMAND Directory_test
     )
 endif()

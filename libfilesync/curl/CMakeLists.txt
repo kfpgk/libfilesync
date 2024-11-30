@@ -1,3 +1,7 @@
+add_subdirectory(option)
+add_subdirectory(storage)
+add_subdirectory(wrapper)
+
 target_sources(libfilesync 
     PRIVATE
         Exception.cpp
@@ -5,27 +9,23 @@ target_sources(libfilesync
         FtpClient.cpp
 )
 
-add_subdirectory(option)
-add_subdirectory(storage)
-add_subdirectory(wrapper)
-
 if(BUILD_UNIT_TESTS)
     enable_testing()
-    add_executable(ProtocolClient_test
+    add_executable(CurlProtocolClient_test
         wrapper/EasyStub.test.cpp
         ProtocolClient.test.cpp
     )
-    target_include_directories(ProtocolClient_test
+    target_include_directories(CurlProtocolClient_test
         PRIVATE
             ${CMAKE_SOURCE_DIR}
             ${CMAKE_BINARY_DIR}
     )
-    target_link_libraries(ProtocolClient_test
+    target_link_libraries(CurlProtocolClient_test
         PRIVATE
             libfilesync
     )
     add_test(
         NAME "UT curl::ProtocolClient"
-        COMMAND ProtocolClient_test
+        COMMAND CurlProtocolClient_test
     )
 endif()

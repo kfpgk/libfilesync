@@ -2,11 +2,12 @@
 #define LIBFILESYNC_TESTS_CORE_CONFLICT_LOCAL_FIRST_RESOLVER_RESOLVE_CONFLICT_HPP
 
 #include <tests/core/conflict/ResolveConflict.hpp>
+#include <libfilesync/protocol/Client.hpp>
 
 #include <string>
 #include <memory>
 
-namespace filesync::integrationtest::core::conflict::local_first_resolver {
+namespace filesync::integration_test::core::conflict::local_first_resolver {
 
     class ResolveConflict : public conflict::ResolveConflict {
 
@@ -14,7 +15,7 @@ namespace filesync::integrationtest::core::conflict::local_first_resolver {
             explicit ResolveConflict(const std::string& testName);
             ResolveConflict(
                 const std::string& testName,
-                std::unique_ptr<ProtocolClient> protocolClient);
+                std::unique_ptr<protocol::Client> protocolClient);
 
         private:
             void perform() override;

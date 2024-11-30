@@ -1,6 +1,6 @@
 #include <tests/core/conflict/local_first_resolver/ResolveConflict.hpp>
 
-namespace test = filesync::integrationtest;
+namespace test = filesync::integration_test;
 
 int main(int argc, char* argv[]) {
 

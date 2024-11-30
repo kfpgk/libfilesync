@@ -1,6 +1,6 @@
 #include <tests/data/File/Changed.hpp>
 
-using namespace filesync::integrationtest;
+using namespace filesync::integration_test;
 
 int main(int argc, char* argv[]) {
 

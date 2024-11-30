@@ -1,7 +1,7 @@
 #include <tests/protocol/ftp/UploadDownloadFile.hpp>
 #include <tests/config/config.h>
 
-namespace test = filesync::integrationtest;
+namespace test = filesync::integration_test;
 
 int main(int argc, char* argv[]) {
 

@@ -4,7 +4,7 @@
 #include <libfilesync/core/FileSyncer.hpp>
 #include <libfilesync/core/conflict/Resolver.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 
 namespace filesync::core {
 
@@ -13,7 +13,7 @@ namespace filesync::core {
         public:
             BufferedSyncer(
                 sync_data::Entry& syncContent,
-                ProtocolClient& protocolClient,
+                protocol::Client& protocolClient,
                 conflict::Resolver& resolver);
 
         private:

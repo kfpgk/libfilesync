@@ -4,7 +4,7 @@
 #include <iostream>
 #include <filesystem>
 
-namespace test = filesync::integrationtest;
+namespace test = filesync::integration_test;
 
 int main(int argc, char* argv[]) {
 

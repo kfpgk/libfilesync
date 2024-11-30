@@ -1,6 +1,11 @@
 # Introduction
 
-This repository holds the source code for the file syncing library `libfilesync`.
+This repository holds the source code, documentation and tests for the file syncing library `libfilesync`.
+
+This `README` gives you the steps to build the library, the (unit and integration) tests and examples.
+You will find information regarding the project structure.
+
+Documentation is provided in terms of <em>UML</em> diagrams located in the `doc` sub directories.
 
 Refer to the [examples](#examples) for guidance on the use of this library.
 
@@ -74,18 +79,25 @@ cmake --build .
 |   +- <em>example1</em>
 |       +- CMakeLists.txt
 |       +- *.cpp
-+- libfilesync              # File sync library 
++- libfilesync              # File sync library
+|   +- doc
+|       +- *.puml           # UML diagram 
 |   +- CMakeLists.txt
 |   +- *.cpp
 |   +- *.hpp
 |   +- <em>component1</em>              # File sync library component sub directory
-|       +. CMakeLists.txt
+|       +- doc
+|           +- *.puml                   # UML diagram
+|       +- CMakeLists.txt
 |       +- *.cpp                        # Library source file
 |       +- *.hpp                        # Library header file
+|       +- *.tpp                        # Library template implementation file
 |       +- *.test.cpp                   # Unit tests source file
 |       +- *.test.hpp                   # Unit test header file
 |   +- <em>component2</em>              # File sync library component sub directory
-|       +. CMakeLists.txt
+|       +- doc
+|           +- *.puml                   
+|       +- CMakeLists.txt
 |       +- *.cpp
 |       +- *.hpp
 |       +- *.test.cpp
@@ -98,18 +110,3 @@ cmake --build .
 |       +- *.hpp                    # Integration test header file
 +- CMakeLists.txt
 </pre>
-
-# Documentation
-
-## Architecture
-
-There are several <em>UML</em> diagrams describing the software architecture.
-
-A [package diagram](doc/libfilesync-package.puml) and a [component diagram](doc/libfilesync-component.puml) show a high level view and dependencies between subsystems.
-
-Check the [overall class diagram](doc/libfilesync-class.puml) for general relations. This diagram only contains a simplified view on the <em>curl</em> related classes. Refer to the [curl class diagram](doc/libfilesync-curl-class.puml) for more details on these.
-For a low level view on the <b>data layer</b>, refer to the [data layer class diagram](doc/libfilesync-data-layer-class.puml).
-
-Take a look at the [curl option class diagram](doc/libfilesync-curl-option-class.puml) and the [curl option sequence diagram](doc/libfilesync-curl-option-seq.puml) for low level handling of <em>curl</em> options.
-
-The [protocol interface class diagram](doc/libfilesync-protocol-interface-class.puml) shows the <b>interface</b> provided by the `protocolClient` objects. 

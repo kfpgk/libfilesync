@@ -7,7 +7,7 @@
 #include <string>
 #include <memory>
 
-namespace filesync::integrationtest::data::file {
+namespace filesync::integration_test::data::file {
 
     class Changed : public IntegrationTest {
 

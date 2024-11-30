@@ -28,4 +28,62 @@ namespace filesync::core::sync_data {
         }
     }
 
+    void Directory::doSetSyncInProgress() {
+        Entry::doSetSyncInProgress();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            it->get()->setSyncInProgress();
+        }
+    }
+
+    void Directory::doResetSyncInProgress() {
+        Entry::doResetSyncInProgress();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            it->get()->resetSyncInProgress();
+        }
+    }
+
+    bool Directory::doGetSyncInProgress() const {
+        bool syncInProgress = Entry::doGetSyncInProgress();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            if (it->get()->getSyncInProgress()) {
+                syncInProgress = true;
+            }              
+        }
+        return syncInProgress;
+    }
+
+    bool Directory::doLocalDifferentThanPrev() const {
+        bool changed = Entry::doLocalDifferentThanPrev();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            if (it->get()->localDifferentThanPrev()) {
+                changed = true;
+            }              
+        }
+        return changed;
+    }
+
+    bool Directory::doRemoteDifferentThanPrev() const {
+        bool changed = Entry::doRemoteDifferentThanPrev();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            if (it->get()->remoteDifferentThanPrev()) {
+                changed = true;
+            }              
+        }
+        return changed;
+    }
+
+    void Directory::doSetPrevious() {
+        Entry::doSetPrevious();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            it->get()->setPrevious();
+        }        
+    }
+
+    void Directory::doWriteRemoteBufferToLocal() {
+        Entry::doWriteRemoteBufferToLocal();
+        for(auto it = components.begin(); it != components.end(); it++) {
+            it->get()->writeRemoteBufferToLocal();
+        }          
+    }
+
 }

@@ -3,7 +3,7 @@
 namespace filesync::core::conflict {
 
     RemoteFirstResolver::RemoteFirstResolver(
-        ProtocolClient& protocolClient) :
+        protocol::Client& protocolClient) :
             Resolver(protocolClient) {
 
     }

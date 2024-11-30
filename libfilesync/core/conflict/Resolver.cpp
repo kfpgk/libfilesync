@@ -2,19 +2,19 @@
 
 namespace filesync::core::conflict {
 
-    Resolver::Resolver(ProtocolClient& protocolClient) :
+    Resolver::Resolver(protocol::Client& protocolClient) :
         Resolver{protocolClient, std::make_shared<FileSyncLocks>()} {
 
     }
 
-    Resolver::Resolver(ProtocolClient& protocolClient,
+    Resolver::Resolver(protocol::Client& protocolClient,
         std::shared_ptr<FileSyncLocks> locks) :
             protocolClient{protocolClient},
             locks{std::move(locks)} {
 
     }
 
-    ProtocolClient& Resolver::getProtocolClient() {
+    protocol::Client& Resolver::getProtocolClient() {
         return protocolClient;
     }
 

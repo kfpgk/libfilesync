@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace filesync::integrationtest::curl::ftp {
+namespace filesync::integration_test::curl::ftp {
 
     class UploadDownload : public IntegrationTest {
 

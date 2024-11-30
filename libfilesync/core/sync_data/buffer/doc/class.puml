@@ -1,0 +1,70 @@
+@startuml sync-data-buffer-class-diagram
+
+title Sync Data Buffer Class Diagram
+
+package buffer {
+
+    interface "<<variant>>\nBuffer" as Buffer
+
+    class FileBuffer {
+        - filePath : filesystem::path
+        + getFilePath() : filesystem::path
+        + store(istream&) : void 
+        + writeContentTo(ostream&) : bool
+        + isEqualTo(istream&) : bool
+    }
+
+    class MemoryBuffer {
+        - data : void*
+        - size : size_t
+        + getFilePath() : filesystem::path
+        + store(istream&) : void 
+        + writeContentTo(ostream&) : bool
+        + isEqualTo(istream&) : bool
+    }
+
+    package visitor {
+        class GetLocation {
+            + operator()(FileBuffer&) : filesystem::path
+            + operator()(MemoryBuffer&) : void*
+        }
+        class IsEqualTo {
+            - in : istream&
+            + operator()(FileBuffer&) : bool
+            + operator()(MemoryBuffer&) : bool
+        }
+        class Store {
+            - in : istream&
+            + operator()(FileBuffer&) : void
+            + operator()(MemoryBuffer&) : void
+        }
+        class WriteContentTo {
+            - out : ostream&
+            + operator()(FileBuffer&) : bool
+            + operator()(MemoryBuffer&) : bool
+        }
+    }
+}
+package client {
+    class "sync_data::Entry" as Entry
+}
+
+Entry o- Buffer
+Entry --> visitor
+
+Buffer <|.. FileBuffer
+Buffer <|.. MemoryBuffer
+
+FileBuffer <-- GetLocation  
+MemoryBuffer <-- GetLocation
+
+FileBuffer <-- IsEqualTo  
+MemoryBuffer <-- IsEqualTo 
+
+FileBuffer <-- Store  
+MemoryBuffer <-- Store 
+
+FileBuffer <-- WriteContentTo  
+MemoryBuffer <-- WriteContentTo 
+
+@enduml

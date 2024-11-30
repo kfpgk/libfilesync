@@ -8,7 +8,7 @@
 #include <thread>
 
 using namespace std::chrono_literals;
-namespace filesync::integrationtest::system {
+namespace filesync::integration_test::system {
 
     FileSync::FileSync(const std::string& testName,
         const std::string& server,
@@ -54,7 +54,7 @@ namespace filesync::integrationtest::system {
     }
 
     void FileSync::evaluate() {
-        filesync::FtpClient client(server, pathOnServer);
+        filesync::protocol::FtpClient client(server, pathOnServer);
 
         if (!client.existsOnServer("dir1")) {
             throw FileSyncException("Could not find 'dir1' on remote server",
@@ -87,7 +87,7 @@ namespace filesync::integrationtest::system {
     }
 
     void FileSync::cleanUp() {
-        filesync::FtpClient client(server, pathOnServer);
+        filesync::protocol::FtpClient client(server, pathOnServer);
 
         client.deleteOnServer("dir1/file1");
         client.deleteOnServer("dir1/file2");

@@ -2,7 +2,7 @@
 #define LIBFILESYNC_CORE_CONFLICT_RESOLVER_HPP
 
 #include <libfilesync/core/sync_data/Entry.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 #include <libfilesync/FileSyncLocks.hpp>
 
 #include <memory>
@@ -11,19 +11,19 @@ namespace filesync::core::conflict {
     class Resolver {
 
         public:     
-            explicit Resolver(ProtocolClient& protocolClient);
-            Resolver(ProtocolClient& protocolClient,
+            explicit Resolver(protocol::Client& protocolClient);
+            Resolver(protocol::Client& protocolClient,
                 std::shared_ptr<FileSyncLocks> locks);
             virtual ~Resolver() = default;
             
             void resolve(sync_data::Entry* entry);
             
         protected:
-            ProtocolClient& getProtocolClient();
+            protocol::Client& getProtocolClient();
             FileSyncLocks& getLocks();
         
         private:
-            ProtocolClient& protocolClient;
+            protocol::Client& protocolClient;
             std::shared_ptr<FileSyncLocks> locks;
                 
             virtual void doResolve(sync_data::Entry* entry) = 0;        

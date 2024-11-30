@@ -3,14 +3,14 @@
 
 #include <libfilesync/core/conflict/Resolver.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 
 namespace filesync::core::conflict {
 
     class LocalFirstResolver : public Resolver {
 
         public:
-            explicit LocalFirstResolver(ProtocolClient& protocolClient);
+            explicit LocalFirstResolver(protocol::Client& protocolClient);
 
         private:
             void doResolve(sync_data::Entry* entry) override;

@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace filesync::integrationtest::debug {
+namespace filesync::integration_test::debug {
 
     class Debug : public IntegrationTest {
 

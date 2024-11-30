@@ -4,10 +4,11 @@
 #include <libfilesync/data/Entry.hpp>
 #include <libfilesync/observer/Observer.hpp>
 #include <libfilesync/core/sync_data/RemoteEntry.hpp>
-#include <libfilesync/core/sync_data/Buffer.hpp>
+#include <libfilesync/core/sync_data/buffer/Buffer.hpp>
 
 #include <filesystem>
 #include <memory>
+#include <variant>
 
 namespace filesync::core::sync_data {
 
@@ -31,30 +32,75 @@ namespace filesync::core::sync_data {
             void setRemoteEntry(const std::filesystem::path& path);
             [[nodiscard]] std::filesystem::path getRemotePath() const;
             void setSyncInProgress();
+            void resetSyncInProgress();
             [[nodiscard]] bool getSyncInProgress() const;
-            bool localChanged() const;
-            bool remoteChanged() const;
-            void writeCache();
-            void applyCache();
+            /**
+             * @brief Check if local file content is different
+             * compared to content in previous buffer.
+             * 
+             * @returns true if contents are different. false
+             * otherwise.
+             */
+            [[nodiscard]] bool localDifferentThanPrev() const;
+            /**
+             * @brief Get location of the data in remote buffer.
+             * 
+             * This can be used to directly write into the buffer's
+             * location.
+             * 
+             * @returns a value of variable type depending on the 
+             * underlying buffer that is used.
+             */
+            buffer::DataLocation getRemoteBufferLocation() const;
+            /**
+             * @brief Check if content in remote buffer is different
+             * compared to content in previous buffer.
+             * 
+             * @returns true if contents are different. false
+             * otherwise.
+             */
+            [[nodiscard]] bool remoteDifferentThanPrev() const;
+            /**
+             * @brief Saves the current state of the local file
+             * into a buffer for later comparison.
+             */
+            void setPrevious();
+            /**
+             * @brief Overwrite the local entry with the contents
+             * of the remote buffer.
+             */
+            void writeRemoteBufferToLocal();
 
         protected:
             void doPrint() const override;
             virtual void doSetRemoteEntry(const std::filesystem::path& path);
+            virtual void doSetSyncInProgress();
+            virtual void doResetSyncInProgress();
+            [[nodiscard]] virtual bool doGetSyncInProgress() const;
+            [[nodiscard]] virtual bool doLocalDifferentThanPrev() const;
+            [[nodiscard]] virtual bool doRemoteDifferentThanPrev() const;
+            virtual void doSetPrevious();
+            virtual void doWriteRemoteBufferToLocal();
 
         private:
             bool syncInProgress = false;
 
             std::unique_ptr<RemoteEntry> remoteEntry;
-            std::unique_ptr<Buffer> bufferForRemote;
-            std::unique_ptr<Buffer> bufferForPrevious;
+            buffer::Buffer bufferForRemote;
+            buffer::Buffer bufferForPrevious;
 
     };
 
     inline bool operator==(
         const Entry& lhs,
         const Entry& rhs) {
+
+        namespace fs = std::filesystem;
         
-        return std::filesystem::equivalent(lhs.getAbsolutePath(), rhs.getAbsolutePath());
+        return(
+            fs::weakly_canonical(lhs.getAbsolutePath()) ==
+            fs::weakly_canonical(rhs.getAbsolutePath())
+        );
     }
 
     inline bool operator==(

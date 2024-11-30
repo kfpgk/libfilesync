@@ -3,7 +3,7 @@ enable_testing()
 add_executable(test_sync_data_file_buffer
     file_buffer.cpp
     FileBuffer.cpp
-    ../../../template/IntegrationTest.cpp    
+    ../../../../template/IntegrationTest.cpp    
 )
 target_include_directories(test_sync_data_file_buffer
     PRIVATE

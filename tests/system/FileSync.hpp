@@ -3,7 +3,7 @@
 
 #include <tests/template/IntegrationTest.hpp>
 
-namespace filesync::integrationtest::system {
+namespace filesync::integration_test::system {
 
     class FileSync : public IntegrationTest {
 

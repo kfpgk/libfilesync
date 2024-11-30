@@ -6,7 +6,7 @@
 #include <vector>
 #include <functional>
 
-namespace filesync::integrationtest {
+namespace filesync::integration_test {
 
     /**
      * @brief A struct holding a testcase, which

@@ -8,7 +8,7 @@
 
 using namespace filesync::utility;
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     UploadDownloadFile::UploadDownloadFile(const std::string& testName,
         const std::string& server,
@@ -25,7 +25,7 @@ namespace filesync::integrationtest::protocol::ftp {
         }
         uploadFile << testFileContent << std::endl;
 
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
 
         if (ftpClient.existsOnServer(remoteFileName)) {
@@ -34,7 +34,7 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void UploadDownloadFile::perform() {            
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
       
         ftpClient.upload(uploadFileName, remoteFileName);
@@ -42,7 +42,7 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void UploadDownloadFile::evaluate() {
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
       
         if (!ftpClient.existsOnServer(remoteFileName)) {
@@ -104,7 +104,7 @@ namespace filesync::integrationtest::protocol::ftp {
         if (rc != 0) {
             std::cout << "Failed to delete '" << downloadFileName << "'" << std::endl;
         }
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
         ftpClient.deleteOnServer(remoteFileName);
     }

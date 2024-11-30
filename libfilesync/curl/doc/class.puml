@@ -40,22 +40,24 @@ package curl {
         + remoteEntryExists() : bool
         + init() : void
     }
-    interface Storage {
-        - {abstract} setupWrite(option::Factory&) : void
-        - {abstract} setupRead(option::Factory&) : void
-        - {abstract} flush() : void
-    }
-    class "FileStorage" as FileStorage {
-        - path : string
-        - filePointer : FILE*
-        - setupWrite(option::Factory&) : void
-        - setupRead(option::Factory&) : void
-        - flush() : void
-    }
-    class "MemoryStorage" as MemoryStorage {
-        - setupWrite(option::Factory&) : void
-        - setupRead(option::Factory&) : void
-        - flush() : void
+    package storage {
+        interface Storage {
+            + {abstract} setupWrite(option::Factory&) : void
+            + {abstract} setupRead(option::Factory&) : void
+            + {abstract} flush() : void
+        }
+        class "FileStorage" as FileStorage {
+            - path : string
+            - filePointer : FILE*
+            + setupWrite(option::Factory&) : void
+            + setupRead(option::Factory&) : void
+            + flush() : void
+        }
+        class "MemoryStorage" as MemoryStorage {
+            + setupWrite(option::Factory&) : void
+            + setupRead(option::Factory&) : void
+            + flush() : void
+        }
     }
     package wrapper {
         class "Url" as CurlUrl {
@@ -91,6 +93,10 @@ package curl {
     }
 
     package option {
+        class "Factory" as Factory {
+            - interface : Easy&
+            + create...Option : ...Option*
+        }
         interface "Option" as CurlOption {
             - interface : Easy&
             + set() : void
@@ -114,11 +120,13 @@ ProtocolClient <|-- FtpClient
 FtpClient "1" o-- "1" CurlFtpClient
 CurlFtpClient --|> CurlProtocolClient
 CurlProtocolClient "1" o-- "1" CurlUrl
-CurlProtocolClient -> Storage : <<Friend>>
+CurlProtocolClient o-- "2" FileStorage
 Storage <|.. MemoryStorage
 Storage <|.. FileStorage
 
-Storage -> CurlEasy
+Factory -> CurlEasy
+
+Storage --> Factory
 CurlOption --> CurlEasy
 CurlProtocolClient "1" o-- "*" CurlOption
 

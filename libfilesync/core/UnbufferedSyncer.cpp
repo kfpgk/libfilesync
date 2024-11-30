@@ -5,7 +5,7 @@ namespace filesync::core {
 
     UnbufferedSyncer::UnbufferedSyncer(
         sync_data::Entry& syncContent,
-        ProtocolClient& protocolClient,
+        protocol::Client& protocolClient,
         conflict::Resolver& resolver) :
             FileSyncer{syncContent, protocolClient, resolver} {
 

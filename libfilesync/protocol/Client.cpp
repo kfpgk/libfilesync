@@ -1,24 +1,25 @@
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 #include <libfilesync/utility/Logger.hpp>
 #include <libfilesync/utility/Debug.hpp>
+#include <libfilesync/FileSyncException.hpp>
 
 #include <sstream>
 #include <filesystem>
 
 using namespace filesync::utility;
 
-namespace filesync {
+namespace filesync::protocol {
 
-    ProtocolClient::ProtocolClient(const std::string& remoteRoot) :
+    Client::Client(const std::string& remoteRoot) :
         remoteRoot{remoteRoot} {
 
     }
 
-    void ProtocolClient::download(const std::filesystem::path& local) {
+    void Client::download(const std::filesystem::path& local) {
         download(local, local);
     }
 
-    void ProtocolClient::download(
+    void Client::download(
         const std::filesystem::path& local,
         const std::filesystem::path& remote) {
 
@@ -28,16 +29,18 @@ namespace filesync {
         message << "Download: '" << local.string() << "' << " << getCompleteRemoteFilePath(remote); 
         Logger::getInstance().log(LogDomain::Info, message.str());
 
+        checkForEmptyPath(local);
+        checkForEmptyPath(remote);
         doDownload(local, remote);
 
         DEBUG_EXIT(); 
     }
 
-    void ProtocolClient::upload(const std::filesystem::path& local) {
+    void Client::upload(const std::filesystem::path& local) {
         upload(local, local);
     }
 
-    void ProtocolClient::upload(
+    void Client::upload(
         const std::filesystem::path& local,
         const std::filesystem::path& remote) {
 
@@ -47,39 +50,50 @@ namespace filesync {
         message << "Upload: '" << local.string() << "' >> " << getCompleteRemoteFilePath(remote); 
         Logger::getInstance().log(LogDomain::Info, message.str());
 
+        checkForEmptyPath(local);
+        checkForEmptyPath(remote);
         doUpload(local, remote);
 
         DEBUG_EXIT(); 
     }
 
-    bool ProtocolClient::existsOnServer(
+    bool Client::existsOnServer(
         const std::filesystem::path& remote) {
 
+        checkForEmptyPath(remote);
         return doExistsOnServer(remote);
     }
 
-    void ProtocolClient::deleteOnServer(
+    void Client::deleteOnServer(
         const std::filesystem::path& remote) {
 
         DEBUG_ENTER();
 
+        checkForEmptyPath(remote);
         doDeleteOnServer(remote);
 
         DEBUG_EXIT();
     }
 
-    void ProtocolClient::setRemoteRootPath(
+    void Client::setRemoteRootPath(
         const std::filesystem::path& remoteRoot) {
         
         this->remoteRoot = remoteRoot;
     }
 
-    std::filesystem::path ProtocolClient::getCompleteRemoteFilePath(
+    std::filesystem::path Client::getCompleteRemoteFilePath(
         const std::filesystem::path& remoteFile) const {
 
         using namespace std::filesystem;
         return remoteRoot.string() + path::preferred_separator + remoteFile.string();
 
+    }
+
+    void Client::checkForEmptyPath(const std::filesystem::path& path) {
+        if (path.string().empty()) {
+            throw FileSyncException("Filesystem path is empty",
+                __FILE__, __LINE__);
+        }
     }
 
 }

@@ -4,19 +4,19 @@
 #include <string>
 #include <filesystem>
 
-namespace filesync {
+namespace filesync::protocol {
 
     /**
      * @brief: Protocol interface class
      * 
      * Non-virtual interface
      */
-    class ProtocolClient {
+    class Client {
 
         public:
-            ProtocolClient() = default;
-            explicit ProtocolClient(const std::string& remoteRoot);
-            virtual ~ProtocolClient() = default;
+            Client() = default;
+            explicit Client(const std::string& remoteRoot);
+            virtual ~Client() = default;
             void download(const std::filesystem::path& local);
             void download(
                 const std::filesystem::path& local,
@@ -28,6 +28,12 @@ namespace filesync {
             void setRemoteRootPath(
                 const std::filesystem::path& remoteRoot);
             [[nodiscard]] bool existsOnServer(const std::filesystem::path& remote);
+            /**
+             * @brief Deletes an entry on the server. This may be a file
+             * or directory, depending on protocol support.
+             * 
+             * Throws if the entry does not exist.
+             */
             void deleteOnServer(const std::filesystem::path& remote);
 
         protected:
@@ -46,7 +52,9 @@ namespace filesync {
             [[nodiscard]] virtual bool doExistsOnServer(
                 const std::filesystem::path& remote) = 0;
             virtual void doDeleteOnServer(
-                const std::filesystem::path& remote) = 0;           
+                const std::filesystem::path& remote) = 0;
+
+            void checkForEmptyPath(const std::filesystem::path& path);           
 
     };
 

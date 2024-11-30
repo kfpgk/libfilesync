@@ -6,19 +6,19 @@
 #include <fstream>
 #include <cstdio>
 
-namespace filesync::integrationtest::core::conflict {
+namespace filesync::integration_test::core::conflict {
 
     ResolveConflict::ResolveConflict(const std::string& testName) :
         IntegrationTest(testName) {
 
-        protocolClient = std::make_unique<FtpClient>(
+        protocolClient = std::make_unique<protocol::FtpClient>(
             LIBFILESYNC_TEST_FTP_SERVER,
             LIBFILESYNC_TEST_FTP_SERVER_DIR);
 
     }
 
     ResolveConflict::ResolveConflict(const std::string& testName,
-        std::unique_ptr<ProtocolClient> protocolClient) :
+        std::unique_ptr<protocol::Client> protocolClient) :
         IntegrationTest(testName),
         protocolClient{std::move(protocolClient)} {
 

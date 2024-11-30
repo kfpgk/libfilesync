@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     /**
      * @brief Upload and download directories via FTP

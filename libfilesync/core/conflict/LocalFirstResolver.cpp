@@ -3,7 +3,7 @@
 namespace filesync::core::conflict {
 
     LocalFirstResolver::LocalFirstResolver(
-        ProtocolClient& protocolClient) :
+        protocol::Client& protocolClient) :
             Resolver(protocolClient) {
 
     }

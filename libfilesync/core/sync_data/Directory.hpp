@@ -19,6 +19,13 @@ namespace filesync::core::sync_data {
         private:
             void doPrint() const override; 
             void doSetRemoteEntry(const std::filesystem::path& path) override;
+            void doSetSyncInProgress() override;
+            void doResetSyncInProgress() override;
+            [[nodiscard]] bool doGetSyncInProgress() const override;
+            [[nodiscard]] bool doLocalDifferentThanPrev() const override;
+            [[nodiscard]] bool doRemoteDifferentThanPrev() const override;
+            void doSetPrevious() override;
+            void doWriteRemoteBufferToLocal() override;
 
     };
 

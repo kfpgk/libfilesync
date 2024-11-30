@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <fstream>
 
-namespace filesync::integrationtest::data::file {
+namespace filesync::integration_test::data::file {
 
     Changed::Changed(const std::string& testName) :
         IntegrationTest(testName) {

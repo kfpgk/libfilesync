@@ -7,7 +7,7 @@
 #include <string>
 #include <memory>
 
-namespace filesync::integrationtest::data {
+namespace filesync::integration_test::data {
 
     class CreateRecursiveEntries : public IntegrationTest {
 

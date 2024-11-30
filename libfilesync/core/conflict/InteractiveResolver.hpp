@@ -3,7 +3,7 @@
 
 #include <libfilesync/core/conflict/Resolver.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 #include <libfilesync/FileSyncLocks.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
@@ -17,8 +17,8 @@ namespace filesync::core::conflict {
     class InteractiveResolver : public Resolver {
 
         public:
-            InteractiveResolver(ProtocolClient& protocolClient);
-            InteractiveResolver(ProtocolClient& protocolClient,
+            InteractiveResolver(protocol::Client& protocolClient);
+            InteractiveResolver(protocol::Client& protocolClient,
                 std::shared_ptr<FileSyncLocks> locks);
 
         private:

@@ -6,7 +6,7 @@
 #include <sstream>
 #include <fstream>
 
-namespace filesync::integrationtest::core::conflict::local_first_resolver {
+namespace filesync::integration_test::core::conflict::local_first_resolver {
 
     ResolveConflict::ResolveConflict(
         const std::string& testName) :
@@ -16,7 +16,7 @@ namespace filesync::integrationtest::core::conflict::local_first_resolver {
 
     ResolveConflict::ResolveConflict(
         const std::string& testName,
-        std::unique_ptr<ProtocolClient> protocolClient) :
+        std::unique_ptr<protocol::Client> protocolClient) :
             conflict::ResolveConflict(testName, std::move(protocolClient)) {
 
     }

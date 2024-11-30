@@ -8,7 +8,7 @@
 
 using namespace filesync::utility;
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     UploadDownloadDir::UploadDownloadDir(const std::string& testName,
         const std::string& server,
@@ -24,14 +24,14 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void UploadDownloadDir::perform() {            
-        FtpClient ftpClient(server, pathOnServer);
+        filesync::protocol::FtpClient ftpClient(server, pathOnServer);
       
         ftpClient.upload(dirName1);
         ftpClient.download(dirName2, dirName1);
     }
 
     void UploadDownloadDir::evaluate() {
-        FtpClient ftpClient(server, pathOnServer);
+        filesync::protocol::FtpClient ftpClient(server, pathOnServer);
       
         if (!ftpClient.existsOnServer(dirName1)) {
             throw FileSyncException("Directory '" + dirName1 \
@@ -46,7 +46,7 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void UploadDownloadDir::cleanUp() {
-        FtpClient ftpClient(server, pathOnServer);
+        filesync::protocol::FtpClient ftpClient(server, pathOnServer);
 
         ftpClient.deleteOnServer(dirName1);
     }

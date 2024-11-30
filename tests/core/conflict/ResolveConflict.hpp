@@ -2,24 +2,24 @@
 #define LIBFILESYNC_TESTS_CORE_CONFLICT_RESOLVE_CONFLICT_HPP
 
 #include <tests/template/IntegrationTest.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
 
 #include <string>
 #include <memory>
 
-namespace filesync::integrationtest::core::conflict {
+namespace filesync::integration_test::core::conflict {
 
     class ResolveConflict : public IntegrationTest {
 
         public:
             explicit ResolveConflict(const std::string& testName);
             ResolveConflict(const std::string& testName,
-                std::unique_ptr<ProtocolClient> protocolClient);
+                std::unique_ptr<protocol::Client> protocolClient);
             virtual ~ResolveConflict() = default;
 
         protected:
-            std::unique_ptr<ProtocolClient> protocolClient = nullptr;
+            std::unique_ptr<protocol::Client> protocolClient = nullptr;
             std::shared_ptr<filesync::core::sync_data::Entry> entry = nullptr;
             std::string localFileName = "testfile_local";
             std::string remoteFileName = "testfile_remote";

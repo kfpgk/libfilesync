@@ -1,6 +1,6 @@
 #include <tests/protocol/ftp/ServerAccess.hpp>
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     ServerAccess::ServerAccess(const std::string& testName,
         const std::string& server,

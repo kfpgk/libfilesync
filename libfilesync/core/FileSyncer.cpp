@@ -6,7 +6,7 @@ namespace filesync::core {
 
     FileSyncer::FileSyncer(
         sync_data::Entry& syncContent,
-        ProtocolClient& protocolClient,
+        protocol::Client& protocolClient,
         conflict::Resolver& resolver) :
             FileSyncer{syncContent,
                 protocolClient,
@@ -17,7 +17,7 @@ namespace filesync::core {
 
     FileSyncer::FileSyncer(
         sync_data::Entry& syncContent,
-        ProtocolClient& protocolClient,
+        protocol::Client& protocolClient,
         conflict::Resolver& resolver,
         std::shared_ptr<FileSyncLocks> locks) :
             protocolClient{protocolClient},
@@ -35,7 +35,7 @@ namespace filesync::core {
         return getProtocolClient().existsOnServer(entry->getRemotePath());
     }
 
-    ProtocolClient& FileSyncer::getProtocolClient() {
+    protocol::Client& FileSyncer::getProtocolClient() {
         return protocolClient;
     }
 

@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     DeleteRemoteFile::DeleteRemoteFile(const std::string& testName,
         const std::string& server,
@@ -20,7 +20,7 @@ namespace filesync::integrationtest::protocol::ftp {
         }
         uploadFile << "Test file content" << std::endl;
 
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
 
         ftpClient.upload(uploadFileName, remoteFileName);
@@ -33,7 +33,7 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void DeleteRemoteFile::perform() {      
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
 
         ftpClient.deleteOnServer(remoteFileName);
@@ -44,7 +44,7 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void DeleteRemoteFile::evaluate() {
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
 
         if (ftpClient.existsOnServer(remoteFileName)) {
@@ -55,7 +55,7 @@ namespace filesync::integrationtest::protocol::ftp {
     }
 
     void DeleteRemoteFile::cleanUp() {
-        FtpClient ftpClient(server);
+        filesync::protocol::FtpClient ftpClient(server);
         ftpClient.setRemoteRootPath(pathOnServer);
 
         ftpClient.deleteOnServer("other-name");

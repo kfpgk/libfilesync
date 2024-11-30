@@ -1,1 +1,1 @@
-add_subdirectory(file_buffer)
+add_subdirectory(buffer)

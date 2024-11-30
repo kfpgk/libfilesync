@@ -3,6 +3,5 @@ target_sources(libfilesync
         Resolver.cpp
         InteractiveResolver.cpp
         LocalFirstResolver.cpp
-        RemoteFirstResolver.cpp
-        
+        RemoteFirstResolver.cpp  
 )

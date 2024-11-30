@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     directoryTest.remove_file();
     directoryTest.remove_directory();
 
-    Logger::getInstance().log(LogDomain::TestResult, "Class Directory: passed", __FILE__, __LINE__);
+    Logger::getInstance().log(LogDomain::TestResult, "Class data::Directory: passed", __FILE__, __LINE__);
     return 0;
 
 }

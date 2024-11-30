@@ -4,7 +4,7 @@
 #include <tests/protocol/ftp/ServerAccess.hpp>
 #include <libfilesync/protocol/FtpClient.hpp>
 
-namespace filesync::integrationtest::protocol::ftp {
+namespace filesync::integration_test::protocol::ftp {
 
     class DeleteRemoteFile : public ServerAccess {
 

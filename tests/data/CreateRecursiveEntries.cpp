@@ -5,7 +5,7 @@
 #include <stack>
 #include <cassert>
 
-namespace filesync::integrationtest::data {
+namespace filesync::integration_test::data {
 
     CreateRecursiveEntries::CreateRecursiveEntries(const std::string& testName) :
         IntegrationTest(testName) {

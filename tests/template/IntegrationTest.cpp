@@ -9,7 +9,7 @@
 
 using namespace filesync::utility;
 
-namespace filesync::integrationtest {
+namespace filesync::integration_test {
 
     IntegrationTest::IntegrationTest(const std::string& name) :
         name{name},

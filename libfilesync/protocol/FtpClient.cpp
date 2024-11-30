@@ -2,7 +2,7 @@
 #include <libfilesync/FileSyncException.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
-namespace filesync {
+namespace filesync::protocol {
 
     FtpClient::FtpClient(const std::string& serverAddress) :
         curlClient(serverAddress) {
@@ -12,7 +12,7 @@ namespace filesync {
     FtpClient::FtpClient(const std::string& serverAddress,
         const std::string& remoteRoot) :
         curlClient(serverAddress),
-        ProtocolClient(remoteRoot) {
+        Client(remoteRoot) {
 
     }
 

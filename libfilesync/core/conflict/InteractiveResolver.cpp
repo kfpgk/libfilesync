@@ -9,13 +9,13 @@
 namespace filesync::core::conflict {
 
     InteractiveResolver::InteractiveResolver(
-        ProtocolClient& protocolClient) :
+        protocol::Client& protocolClient) :
             InteractiveResolver(protocolClient,
                 std::make_shared<FileSyncLocks>()) {
 
     }
 
-    InteractiveResolver::InteractiveResolver(ProtocolClient& protocolClient,
+    InteractiveResolver::InteractiveResolver(protocol::Client& protocolClient,
         std::shared_ptr<FileSyncLocks> locks) :
             Resolver{protocolClient, locks} {
 

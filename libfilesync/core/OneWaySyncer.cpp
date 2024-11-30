@@ -5,7 +5,7 @@ namespace filesync::core {
 
     OneWaySyncer::OneWaySyncer(
         sync_data::Entry& syncContent,
-        ProtocolClient& protocolClient,
+        protocol::Client& protocolClient,
         conflict::Resolver& resolver) :
             FileSyncer{syncContent, protocolClient, resolver} {
 
@@ -26,10 +26,11 @@ namespace filesync::core {
                     getProtocolClient().download(entry->getPath(), entry->getRemotePath());
                 } else {
                     Logger::getInstance().log(LogDomain::Warning, 
-                        "File '" + entry->getPath().string() + "' does \
-                        neither exist locally nor remotely.");
+                        "File '" + entry->getPath().string() + "' does "\
+                        "neither exist locally nor remotely.");
                 }
             }
+            entry->setSyncInProgress();
             entry->resetChanged();
         }
 

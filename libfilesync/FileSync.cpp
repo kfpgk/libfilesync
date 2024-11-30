@@ -62,7 +62,7 @@ namespace filesync {
             enum ConflictResolveStrategy conflictResolveStrategy = ConflictResolveStrategy::None;
             enum SyncStrategy syncStrategy = SyncStrategy::None;
             std::chrono::milliseconds interval = 5s;
-            std::shared_ptr<ProtocolClient> protocolClient = nullptr;
+            std::shared_ptr<protocol::Client> protocolClient = nullptr;
             std::unique_ptr<core::sync_data::Entry> entry = nullptr;
             std::unique_ptr<core::conflict::Resolver> resolver = nullptr;
             std::unique_ptr<core::FileSyncer> fileSyncer = nullptr;
@@ -179,7 +179,7 @@ namespace filesync {
 
         switch (protocolType) {
             case ProtocolType::FTP:
-                protocolClient = std::make_unique<FtpClient>(serverAddress, remoteRoot); 
+                protocolClient = std::make_unique<protocol::FtpClient>(serverAddress, remoteRoot); 
                 break;
             default:
                 throw FileSyncException("Unsupported protocol type.",

@@ -3,7 +3,7 @@
 
 #include <libfilesync/core/sync_data/Entry.hpp>
 #include <libfilesync/core/conflict/Resolver.hpp>
-#include <libfilesync/protocol/ProtocolClient.hpp>
+#include <libfilesync/protocol/Client.hpp>
 #include <libfilesync/FileSyncLocks.hpp>
 
 #include <memory>
@@ -22,17 +22,17 @@ namespace filesync::core {
         public:     
             FileSyncer(
                 sync_data::Entry& syncContent,
-                ProtocolClient& protocolClient,
+                protocol::Client& protocolClient,
                 conflict::Resolver& resolver);
 
             FileSyncer(
                 sync_data::Entry& syncContent,
-                ProtocolClient& protocolClient,
+                protocol::Client& protocolClient,
                 conflict::Resolver& resolver,
                 std::shared_ptr<FileSyncLocks> locks);
 
         protected:           
-            ProtocolClient& getProtocolClient();
+            protocol::Client& getProtocolClient();
             conflict::Resolver& getResolver();
             FileSyncLocks& getLocks();
         
@@ -40,7 +40,7 @@ namespace filesync::core {
             [[nodiscard]] bool fileExistsRemotely(sync_data::Entry* entry);
 
         private: 
-            ProtocolClient& protocolClient;
+            protocol::Client& protocolClient;
             conflict::Resolver& resolver;
             std::shared_ptr<FileSyncLocks> locks;
             
