@@ -28,7 +28,8 @@ namespace filesync::curl::storage {
      * function is declared a friend function inside the
      * class definition.
      */
-    extern "C" size_t fileStorageWriteCallback(char *contents, size_t size, size_t count, FILE *target);
+    extern "C" size_t fileStorageWriteCallback(
+        char* contents, size_t size, size_t count, FILE* target);
 
     /**
      * @brief Callback function for cURL READFUNCTION option
@@ -44,8 +45,13 @@ namespace filesync::curl::storage {
      * function is declared a friend function inside the
      * class definition.
      */
-    extern "C" size_t fileStorageReadCallback(char *buffer, size_t size, size_t count, FILE *contents);
+    extern "C" size_t fileStorageReadCallback(
+        char* buffer, size_t size, size_t count, FILE* contents);
 
+    /**
+     * @brief Class that stores CURL transfer objects
+     * in a file.
+     */
     class FileStorage : public Storage {
 
         enum class FileAccessType {read, write}; 
@@ -53,8 +59,6 @@ namespace filesync::curl::storage {
         public:
             explicit FileStorage(const std::filesystem::path& path);
             ~FileStorage();
-
-            std::filesystem::path getFilePath();
 
         private:
             std::filesystem::path path;
@@ -76,10 +80,10 @@ namespace filesync::curl::storage {
             void doFlush() override;
 
             friend size_t fileStorageWriteCallback(
-                char *contents, size_t size, size_t count, FILE *target);  
+                char *contents, size_t size, size_t count, FILE* target);  
 
             friend size_t fileStorageReadCallback(
-                char *buffer, size_t size, size_t count, FILE *contents);
+                char *buffer, size_t size, size_t count, FILE* contents);
 
             friend class unit_test::FileStorageTest;
 

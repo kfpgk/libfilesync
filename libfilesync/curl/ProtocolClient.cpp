@@ -63,6 +63,12 @@ namespace filesync::curl {
         uploadFileStorage->setupRead(optionFactory);
     }
 
+    void ProtocolClient::setInMemoryDataForUpload(storage::CharBuffer& data) {
+        DEBUG("Setting up memory storage for upload.");
+        uploadMemoryStorage = std::make_unique<storage::MemoryStorage>(data);
+        uploadMemoryStorage->setupRead(optionFactory);        
+    }
+
     void ProtocolClient::setRemoteDir(const std::filesystem::path& path) {        
         using namespace std::filesystem;
         remoteDirPath = path;
@@ -83,10 +89,16 @@ namespace filesync::curl {
         downloadFileStorage->setupWrite(optionFactory);
     }
 
+    void ProtocolClient::prepareDownloadToMemory(storage::CharBuffer& data) {
+        DEBUG("Setting up memory storage as download destination");
+        downloadMemoryStorage = std::make_unique<storage::MemoryStorage>(data);
+        downloadMemoryStorage->setupWrite(optionFactory);        
+    }
+
     void ProtocolClient::upload() {
         DEBUG_ENTER();
 
-        validateLocalUploadFile();
+        validateLocalUploadSource();
         validateRemoteFilePath();
         doUpload();
 
@@ -108,7 +120,7 @@ namespace filesync::curl {
     void ProtocolClient::download() {
         DEBUG_ENTER();
 
-        validateLocalDownloadFile();
+        validateLocalDownloadDestination();
         validateRemoteFilePath();
         doDownload();
 
@@ -192,16 +204,16 @@ namespace filesync::curl {
         return remoteDirPath.string();
     }
 
-    void ProtocolClient::validateLocalDownloadFile() const {
-        if (!downloadFileStorage) {
-            throw Exception("Local download file storage not set up.", \
+    void ProtocolClient::validateLocalDownloadDestination() const {
+        if (!downloadFileStorage && !downloadMemoryStorage) {
+            throw Exception("Local download storage not set up.", \
                 __FILE__, __LINE__); 
         }
     }
 
-    void ProtocolClient::validateLocalUploadFile() const {
-        if (!uploadFileStorage) {
-            throw Exception("Local upload file storage not set up.", \
+    void ProtocolClient::validateLocalUploadSource() const {
+        if (!uploadFileStorage && !uploadMemoryStorage) {
+            throw Exception("Local upload storage not set up.", \
                 __FILE__, __LINE__); 
         }
     }

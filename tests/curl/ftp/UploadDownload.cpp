@@ -22,7 +22,11 @@ namespace filesync::integration_test::curl::ftp {
             file1Content{"file1 content"},
             file2Name{"file2"},
             file2RemotePath{pathOnServer + separator + file2Name},
-            file2Content{"file2 content"} {
+            file2Content{"file2 content"},
+            binaryFile1Name{"file1.bin"},
+            binaryFile1RemotePath{pathOnServer + separator + binaryFile1Name},
+            binaryFile1Content{42},
+            binaryFile2Name{"file2.bin"} {
 
         TestCase uploadUninitialized {
             .name = "Upload without defining local and remote paths",
@@ -88,11 +92,25 @@ namespace filesync::integration_test::curl::ftp {
         addTestCase(upload);
 
         TestCase download {
-            .name = "upload to server",
+            .name = "download from server",
             .perform = std::bind(&UploadDownload::performDownload, this),
             .evaluate = std::bind(&UploadDownload::evaluateDownload, this)
         };
         addTestCase(download);
+
+        TestCase uploadBinaryFile {
+            .name = "upload binary file to server",
+            .perform = std::bind(&UploadDownload::performUploadBinaryFile, this),
+            .evaluate = std::bind(&UploadDownload::evaluateUploadBinaryFile, this)
+        };
+        addTestCase(uploadBinaryFile);
+
+        TestCase downloadBinaryFile {
+            .name = "download binary file from server",
+            .perform = std::bind(&UploadDownload::performDownloadBinaryFile, this),
+            .evaluate = std::bind(&UploadDownload::evaluateDownloadBinaryFile, this)
+        };
+        addTestCase(downloadBinaryFile);
 
     }
 
@@ -104,6 +122,9 @@ namespace filesync::integration_test::curl::ftp {
         }
         localFile << file1Content << std::endl;
         localFile.close();
+
+        std::ofstream binFile(binaryFile1Name, std::ios::binary | std::ios::out);
+        binFile.write(reinterpret_cast<char*>(&binaryFile1Content), sizeof(int));
     }
 
     void UploadDownload::performUploadUninitialized() {
@@ -328,6 +349,55 @@ namespace filesync::integration_test::curl::ftp {
         std::getline(localFile, line);
         if (line != file1Content) {
             throw FileSyncException("Content of downloaded file did not meet expectation");
+        }
+    }
+
+    void UploadDownload::performUploadBinaryFile() {
+
+        filesync::curl::FtpClient client(server);
+
+        client.setLocalFileForUpload(binaryFile1Name);
+        client.setRemoteFile(binaryFile1RemotePath);
+        client.upload();
+
+    }
+
+    void UploadDownload::evaluateUploadBinaryFile() {
+        filesync::curl::FtpClient client(server);
+
+        client.setRemoteFile(binaryFile1RemotePath);
+        if (!client.remoteEntryExists()) {
+            throw FileSyncException("File not found on server after upload",
+                __FILE__, __LINE__);
+        }
+        client.deleteRemoteFile();
+    }
+
+    void UploadDownload::performDownloadBinaryFile() {
+
+        auto localSetup = [this]() {
+            filesync::curl::FtpClient client(server);
+            client.setLocalFileForUpload(binaryFile1Name);
+            client.setRemoteFile(binaryFile1RemotePath);
+            client.upload();
+        };
+
+        localSetup();
+
+        filesync::curl::FtpClient client(server);
+        client.createLocalFileForDownload(binaryFile2Name);
+        client.setRemoteFile(binaryFile1RemotePath);
+        client.download();
+    }
+
+    void UploadDownload::evaluateDownloadBinaryFile() {
+        std::ifstream binFile(binaryFile2Name, std::ios::out | std::ios::binary);
+        int content;
+        binFile.read(reinterpret_cast<char*>(&content), sizeof(int));
+
+        if (content != binaryFile1Content) {
+            throw FileSyncException("Content of downloaded binary file is not as expected",
+                __FILE__, __LINE__);            
         }
     }
 

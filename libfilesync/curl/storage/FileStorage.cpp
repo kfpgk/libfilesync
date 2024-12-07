@@ -21,10 +21,6 @@ namespace filesync::curl::storage {
         }
     }
 
-    std::filesystem::path FileStorage::getFilePath() {
-        return path;
-    }
-
     void FileStorage::doSetupRead(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_READFUNCTION, &fileStorageReadCallback)->set();
         setFile(optionFactory, FileAccessType::read);
@@ -116,8 +112,9 @@ namespace filesync::curl::storage {
      * is written to. If it is NULL, we discard the received
      * data.
      */
-    extern "C" size_t fileStorageWriteCallback(char *contents,
-        size_t size, size_t count, FILE *target) {
+    extern "C" size_t fileStorageWriteCallback(char* contents,
+        size_t size, size_t count, FILE* target) {
+
         if (target) {
             return std::fwrite(contents, size, count, target);
         } else {
@@ -132,8 +129,9 @@ namespace filesync::curl::storage {
      * @param[in] contents Source file which the outgoing data
      * is read from.
      */
-    extern "C" size_t fileStorageReadCallback(char *buffer,
-        size_t size, size_t count, FILE *contents) {
+    extern "C" size_t fileStorageReadCallback(char* buffer,
+        size_t size, size_t count, FILE* contents) {
+
         return std::fread(buffer, size, count, contents);  
     }
 

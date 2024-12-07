@@ -1,15 +1,15 @@
-#include <tests/curl/ftp/UploadDownload.hpp>
+#include <tests/curl/storage/memory_storage/MemoryStorage.hpp>
 #include <tests/config/config.h>
 
 namespace test = filesync::integration_test;
 
 int main(int argc, char* argv[]) {
 
-    test::curl::ftp::UploadDownload test("curl ftp upload and download",
+    test::curl::storage::memory_storage::MemoryStorage test(
+        "curl upload and download to memory storage",
         LIBFILESYNC_TEST_FTP_SERVER,
         LIBFILESYNC_TEST_FTP_SERVER_DIR);
 
-    test.setKeepSandBox(true);
     test.run();
 
     return 0;

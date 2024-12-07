@@ -20,23 +20,23 @@ namespace filesync::curl::option {
             explicit Factory(wrapper::Easy& interface);
 
             template <typename... Args>
-            std::unique_ptr<Option> createGeneric(CURLoption curlOption, Args&&... args) const;
+            [[nodiscard]] std::unique_ptr<Option> createGeneric(CURLoption curlOption, Args&&... args) const;
 
-            std::unique_ptr<Collection> createCollection() const;
+            [[nodiscard]] std::unique_ptr<Collection> createCollection() const;
 
-            std::unique_ptr<Nobody> createNobody() const;
-            std::unique_ptr<Nobody> createVolatileNobody() const;
+            [[nodiscard]] std::unique_ptr<Nobody> createNobody() const;
+            [[nodiscard]] std::unique_ptr<Nobody> createVolatileNobody() const;
 
-            std::unique_ptr<Quote> createQuote() const;
-            std::unique_ptr<Quote> createQuote(const std::string& command) const;
-            std::unique_ptr<Quote> createVolatileQuote() const;
-            std::unique_ptr<Quote> createVolatileQuote(const std::string& command) const;
+            [[nodiscard]] std::unique_ptr<Quote> createQuote() const;
+            [[nodiscard]] std::unique_ptr<Quote> createQuote(const std::string& command) const;
+            [[nodiscard]] std::unique_ptr<Quote> createVolatileQuote() const;
+            [[nodiscard]] std::unique_ptr<Quote> createVolatileQuote(const std::string& command) const;
 
-            std::unique_ptr<Upload> createUpload(bool value) const;
-            std::unique_ptr<Upload> createVolatileUpload(bool value) const;
+            [[nodiscard]] std::unique_ptr<Upload> createUpload(bool value) const;
+            [[nodiscard]] std::unique_ptr<Upload> createVolatileUpload(bool value) const;
 
-            std::unique_ptr<Verbose> createVerbose() const;
-            std::unique_ptr<Verbose> createVolatileVerbose() const;
+            [[nodiscard]] std::unique_ptr<Verbose> createVerbose() const;
+            [[nodiscard]] std::unique_ptr<Verbose> createVolatileVerbose() const;
 
         private:
             wrapper::Easy& interface;

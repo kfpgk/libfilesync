@@ -5,6 +5,8 @@
 #include <libfilesync/curl/wrapper/Easy.hpp>
 #include <libfilesync/curl/wrapper/Url.hpp>
 #include <libfilesync/curl/storage/FileStorage.hpp>
+#include <libfilesync/curl/storage/MemoryStorage.hpp>
+#include <libfilesync/curl/storage/CharBuffer.hpp>
 
 #include <curl/curl.h>
 
@@ -37,12 +39,14 @@ namespace filesync::curl {
             void setInterface(std::unique_ptr<wrapper::Easy> interface);
             void setRemoteFile(const std::filesystem::path& path);
             void setLocalFileForUpload(const std::filesystem::path& path);
+            void setInMemoryDataForUpload(storage::CharBuffer& data);
             void setRemoteDir(const std::filesystem::path& path);
             /**
              * @brief Creates an empty local file to which a download
              * will be written.
              */
             void createLocalFileForDownload(const std::filesystem::path& path);
+            void prepareDownloadToMemory(storage::CharBuffer& data);
             void setCreateMissingDirs(bool value); 
 
             void upload();
@@ -72,9 +76,11 @@ namespace filesync::curl {
 
             std::unique_ptr<storage::FileStorage> downloadFileStorage;
             std::unique_ptr<storage::FileStorage> uploadFileStorage;
+            std::unique_ptr<storage::MemoryStorage> downloadMemoryStorage;
+            std::unique_ptr<storage::MemoryStorage> uploadMemoryStorage;
 
-            void validateLocalDownloadFile() const;
-            void validateLocalUploadFile() const;
+            void validateLocalDownloadDestination() const;
+            void validateLocalUploadSource() const;
             void validateRemoteFilePath() const;
             void validateRemoteDirPath() const;
 
