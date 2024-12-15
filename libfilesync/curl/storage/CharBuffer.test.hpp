@@ -7,7 +7,9 @@ namespace filesync::curl::storage::unit_test {
 
         public:
             void test_clear();
+            void test_get_size();
             void test_byte_array_and_string_write();
+            void test_get_span();
             
     };
 

@@ -13,6 +13,22 @@ namespace filesync::curl::storage {
         position{0} {
     }
 
+    CharBuffer::CharBuffer(std::string data) :
+        data{static_cast<char*>(std::malloc(1))},
+        size{0},
+        position{0} {
+
+        write(data);
+    }
+
+    CharBuffer::CharBuffer(char* data, std::size_t dataSize) :
+        data{static_cast<char*>(std::malloc(1))},
+        size{0},
+        position{0} {
+
+        write(data, dataSize);
+    }
+
     CharBuffer::~CharBuffer() {
         std::free(data);
     }
@@ -95,8 +111,8 @@ namespace filesync::curl::storage {
         return true;
     }
 
-    std::vector<char, ConsumingAllocator<char>> CharBuffer::retrieveVector() {
-        return std::vector<char, ConsumingAllocator<char>>(ConsumingAllocator(data, size));
+    std::span<char> CharBuffer::getSpan() const {
+        return std::span{data, size};
     }
 
     bool operator!=(const CharBuffer& lhs, const CharBuffer& rhs) {
