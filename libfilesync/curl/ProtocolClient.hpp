@@ -6,7 +6,7 @@
 #include <libfilesync/curl/wrapper/Url.hpp>
 #include <libfilesync/curl/storage/FileStorage.hpp>
 #include <libfilesync/curl/storage/MemoryStorage.hpp>
-#include <libfilesync/curl/storage/CharBuffer.hpp>
+#include <libfilesync/curl/storage/MemoryStorageHandle.hpp>
 
 #include <curl/curl.h>
 
@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace filesync::curl {
 
@@ -24,7 +25,7 @@ namespace filesync::curl {
     /**
      * Non-virtual interface class for cURL protocols
      * 
-     * Roles:
+     * Patterns:
      *  - Service/adaptee of the adapter pattern
      */
     class ProtocolClient {
@@ -39,14 +40,38 @@ namespace filesync::curl {
             void setInterface(std::unique_ptr<wrapper::Easy> interface);
             void setRemoteFile(const std::filesystem::path& path);
             void setLocalFileForUpload(const std::filesystem::path& path);
-            void setInMemoryDataForUpload(storage::CharBuffer& data);
+            void setInMemoryDataForUpload(const std::span<char>& data);
             void setRemoteDir(const std::filesystem::path& path);
             /**
              * @brief Creates an empty local file to which a download
              * will be written.
              */
             void createLocalFileForDownload(const std::filesystem::path& path);
-            void prepareDownloadToMemory(storage::CharBuffer& data);
+            void prepareDownloadToMemory();
+            /**
+             * @brief Returns a read reference to volatile memory in 
+             * the form of a std::span
+             * 
+             * Memory is deallocated when protocol client instance gets
+             * destroyed. If you want to have ownership refer to
+             * 'getCopyOfDownloadedMemory' or 'takeDownloadedMemory'.
+             */
+            std::span<char> getReferenceToDownloadedMemory();
+            /**
+             * @brief Returns a copy of the downloaded memory
+             * 
+             * Copies the downloaded memory into a std::vector.
+             */
+            std::vector<char> getCopyOfDownloadedMemory();
+            /**
+             * @brief Returns a handle which has ownership to the
+             * downloaded memory. 
+             * 
+             * This handle can be passed back to a protocol instance
+             * for upload. Involves no copy and takes ownership over
+             * the memory away from this protocol instance.
+             */
+            std::unique_ptr<storage::MemoryStorageHandle> takeDownloadedMemory();
             void setCreateMissingDirs(bool value); 
 
             void upload();
@@ -83,6 +108,7 @@ namespace filesync::curl {
             void validateLocalUploadSource() const;
             void validateRemoteFilePath() const;
             void validateRemoteDirPath() const;
+            void validateDownloadMemoryStorage() const;
 
             virtual void doUpload();
             virtual void doDownload();

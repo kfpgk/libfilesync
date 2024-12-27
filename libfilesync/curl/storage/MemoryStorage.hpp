@@ -1,11 +1,10 @@
 #ifndef LIBFILESYNC_CURL_STORAGE_MEMORY_STORAGE_HPP
 #define LIBFILESYNC_CURL_STORAGE_MEMORY_STORAGE_HPP
 
-#include <libfilesync/curl/storage/Storage.hpp>
 #include <libfilesync/curl/storage/CharBuffer.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
 
-#include <memory>
+#include <span>
 
 namespace filesync::curl::storage {
 
@@ -46,25 +45,30 @@ namespace filesync::curl::storage {
     /**
      * @brief Class that stores CURL transfer objects
      * in memory.
+     * 
+     * Patterns:
+     * 
+     *  - Element of visitor pattern
      */
-    class MemoryStorage : public Storage {
+    class MemoryStorage {
 
         public:
-            explicit MemoryStorage(CharBuffer& data);
+            MemoryStorage() = default;
+            explicit MemoryStorage(const std::span<char>& data);
 
+            std::span<char> getDataReference() const;
+            void setupRead(const option::Factory& optionFactory);
+            void setupWrite(const option::Factory& optionFactory);
+            void flush();
+            
         private:
-            CharBuffer& data;
-
-            void doSetupRead(const option::Factory& optionFactory) override;
-            void doSetupWrite(const option::Factory& optionFactory) override;
-            void doFlush() override;
+            CharBuffer data;
 
             friend size_t memoryStorageWriteCallback(
                 char* contents, size_t size, size_t count, void* target);  
 
             friend size_t memoryStorageReadCallback(
                 char* buffer, size_t size, size_t count, void* contents);
-
 
     };
 

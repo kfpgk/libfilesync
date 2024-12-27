@@ -1,8 +1,9 @@
 #ifndef LIBFILESYNC_PROTOCOL_CLIENT_HPP
 #define LIBFILESYNC_PROTOCOL_CLIENT_HPP
 
-#include <string>
 #include <filesystem>
+#include <span>
+#include <string>
 
 namespace filesync::protocol {
 
@@ -21,9 +22,15 @@ namespace filesync::protocol {
             void download(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
+            void downloadToMemory(
+                std::span<char>& local,
+                const std::filesystem::path& remote);
             void upload(const std::filesystem::path& local);
             void upload(
                 const std::filesystem::path& local,
+                const std::filesystem::path& remote);
+            void uploadFromMemory(
+                const std::span<char>& local,
                 const std::filesystem::path& remote);
             void setRemoteRootPath(
                 const std::filesystem::path& remoteRoot);
@@ -45,9 +52,15 @@ namespace filesync::protocol {
 
             virtual void doDownload(
                 const std::filesystem::path& local,
+                const std::filesystem::path& remote) = 0;
+            virtual void doDownloadToMemory(
+                std::span<char>& local,
                 const std::filesystem::path& remote) = 0;          
             virtual void doUpload(
                 const std::filesystem::path& local,
+                const std::filesystem::path& remote) = 0;
+            virtual void doUploadFromMemory(
+                const std::span<char>& local,
                 const std::filesystem::path& remote) = 0;
             [[nodiscard]] virtual bool doExistsOnServer(
                 const std::filesystem::path& remote) = 0;

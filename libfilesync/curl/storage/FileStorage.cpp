@@ -21,17 +21,21 @@ namespace filesync::curl::storage {
         }
     }
 
-    void FileStorage::doSetupRead(const option::Factory& optionFactory) {
+    std::filesystem::path FileStorage::getPath() const {
+        return path;
+    }
+
+    void FileStorage::setupRead(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_READFUNCTION, &fileStorageReadCallback)->set();
         setFile(optionFactory, FileAccessType::read);
     }
 
-    void FileStorage::doSetupWrite(const option::Factory& optionFactory) {
+    void FileStorage::setupWrite(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_WRITEFUNCTION, &fileStorageWriteCallback)->set();
         setFile(optionFactory, FileAccessType::write);
     }
 
-    void FileStorage::doFlush() {
+    void FileStorage::flush() {
         if (filePointer) {
             std::fflush(filePointer);
         }

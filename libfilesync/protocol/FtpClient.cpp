@@ -21,10 +21,10 @@ namespace filesync::protocol {
         const std::filesystem::path& remote) {
 
         switch(getRemoteEntryType(remote)) {
-            case data::EntryType::dir:
+            case filesync::data::EntryType::dir:
                 doDownloadDirectory(local, remote);
                 break;
-            case data::EntryType::file:
+            case filesync::data::EntryType::file:
                 doDownloadFile(local, remote);
                 break;
             default:
@@ -64,6 +64,42 @@ namespace filesync::protocol {
             e.addContext(__FILE__, __LINE__);
             throw e;
         }        
+    }
+
+    void FtpClient::doDownloadToMemory(
+        std::span<char>& local,
+        const std::filesystem::path& remote) {
+
+        switch(getRemoteEntryType(remote)) {
+            case filesync::data::EntryType::dir:
+                throw FileSyncException("Cannot download remote directory to "\
+                    "memory buffer");
+                break;
+            case filesync::data::EntryType::file:
+                doDownloadFileToMemory(local, remote);
+                break;
+            default:
+                throw FileSyncException("Remote entry '" 
+                    + getCompleteRemoteFilePath(remote).string()  + "' not found.");
+        }
+               
+    }
+
+    void FtpClient::doDownloadFileToMemory(
+        std::span<char>& local,
+        const std::filesystem::path& remote) {
+
+        try {
+            curlClient.prepareDownloadToMemory();
+            curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
+            curlClient.download();
+            local = curlClient.getReferenceToDownloadedMemory();
+        } catch (FileSyncException& e) {
+            e.addContext(__FILE__, __LINE__);
+            throw e;
+        }
+
+
     }
 
     void FtpClient::doUpload(
@@ -111,9 +147,24 @@ namespace filesync::protocol {
 
     }        
 
+    void FtpClient::doUploadFromMemory(
+        const std::span<char>& local,
+        const std::filesystem::path& remote) {
+
+        try {
+            curlClient.setInMemoryDataForUpload(local);
+            curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
+            curlClient.upload();
+        } catch (FileSyncException& e) {
+            e.addContext(__FILE__, __LINE__);
+            throw e;
+        }
+
+    }
+
     bool FtpClient::doExistsOnServer(const std::filesystem::path& remote) {
         try {
-            return getRemoteEntryType(remote) != data::EntryType::none; 
+            return getRemoteEntryType(remote) != filesync::data::EntryType::none; 
         } catch (FileSyncException& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -124,11 +175,11 @@ namespace filesync::protocol {
         
         try {
         switch(getRemoteEntryType(remote)) {
-            case data::EntryType::dir:
+            case filesync::data::EntryType::dir:
                 curlClient.setRemoteDir(getCompleteRemoteFilePath(remote));
                 curlClient.deleteRemoteDir();
                 break;
-            case data::EntryType::file:
+            case filesync::data::EntryType::file:
                 curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
                 curlClient.deleteRemoteFile();
                 break;
@@ -141,21 +192,21 @@ namespace filesync::protocol {
         }
     }
 
-    data::EntryType FtpClient::getRemoteEntryType(
+    filesync::data::EntryType FtpClient::getRemoteEntryType(
         const std::filesystem::path& remote) {
 
         curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
         if (curlClient.remoteEntryExists()) {
             DEBUG("Remote entry '" << getCompleteRemoteFilePath(remote).string() << "' is a file.");
-            return data::EntryType::file;
+            return filesync::data::EntryType::file;
         }
         curlClient.setRemoteDir(getCompleteRemoteFilePath(remote));
         if (curlClient.remoteEntryExists()) {
             DEBUG("Remote entry '" << getCompleteRemoteFilePath(remote).string() << "' is a directory.");
-            return data::EntryType::dir;
+            return filesync::data::EntryType::dir;
         }
         DEBUG("Remote entry '" << getCompleteRemoteFilePath(remote).string() << "' does not exist.");
-        return data::EntryType::none;
+        return filesync::data::EntryType::none;
     }
 
 }

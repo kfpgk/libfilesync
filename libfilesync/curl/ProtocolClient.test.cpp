@@ -10,19 +10,19 @@ using namespace filesync::utility;
 
 int main(int argc, char* argv[]) {
 
-    unit_test::ProtocolClientTest protocolClientTest;
+    unit_test::ProtocolClientTest test;
 
-    protocolClientTest.set_bad_host_name();
+    test.set_bad_host_name();
 
-    protocolClientTest.set_valid_remote_file();
-    protocolClientTest.set_remote_file_with_special_chars();
-    protocolClientTest.set_non_existing_local_file_for_upload();
+    test.set_valid_remote_file();
+    test.set_remote_file_with_special_chars();
+    test.set_non_existing_local_file_for_upload();
 
-    protocolClientTest.download_uninitialized_easy_stubbed();
-    protocolClientTest.download_with_uninitialized_local_path_easy_stubbed();
+    test.download_uninitialized_easy_stubbed();
+    test.download_with_uninitialized_local_path_easy_stubbed();
 
-    protocolClientTest.upload_uninitialized_easy_stubbed();
-    protocolClientTest.upload_with_uninitialized_local_path_easy_stubbed();
+    test.upload_uninitialized_easy_stubbed();
+    test.upload_with_uninitialized_local_path_easy_stubbed();
 
     Logger::getInstance().log(LogDomain::TestResult,
         "curl::ProtocolClient: passed", __FILE__, __LINE__);

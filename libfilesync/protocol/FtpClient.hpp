@@ -5,9 +5,9 @@
 #include <libfilesync/curl/FtpClient.hpp>
 #include <libfilesync/data/Data.hpp>
 
-#include <string>
 #include <filesystem>
-
+#include <span>
+#include <string>
 namespace filesync::protocol {
 
     /**
@@ -35,18 +35,27 @@ namespace filesync::protocol {
             void doDownloadFile(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
+            void doDownloadFileToMemory(
+                std::span<char>& local,
+                const std::filesystem::path& remote);
             void doDownloadDirectory(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
 
-            data::EntryType getRemoteEntryType(
+            filesync::data::EntryType getRemoteEntryType(
                 const std::filesystem::path& remote);   
 
             void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override;
+            void doDownloadToMemory(
+                std::span<char>& local,
+                const std::filesystem::path& remote) override;
             void doUpload(
                 const std::filesystem::path& local,
+                const std::filesystem::path& remote) override;
+            void doUploadFromMemory(
+                const std::span<char>& local,
                 const std::filesystem::path& remote) override;
             [[nodiscard]] bool doExistsOnServer(
                 const std::filesystem::path& remote) override;

@@ -2,9 +2,10 @@
 #define LIBFILESYNC_TESTS_CURL_STORAGE_MEMORY_STORAGE_MEMORY_STORAGE_HPP
 
 #include <tests/template/IntegrationTest.hpp>
-#include <libfilesync/curl/storage/CharBuffer.hpp>
 
+#include <span>
 #include <string>
+#include <vector>
 
 namespace filesync::integration_test::curl::storage::memory_storage {
 
@@ -26,8 +27,11 @@ namespace filesync::integration_test::curl::storage::memory_storage {
 
             std::string testCase2Content;
 
-            filesync::curl::storage::CharBuffer data1;
-            filesync::curl::storage::CharBuffer data2;            
+            std::span<char> dataRef1;
+            std::span<char> dataRef2;
+
+            std::vector<char> data1;
+            std::vector<char> data2;            
 
             /**
              * @brief Test download to memory

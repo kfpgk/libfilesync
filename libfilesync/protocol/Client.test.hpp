@@ -3,21 +3,29 @@
 
 #include <libfilesync/protocol/Client.hpp>
 
+#include <span>
+
 namespace filesync::protocol::unit_test {
 
     class ConcreteClient : public Client {
 
         private:
-            virtual void doDownload(
+            void doDownload(
                 const std::filesystem::path& local,
-                const std::filesystem::path& remote) {};          
-            virtual void doUpload(
+                const std::filesystem::path& remote) override {};
+            void doDownloadToMemory(
+                std::span<char>& local,
+                const std::filesystem::path& remote) override {};          
+            void doUpload(
                 const std::filesystem::path& local,
-                const std::filesystem::path& remote) {};
-            [[nodiscard]] virtual bool doExistsOnServer(
-                const std::filesystem::path& remote) { return true; };
-            virtual void doDeleteOnServer(
-                const std::filesystem::path& remote) {};
+                const std::filesystem::path& remote) override {};
+            void doUploadFromMemory(
+                const std::span<char>& local,
+                const std::filesystem::path& remote) override {};
+            [[nodiscard]] bool doExistsOnServer(
+                const std::filesystem::path& remote) override { return true; };
+            void doDeleteOnServer(
+                const std::filesystem::path& remote) override {};
 
     };
 

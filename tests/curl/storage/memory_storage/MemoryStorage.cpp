@@ -23,7 +23,7 @@ namespace filesync::integration_test::curl::storage::memory_storage {
             file2Content{"file2 content"},
             testCase2Content{"test case 2 file content"} {
 
-        data2.write("file1 content");
+        dataRef2 = {file1Content.begin(), file1Content.end()};
 
         TestCase download {
             .name = "Test download to memory",
@@ -50,15 +50,34 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         proto.upload(file1Name);
 
         filesync::curl::FtpClient curlProto(server);
-        data1.clear();  
-        curlProto.prepareDownloadToMemory(data1);
+        curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
+        data1 = curlProto.getCopyOfDownloadedMemory();
     }
 
     void MemoryStorage::evaluateDownload() {
-        if (data1 != data2) {
-            data1.print();
+        bool success = true;
+        if (data1.size() != dataRef2.size()) {
+            success = false;
+        } else {
+            for (int i = 0; i < data1.size(); i++) {
+                if (data1[i] != dataRef2[i]) {
+                    success = false;
+                }
+            }
+        }
+        if (!success) {
+            std::cout << "Downloaded content (size = " << data1.size() << "):" << std::endl;
+            for (auto i : data1) {
+                std::cout << i;
+            }
+            std::cout << std::endl;
+            std::cout << "Expected content (size = " << dataRef2.size() << "):" << std::endl;
+            for (auto i : dataRef2) {
+                std::cout << i;
+            }
+            std::cout << std::endl;
             throw FileSyncException("Download to memory does not have correct content.",
                 __FILE__, __LINE__);
         }
@@ -66,24 +85,42 @@ namespace filesync::integration_test::curl::storage::memory_storage {
 
     void MemoryStorage::performUpload() {
         filesync::curl::FtpClient curlProto(server);
-        data1.clear();
-        data1.write(testCase2Content);
-        data1.print();  
-        curlProto.setInMemoryDataForUpload(data1);
+
+        dataRef1 = {testCase2Content.begin(), testCase2Content.end()};
+        curlProto.setInMemoryDataForUpload(dataRef1);
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.upload();
     }
 
     void MemoryStorage::evaluateUpload() {
         filesync::curl::FtpClient curlProto(server);
-        data2.clear();  
-        curlProto.prepareDownloadToMemory(data2);
+        curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
+        dataRef2 = curlProto.getReferenceToDownloadedMemory();
 
-        if (data1 != data2) {
-            data2.print();
-            throw FileSyncException("Upload from memory did not result in expected content.",
+        bool success = true;
+        if (dataRef1.size() != dataRef2.size()) {
+            success = false;
+        } else {
+            for (int i = 0; i < dataRef1.size(); i++) {
+                if (dataRef1[i] != dataRef2[i]) {
+                    success = false;
+                }
+            }
+        }
+        if (!success) {
+            std::cout << "Uploaded content (size = " << data1.size() << "):" << std::endl;
+            for (auto i : dataRef1) {
+                std::cout << i;
+            }
+            std::cout << std::endl;
+            std::cout << "Expected content (size = " << dataRef2.size() << "):" << std::endl;
+            for (auto i : dataRef2) {
+                std::cout << i;
+            }
+            std::cout << std::endl;
+            throw FileSyncException("Upload from memory does not have correct content.",
                 __FILE__, __LINE__);
         }
     }

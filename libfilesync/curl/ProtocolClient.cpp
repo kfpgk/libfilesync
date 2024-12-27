@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <sstream>
+#include <vector>
 
 using namespace filesync::utility;
 
@@ -56,14 +57,13 @@ namespace filesync::curl {
         DEBUG("Setting file '" + path.string() + "' for upload.");
         if (!std::filesystem::is_regular_file(path)) {
             throw Exception(std::string("Local file not found: '" \
-                + path.string() + "'"), \
-                __FILE__, __LINE__);  
+                + path.string() + "'"), __FILE__, __LINE__);  
         }
         uploadFileStorage = std::make_unique<storage::FileStorage>(path);
         uploadFileStorage->setupRead(optionFactory);
     }
 
-    void ProtocolClient::setInMemoryDataForUpload(storage::CharBuffer& data) {
+    void ProtocolClient::setInMemoryDataForUpload(const std::span<char>& data) {
         DEBUG("Setting up memory storage for upload.");
         uploadMemoryStorage = std::make_unique<storage::MemoryStorage>(data);
         uploadMemoryStorage->setupRead(optionFactory);        
@@ -89,10 +89,29 @@ namespace filesync::curl {
         downloadFileStorage->setupWrite(optionFactory);
     }
 
-    void ProtocolClient::prepareDownloadToMemory(storage::CharBuffer& data) {
+    void ProtocolClient::prepareDownloadToMemory() {
         DEBUG("Setting up memory storage as download destination");
-        downloadMemoryStorage = std::make_unique<storage::MemoryStorage>(data);
+        downloadMemoryStorage = std::make_unique<storage::MemoryStorage>();
         downloadMemoryStorage->setupWrite(optionFactory);        
+    }
+
+    std::span<char> ProtocolClient::getReferenceToDownloadedMemory() {
+        validateDownloadMemoryStorage();
+        return downloadMemoryStorage->getDataReference();
+    }
+
+    std::vector<char> ProtocolClient::getCopyOfDownloadedMemory() {
+        validateDownloadMemoryStorage();
+        return std::vector<char> {
+            downloadMemoryStorage->getDataReference().begin(),
+            downloadMemoryStorage->getDataReference().end()};
+    }
+
+    std::unique_ptr<storage::MemoryStorageHandle> ProtocolClient::takeDownloadedMemory() {
+        validateDownloadMemoryStorage();
+        return std::make_unique<storage::MemoryStorageHandle>(
+            storage::MemoryStorageHandle::ConstructorPermission{0},
+            std::move(downloadMemoryStorage));
     }
 
     void ProtocolClient::upload() {
@@ -229,6 +248,13 @@ namespace filesync::curl {
         if (getRemoteDirPath().empty()) {
             throw Exception("Remote directory path not set.", \
                 __FILE__, __LINE__); 
+        }
+    }
+
+    void ProtocolClient::validateDownloadMemoryStorage() const {
+        if (!downloadMemoryStorage) {
+            throw Exception("Download memory storage is empty",
+                __FILE__, __LINE__);
         }
     }
 

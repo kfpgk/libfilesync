@@ -8,25 +8,33 @@
 
 namespace filesync::curl::storage {
 
-    MemoryStorage::MemoryStorage(CharBuffer& data) :
+    MemoryStorage::MemoryStorage(const std::span<char>& data) :
         data{data} {
 
     }
 
-    void MemoryStorage::doSetupRead(const option::Factory& optionFactory) {
+    std::span<char> MemoryStorage::getDataReference() const {
+        return data.getSpan();
+    }
+
+    void MemoryStorage::setupRead(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_READFUNCTION, &memoryStorageReadCallback)->set();
-        data.resetReadPosition();
+        data.resetPosition();
         optionFactory.createGeneric(CURLOPT_READDATA, static_cast<void*>(&data))->set();
     }
 
-    void MemoryStorage::doSetupWrite(const option::Factory& optionFactory) {
+    void MemoryStorage::setupWrite(const option::Factory& optionFactory) {
+        if (!data.hasMemoryOwnership()) {
+            throw Exception("Do not own underlying memory. Cannot write to this buffer",
+                __FILE__, __LINE__);               
+        }
         optionFactory.createGeneric(CURLOPT_WRITEFUNCTION, &memoryStorageWriteCallback)->set();
-        data.resetReadPosition();
+        data.resetPosition();
         DEBUG("Data address: " << &data);
         optionFactory.createGeneric(CURLOPT_WRITEDATA, static_cast<void*>(&data))->set();
     }
 
-    void MemoryStorage::doFlush() {
+    void MemoryStorage::flush() {
         /* Do nothing */
     }
 

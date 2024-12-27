@@ -8,32 +8,67 @@
 namespace filesync::curl::storage {
 
     CharBuffer::CharBuffer() :
-        data{static_cast<char*>(std::malloc(1))},
         size{0},
-        position{0} {
+        position{0},
+        owning{true} {
+
+        char* ptr = static_cast<char*>(std::malloc(1));
+        if(!ptr) {
+            throw Exception("Out of memory. malloc() returned NULL",
+                __FILE__, __LINE__);
+        }
+        data = ptr;
     }
 
     CharBuffer::CharBuffer(std::string data) :
-        data{static_cast<char*>(std::malloc(1))},
         size{0},
-        position{0} {
+        owning{true} {
+
+        char* ptr = static_cast<char*>(std::malloc(1));
+        if(!ptr) {
+            throw Exception("Out of memory. malloc() returned NULL",
+                __FILE__, __LINE__);
+        }
+        this->data = ptr;
+        position = this->data;
 
         write(data);
     }
 
     CharBuffer::CharBuffer(char* data, std::size_t dataSize) :
-        data{static_cast<char*>(std::malloc(1))},
         size{0},
-        position{0} {
+        owning{true} {
 
-        write(data, dataSize);
+        char* ptr = static_cast<char*>(std::malloc(1));
+        if(!ptr) {
+            throw Exception("Out of memory. malloc() returned NULL",
+                __FILE__, __LINE__);
+        }
+        this->data = ptr;
+        position = this->data;
+
+        size_t remaining = dataSize;
+        while (remaining > 0) {
+            size_t written = write(data, dataSize);
+            remaining -= written;
+        }
+    }
+
+    CharBuffer::CharBuffer(const std::span<char>& data) :
+        data{data.data()},
+        size{data.size()},
+        position{this->data},
+        owning{false} {
+
     }
 
     CharBuffer::~CharBuffer() {
-        std::free(data);
+        if (owning) {
+            std::free(data);
+        }
     }
 
-    void CharBuffer::resetReadPosition() {
+    void CharBuffer::resetPosition() {
         position = data;
     }
 
@@ -53,6 +88,7 @@ namespace filesync::curl::storage {
     }
 
     void CharBuffer::write(std::string writeData) {
+        checkOwnership();
         char* ptr = static_cast<char*>(std::realloc(data, size + writeData.size() + 1));
         if(!ptr) {
             throw Exception("Out of memory. realloc() returned NULL",
@@ -63,10 +99,11 @@ namespace filesync::curl::storage {
         std::memcpy(&(data[size]), writeData.data(), writeData.size());
         size += writeData.size();
         data[size] = 0;
-     
+        resetPosition();
     }
 
     std::size_t CharBuffer::write(char* writeData, std::size_t dataSize) {
+        checkOwnership();
         char* ptr = static_cast<char*>(std::realloc(data, size + dataSize + 1));
         if(!ptr) {
             throw Exception("Out of memory. realloc() returned NULL",
@@ -77,6 +114,7 @@ namespace filesync::curl::storage {
         std::memcpy(&(data[size]), writeData, dataSize);
         size += dataSize;
         data[size] = 0;
+        resetPosition();
 
         return dataSize;
     }
@@ -93,10 +131,30 @@ namespace filesync::curl::storage {
     }
 
     void CharBuffer::clear() {
+        checkOwnership();
         char* ptr = static_cast<char*>(std::realloc(data, 1));
+        if(!ptr) {
+            throw Exception("Out of memory. realloc() returned NULL",
+                __FILE__, __LINE__);
+        }
         data = ptr;
         size = 0;
-        position = 0;
+        resetPosition();
+    }
+
+    std::span<char> CharBuffer::getSpan() const {
+        return std::span{data, size};
+    }
+
+    bool CharBuffer::hasMemoryOwnership() const {
+        return owning;
+    }
+
+    void CharBuffer::checkOwnership() const {
+        if (!owning) {
+            throw Exception("Do not own underlying memory. Cannot write to this buffer",
+                __FILE__, __LINE__);            
+        }
     }
 
     bool operator==(const CharBuffer& lhs, const CharBuffer& rhs) {
@@ -109,10 +167,6 @@ namespace filesync::curl::storage {
             }
         }
         return true;
-    }
-
-    std::span<char> CharBuffer::getSpan() const {
-        return std::span{data, size};
     }
 
     bool operator!=(const CharBuffer& lhs, const CharBuffer& rhs) {

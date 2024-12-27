@@ -1,7 +1,6 @@
 #ifndef LIBFILESYNC_CURL_STORAGE_FILE_STORAGE_HPP
 #define LIBFILESYNC_CURL_STORAGE_FILE_STORAGE_HPP
 
-#include <libfilesync/curl/storage/Storage.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
 
 #include <cstdarg>
@@ -51,14 +50,22 @@ namespace filesync::curl::storage {
     /**
      * @brief Class that stores CURL transfer objects
      * in a file.
+     * 
+     * Patterns:
+     * 
+     *  - Element of visitor pattern
      */
-    class FileStorage : public Storage {
-
+    class FileStorage {
         enum class FileAccessType {read, write}; 
 
         public:
             explicit FileStorage(const std::filesystem::path& path);
             ~FileStorage();
+
+            std::filesystem::path getPath() const;
+            void setupRead(const option::Factory& optionFactory);
+            void setupWrite(const option::Factory& optionFactory);
+            void flush();
 
         private:
             std::filesystem::path path;
@@ -75,17 +82,13 @@ namespace filesync::curl::storage {
             void setFile(const option::Factory& optionFactory,
                 FileAccessType fileAccess);
 
-            void doSetupRead(const option::Factory& optionFactory) override;
-            void doSetupWrite(const option::Factory& optionFactory) override;
-            void doFlush() override;
+        friend size_t fileStorageWriteCallback(
+            char *contents, size_t size, size_t count, FILE* target);  
 
-            friend size_t fileStorageWriteCallback(
-                char *contents, size_t size, size_t count, FILE* target);  
+        friend size_t fileStorageReadCallback(
+            char *buffer, size_t size, size_t count, FILE* contents);
 
-            friend size_t fileStorageReadCallback(
-                char *buffer, size_t size, size_t count, FILE* contents);
-
-            friend class unit_test::FileStorageTest;
+        friend class unit_test::FileStorageTest;
 
     };
 

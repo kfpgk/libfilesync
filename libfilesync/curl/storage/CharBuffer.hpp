@@ -26,21 +26,26 @@ namespace filesync::curl::storage {
             CharBuffer();
             explicit CharBuffer(std::string data);
             CharBuffer(char* data, std::size_t dataSize);
+            CharBuffer(const std::span<char>& data);
             ~CharBuffer();
 
-            void resetReadPosition();
+            void resetPosition();
             void print();
             [[nodiscard]] std::size_t getSize() const;
             void write(std::string data);
-            std::size_t write(char* data, std::size_t dataSize);
-            std::size_t read(char* buffer, std::size_t bufferSize);
+            [[nodiscard]] std::size_t write(char* data, std::size_t dataSize);
+            [[nodiscard]] std::size_t read(char* buffer, std::size_t bufferSize);
             void clear();
             std::span<char> getSpan() const;
+            bool hasMemoryOwnership() const;
 
         private:
             char* data;
             std::size_t size;
             char* position;
+            bool owning = false;
+
+            void checkOwnership() const;
 
         friend bool operator==(const CharBuffer& lhs, const CharBuffer& rhs);
         friend bool operator!=(const CharBuffer& lhs, const CharBuffer& rhs);

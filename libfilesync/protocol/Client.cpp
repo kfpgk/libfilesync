@@ -36,6 +36,23 @@ namespace filesync::protocol {
         DEBUG_EXIT(); 
     }
 
+    void Client::downloadToMemory(
+        std::span<char>& local,
+        const std::filesystem::path& remote) {
+
+        DEBUG_ENTER(); 
+
+        std::stringstream message;
+        message << "Download: " << getCompleteRemoteFilePath(remote) << " to char buffer";
+        Logger::getInstance().log(LogDomain::Info, message.str());
+
+        checkForEmptyPath(remote);
+        doDownloadToMemory(local, remote);
+
+        DEBUG_EXIT(); 
+
+    }
+
     void Client::upload(const std::filesystem::path& local) {
         upload(local, local);
     }
@@ -55,6 +72,24 @@ namespace filesync::protocol {
         doUpload(local, remote);
 
         DEBUG_EXIT(); 
+    }
+
+    void Client::uploadFromMemory(
+        const std::span<char>& local,
+        const std::filesystem::path& remote) {
+
+        DEBUG_ENTER();
+
+        std::stringstream message;
+        message << "Upload: char buffer of size '" << local.size() << "' to "
+            << getCompleteRemoteFilePath(remote); 
+        Logger::getInstance().log(LogDomain::Info, message.str());
+
+        checkForEmptyPath(remote);
+        doUploadFromMemory(local, remote);
+
+        DEBUG_EXIT(); 
+
     }
 
     bool Client::existsOnServer(
