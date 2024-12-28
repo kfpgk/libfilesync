@@ -55,7 +55,7 @@ Run the tests using `ctest`
 make test
 ```
 
-Unit test names are preceded by `UT` and untegration test names are preceded by `IT` in the result view. Integration tests potentially require an available test server that must be configured in `tests/config/config.h` in order to run. This test server is expected to have a certain configuration (e.g. allow creation of directories, refer to the integration test objects for details).
+Unit test names are preceded by `UT` and integration test names are preceded by `IT` in the result view. Integration tests potentially require an available test server that must be configured in `tests/config/config.h` in order to run. This test server is expected to have a certain configuration (e.g. allow creation of directories, refer to the integration test objects for details).
 
 ## Debug build
 
@@ -85,7 +85,7 @@ cmake --build .
 |   +- CMakeLists.txt
 |   +- *.cpp
 |   +- *.hpp
-|   +- <em>component1</em>              # File sync library component sub directory
+|   +- <em>component1</em>                       # File sync library component sub directory
 |       +- doc
 |           +- *.puml                   # UML diagram
 |       +- CMakeLists.txt
@@ -94,7 +94,7 @@ cmake --build .
 |       +- *.tpp                        # Library template implementation file
 |       +- *.test.cpp                   # Unit tests source file
 |       +- *.test.hpp                   # Unit test header file
-|   +- <em>component2</em>              # File sync library component sub directory
+|   +- <em>component2</em>                       # File sync library component sub directory
 |       +- doc
 |           +- *.puml                   
 |       +- CMakeLists.txt
@@ -102,9 +102,9 @@ cmake --build .
 |       +- *.hpp
 |       +- *.test.cpp
 |       +- *.test.hpp
-+- tests                    # Integration tests
++- tests                            # Integration tests
 |   +- CMakeLists.txt
-|   +- <em>test1</em>               # Integration test sub directory
+|   +- <em>test1</em>                        # Integration test sub directory
 |       +- CMakeLists.txt
 |       +- *.cpp                    # Integration test source file
 |       +- *.hpp                    # Integration test header file
