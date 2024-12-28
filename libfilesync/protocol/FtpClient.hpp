@@ -2,6 +2,7 @@
 #define LIBFILESYNC_PROTOCOL_FTP_CLIENT_HPP
 
 #include <libfilesync/protocol/Client.hpp>
+#include <libfilesync/protocol/MemoryHandle.hpp>
 #include <libfilesync/curl/FtpClient.hpp>
 #include <libfilesync/data/Data.hpp>
 
@@ -35,8 +36,7 @@ namespace filesync::protocol {
             void doDownloadFile(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
-            void doDownloadFileToMemory(
-                std::span<char>& local,
+            [[nodiscard]] std::unique_ptr<MemoryHandle<char>> doDownloadFileToMemory(
                 const std::filesystem::path& remote);
             void doDownloadDirectory(
                 const std::filesystem::path& local,
@@ -48,8 +48,7 @@ namespace filesync::protocol {
             void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override;
-            void doDownloadToMemory(
-                std::span<char>& local,
+            [[nodiscard]] std::unique_ptr<MemoryHandle<char>> doDownloadToMemory(
                 const std::filesystem::path& remote) override;
             void doUpload(
                 const std::filesystem::path& local,

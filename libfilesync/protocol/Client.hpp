@@ -1,7 +1,10 @@
 #ifndef LIBFILESYNC_PROTOCOL_CLIENT_HPP
 #define LIBFILESYNC_PROTOCOL_CLIENT_HPP
 
+#include <libfilesync/protocol/MemoryHandle.hpp>
+
 #include <filesystem>
+#include <memory>
 #include <span>
 #include <string>
 
@@ -22,8 +25,7 @@ namespace filesync::protocol {
             void download(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
-            void downloadToMemory(
-                std::span<char>& local,
+            [[nodiscard]] std::unique_ptr<MemoryHandle<char>> downloadToMemory(
                 const std::filesystem::path& remote);
             void upload(const std::filesystem::path& local);
             void upload(
@@ -53,8 +55,7 @@ namespace filesync::protocol {
             virtual void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) = 0;
-            virtual void doDownloadToMemory(
-                std::span<char>& local,
+            [[nodiscard]] virtual std::unique_ptr<MemoryHandle<char>> doDownloadToMemory(
                 const std::filesystem::path& remote) = 0;          
             virtual void doUpload(
                 const std::filesystem::path& local,

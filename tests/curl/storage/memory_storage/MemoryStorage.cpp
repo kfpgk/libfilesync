@@ -23,7 +23,7 @@ namespace filesync::integration_test::curl::storage::memory_storage {
             file2Content{"file2 content"},
             testCase2Content{"test case 2 file content"} {
 
-        dataRef2 = {file1Content.begin(), file1Content.end()};
+        expectedRef1 = {file1Content.begin(), file1Content.end()};
 
         TestCase download {
             .name = "Test download to memory",
@@ -65,11 +65,11 @@ namespace filesync::integration_test::curl::storage::memory_storage {
 
     void MemoryStorage::evaluateDownload() {
         bool success = true;
-        if (data1.size() != dataRef2.size()) {
+        if (data1.size() != expectedRef1.size()) {
             success = false;
         } else {
             for (int i = 0; i < data1.size(); i++) {
-                if (data1[i] != dataRef2[i]) {
+                if (data1[i] != expectedRef1[i]) {
                     success = false;
                 }
             }
@@ -80,8 +80,8 @@ namespace filesync::integration_test::curl::storage::memory_storage {
                 std::cout << i;
             }
             std::cout << std::endl;
-            std::cout << "Expected content (size = " << dataRef2.size() << "):" << std::endl;
-            for (auto i : dataRef2) {
+            std::cout << "Expected content (size = " << expectedRef1.size() << "):" << std::endl;
+            for (auto i : expectedRef1) {
                 std::cout << i;
             }
             std::cout << std::endl;
@@ -93,8 +93,8 @@ namespace filesync::integration_test::curl::storage::memory_storage {
     void MemoryStorage::performUpload() {
         filesync::curl::FtpClient curlProto(server);
 
-        dataRef1 = {testCase2Content.begin(), testCase2Content.end()};
-        curlProto.setInMemoryDataForUpload(dataRef1);
+        expectedRef2 = {testCase2Content.begin(), testCase2Content.end()};
+        curlProto.setInMemoryDataForUpload(expectedRef2);
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.upload();
     }
@@ -104,26 +104,27 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
-        dataRef2 = curlProto.getReferenceToDownloadMemory();
+        dataHandle1 = curlProto.takeDownloadMemory();
 
+        std::span<char> dataRef {dataHandle1->data()};
         bool success = true;
-        if (dataRef1.size() != dataRef2.size()) {
+        if (dataRef.size() != expectedRef2.size()) {
             success = false;
         } else {
-            for (int i = 0; i < dataRef1.size(); i++) {
-                if (dataRef1[i] != dataRef2[i]) {
+            for (int i = 0; i < dataRef.size(); i++) {
+                if (dataRef[i] != expectedRef2[i]) {
                     success = false;
                 }
             }
         }
         if (!success) {
-            std::cout << "Uploaded content (size = " << data1.size() << "):" << std::endl;
-            for (auto i : dataRef1) {
+            std::cout << "Uploaded content (size = " << dataRef.size() << "):" << std::endl;
+            for (auto i : dataRef) {
                 std::cout << i;
             }
             std::cout << std::endl;
-            std::cout << "Expected content (size = " << dataRef2.size() << "):" << std::endl;
-            for (auto i : dataRef2) {
+            std::cout << "Expected content (size = " << expectedRef2.size() << "):" << std::endl;
+            for (auto i : expectedRef2) {
                 std::cout << i;
             }
             std::cout << std::endl;
@@ -156,26 +157,29 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
-        data1 = curlProto.getCopyOfDownloadMemory();
+        dataHandle1 = curlProto.takeDownloadMemory();
 
         curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file2Name);
         curlProto.download();
-        dataRef2 = curlProto.getReferenceToDownloadMemory();
+        dataHandle2 = curlProto.takeDownloadMemory();
+
+        std::span<char> dataRef1 {dataHandle1->data()};
+        std::span<char> dataRef2 {dataHandle2->data()};
 
         bool success = true;
-        if (data1.size() != dataRef2.size()) {
+        if (dataRef1.size() != dataRef2.size()) {
             success = false;
         } else {
-            for (int i = 0; i < data1.size(); i++) {
-                if (data1[i] != dataRef2[i]) {
+            for (int i = 0; i < dataRef1.size(); i++) {
+                if (dataRef1[i] != dataRef2[i]) {
                     success = false;
                 }
             }
         }
         if (!success) {
-            std::cout << "Re-Uploaded content (size = " << data1.size() << "):" << std::endl;
-            for (auto i : data1) {
+            std::cout << "Re-Uploaded content (size = " << dataRef1.size() << "):" << std::endl;
+            for (auto i : dataRef1) {
                 std::cout << i;
             }
             std::cout << std::endl;

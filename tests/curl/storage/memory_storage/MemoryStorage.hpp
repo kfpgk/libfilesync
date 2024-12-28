@@ -29,8 +29,8 @@ namespace filesync::integration_test::curl::storage::memory_storage {
 
             std::string testCase2Content;
 
-            std::span<char> dataRef1;
-            std::span<char> dataRef2;
+            std::span<char> expectedRef1;
+            std::span<char> expectedRef2;
 
             std::vector<char> data1;
             std::vector<char> data2;

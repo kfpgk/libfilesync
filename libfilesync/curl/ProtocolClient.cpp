@@ -95,11 +95,6 @@ namespace filesync::curl {
         downloadMemoryStorage->setupWrite(optionFactory);        
     }
 
-    std::span<char> ProtocolClient::getReferenceToDownloadMemory() {
-        validateDownloadMemoryStorage();
-        return downloadMemoryStorage->getDataReference();
-    }
-
     std::vector<char> ProtocolClient::getCopyOfDownloadMemory() {
         validateDownloadMemoryStorage();
         return std::vector<char> {

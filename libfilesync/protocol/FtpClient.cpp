@@ -66,8 +66,7 @@ namespace filesync::protocol {
         }        
     }
 
-    void FtpClient::doDownloadToMemory(
-        std::span<char>& local,
+    std::unique_ptr<MemoryHandle<char>> FtpClient::doDownloadToMemory(
         const std::filesystem::path& remote) {
 
         switch(getRemoteEntryType(remote)) {
@@ -76,7 +75,7 @@ namespace filesync::protocol {
                     "memory buffer");
                 break;
             case filesync::data::EntryType::file:
-                doDownloadFileToMemory(local, remote);
+                return doDownloadFileToMemory(remote);
                 break;
             default:
                 throw FileSyncException("Remote entry '" 
@@ -85,15 +84,14 @@ namespace filesync::protocol {
                
     }
 
-    void FtpClient::doDownloadFileToMemory(
-        std::span<char>& local,
+    std::unique_ptr<MemoryHandle<char>> FtpClient::doDownloadFileToMemory(
         const std::filesystem::path& remote) {
 
         try {
             curlClient.prepareDownloadToMemory();
             curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
             curlClient.download();
-            local = curlClient.getReferenceToDownloadMemory();
+            curlClient.takeDownloadMemory();
         } catch (FileSyncException& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;

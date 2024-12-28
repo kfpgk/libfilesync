@@ -2,7 +2,9 @@
 #define LIBFILESYNC_PROTOCOL_CLIENT_TEST_HPP
 
 #include <libfilesync/protocol/Client.hpp>
+#include <libfilesync/protocol/MemoryHandle.hpp>
 
+#include <memory>
 #include <span>
 
 namespace filesync::protocol::unit_test {
@@ -13,9 +15,8 @@ namespace filesync::protocol::unit_test {
             void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override {};
-            void doDownloadToMemory(
-                std::span<char>& local,
-                const std::filesystem::path& remote) override {};          
+            [[nodiscard]] std::unique_ptr<MemoryHandle<char>> doDownloadToMemory(
+                const std::filesystem::path& remote) override { return nullptr; };          
             void doUpload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override {};
