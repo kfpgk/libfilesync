@@ -36,7 +36,7 @@ namespace filesync::protocol {
         DEBUG_EXIT(); 
     }
 
-    std::unique_ptr<MemoryHandle<char>> Client::downloadToMemory(
+    std::unique_ptr<memory::Handle<char>> Client::downloadToMemory(
         const std::filesystem::path& remote) {
 
         DEBUG_ENTER(); 
@@ -46,7 +46,7 @@ namespace filesync::protocol {
         Logger::getInstance().log(LogDomain::Info, message.str());
 
         checkForEmptyPath(remote);
-        std::unique_ptr<MemoryHandle<char>> data = doDownloadToMemory(remote);
+        std::unique_ptr<memory::Handle<char>> data = doDownloadToMemory(remote);
 
         DEBUG_EXIT(); 
         return data;

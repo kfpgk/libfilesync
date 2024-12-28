@@ -1,3 +1,5 @@
+add_subdirectory(memory)
+
 target_sources(libfilesync 
     PRIVATE
         Client.cpp

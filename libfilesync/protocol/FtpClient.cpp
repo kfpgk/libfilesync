@@ -1,4 +1,5 @@
 #include <libfilesync/protocol/FtpClient.hpp>
+#include <libfilesync/protocol/memory/CurlHandle.hpp>
 #include <libfilesync/FileSyncException.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
@@ -66,7 +67,7 @@ namespace filesync::protocol {
         }        
     }
 
-    std::unique_ptr<MemoryHandle<char>> FtpClient::doDownloadToMemory(
+    std::unique_ptr<memory::Handle<char>> FtpClient::doDownloadToMemory(
         const std::filesystem::path& remote) {
 
         switch(getRemoteEntryType(remote)) {
@@ -84,14 +85,14 @@ namespace filesync::protocol {
                
     }
 
-    std::unique_ptr<MemoryHandle<char>> FtpClient::doDownloadFileToMemory(
+    std::unique_ptr<memory::Handle<char>> FtpClient::doDownloadFileToMemory(
         const std::filesystem::path& remote) {
 
         try {
             curlClient.prepareDownloadToMemory();
             curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
             curlClient.download();
-            curlClient.takeDownloadMemory();
+            return std::make_unique<memory::CurlHandle>(curlClient.takeDownloadMemory());
         } catch (FileSyncException& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
