@@ -39,6 +39,13 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         };
         addTestCase(upload);
 
+        TestCase reupload {
+            .name = "Test reupload from memory",
+            .perform = std::bind(&MemoryStorage::performReUpload, this),
+            .evaluate = std::bind(&MemoryStorage::evaluateReUpload, this)
+        };
+        addTestCase(reupload);
+
     }
 
     void MemoryStorage::performDownload() {
@@ -53,7 +60,7 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
-        data1 = curlProto.getCopyOfDownloadedMemory();
+        data1 = curlProto.getCopyOfDownloadMemory();
     }
 
     void MemoryStorage::evaluateDownload() {
@@ -97,7 +104,7 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
-        dataRef2 = curlProto.getReferenceToDownloadedMemory();
+        dataRef2 = curlProto.getReferenceToDownloadMemory();
 
         bool success = true;
         if (dataRef1.size() != dataRef2.size()) {
@@ -121,6 +128,63 @@ namespace filesync::integration_test::curl::storage::memory_storage {
             }
             std::cout << std::endl;
             throw FileSyncException("Upload from memory does not have correct content.",
+                __FILE__, __LINE__);
+        }
+    }
+
+    void MemoryStorage::performReUpload() {
+        {
+            std::ofstream file1(file1Name);
+            file1 << file1Content;
+        }
+        filesync::protocol::FtpClient proto(server, pathOnServer);
+        proto.upload(file1Name);
+
+        filesync::curl::FtpClient curlProto(server);
+        curlProto.prepareDownloadToMemory();
+        curlProto.setRemoteFile(pathOnServer + separator + file1Name);
+        curlProto.download();
+        dataHandle1 = curlProto.takeDownloadMemory();
+
+        curlProto.setInMemoryDataForUpload(dataHandle1->data());
+        curlProto.setRemoteFile(pathOnServer + separator + file2Name);
+        curlProto.upload();
+    }
+
+    void MemoryStorage::evaluateReUpload() {
+        filesync::curl::FtpClient curlProto(server);
+        curlProto.prepareDownloadToMemory();
+        curlProto.setRemoteFile(pathOnServer + separator + file1Name);
+        curlProto.download();
+        data1 = curlProto.getCopyOfDownloadMemory();
+
+        curlProto.prepareDownloadToMemory();
+        curlProto.setRemoteFile(pathOnServer + separator + file2Name);
+        curlProto.download();
+        dataRef2 = curlProto.getReferenceToDownloadMemory();
+
+        bool success = true;
+        if (data1.size() != dataRef2.size()) {
+            success = false;
+        } else {
+            for (int i = 0; i < data1.size(); i++) {
+                if (data1[i] != dataRef2[i]) {
+                    success = false;
+                }
+            }
+        }
+        if (!success) {
+            std::cout << "Re-Uploaded content (size = " << data1.size() << "):" << std::endl;
+            for (auto i : data1) {
+                std::cout << i;
+            }
+            std::cout << std::endl;
+            std::cout << "Expected content (size = " << dataRef2.size() << "):" << std::endl;
+            for (auto i : dataRef2) {
+                std::cout << i;
+            }
+            std::cout << std::endl;
+            throw FileSyncException("Re-Upload from memory does not have correct content.",
                 __FILE__, __LINE__);
         }
     }

@@ -50,19 +50,21 @@ namespace filesync::curl {
             void prepareDownloadToMemory();
             /**
              * @brief Returns a read reference to volatile memory in 
-             * the form of a std::span
+             * the form of a std::span, only meant for immediate usage
              * 
-             * Memory is deallocated when protocol client instance gets
-             * destroyed. If you want to have ownership refer to
-             * 'getCopyOfDownloadedMemory' or 'takeDownloadedMemory'.
+             * Memory is deallocated as soon as a new download to 
+             * memory is being performed or when protocol client 
+             * instance gets destroyed. If you want to have ownership
+             * refer to 'getCopyOfDownloadMemory' or 
+             * 'takeDownloadMemory'.
              */
-            std::span<char> getReferenceToDownloadedMemory();
+            std::span<char> getReferenceToDownloadMemory();
             /**
              * @brief Returns a copy of the downloaded memory
              * 
              * Copies the downloaded memory into a std::vector.
              */
-            std::vector<char> getCopyOfDownloadedMemory();
+            std::vector<char> getCopyOfDownloadMemory();
             /**
              * @brief Returns a handle which has ownership to the
              * downloaded memory. 
@@ -71,7 +73,7 @@ namespace filesync::curl {
              * for upload. Involves no copy and takes ownership over
              * the memory away from this protocol instance.
              */
-            std::unique_ptr<storage::MemoryStorageHandle> takeDownloadedMemory();
+            std::unique_ptr<storage::MemoryStorageHandle> takeDownloadMemory();
             void setCreateMissingDirs(bool value); 
 
             void upload();

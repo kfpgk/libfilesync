@@ -93,7 +93,7 @@ namespace filesync::protocol {
             curlClient.prepareDownloadToMemory();
             curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
             curlClient.download();
-            local = curlClient.getReferenceToDownloadedMemory();
+            local = curlClient.getReferenceToDownloadMemory();
         } catch (FileSyncException& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;

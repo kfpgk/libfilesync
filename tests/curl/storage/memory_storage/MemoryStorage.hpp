@@ -2,7 +2,9 @@
 #define LIBFILESYNC_TESTS_CURL_STORAGE_MEMORY_STORAGE_MEMORY_STORAGE_HPP
 
 #include <tests/template/IntegrationTest.hpp>
+#include <libfilesync/curl/storage/MemoryStorageHandle.hpp>
 
+#include <memory>
 #include <span>
 #include <string>
 #include <vector>
@@ -31,7 +33,10 @@ namespace filesync::integration_test::curl::storage::memory_storage {
             std::span<char> dataRef2;
 
             std::vector<char> data1;
-            std::vector<char> data2;            
+            std::vector<char> data2;
+
+            std::unique_ptr<filesync::curl::storage::MemoryStorageHandle> dataHandle1;
+            std::unique_ptr<filesync::curl::storage::MemoryStorageHandle> dataHandle2;            
 
             /**
              * @brief Test download to memory
@@ -44,6 +49,12 @@ namespace filesync::integration_test::curl::storage::memory_storage {
              */
             void performUpload();
             void evaluateUpload();
+
+            /**
+             * @brief Test reupload from memory
+             */
+            void performReUpload();
+            void evaluateReUpload();
 
     };
 

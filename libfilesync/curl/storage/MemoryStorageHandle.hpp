@@ -47,6 +47,8 @@ namespace filesync::curl::storage {
             MemoryStorageHandle(ConstructorPermission token,
                 std::unique_ptr<MemoryStorage> storage);
 
+            std::span<char> data() const;
+
         private:
             std::unique_ptr<MemoryStorage> storage;
 

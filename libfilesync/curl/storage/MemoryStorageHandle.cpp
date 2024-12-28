@@ -3,6 +3,10 @@
 
 namespace filesync::curl::storage {
 
+    std::span<char> MemoryStorageHandle::data() const {
+        return storage->getDataReference();
+    }
+
     MemoryStorageHandle::MemoryStorageHandle(
         [[maybe_unused]] ConstructorPermission permission,
         std::unique_ptr<MemoryStorage> storage) :
