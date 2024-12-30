@@ -2,11 +2,11 @@
 
 namespace filesync::core::sync_data::buffer::visitor {
 
-    HandleType GetHandle::operator()(const FileBuffer& buffer) {
+    protocol::HandleOrFilePath GetHandle::operator()(const FileBuffer& buffer) {
         return buffer.getFilePath();
     }
 
-    HandleType GetHandle::operator()(ProtocolMemoryBuffer& buffer) {
+    protocol::HandleOrFilePath GetHandle::operator()(ProtocolMemoryBuffer& buffer) {
         return buffer.getHandle();
     }
 

@@ -20,10 +20,10 @@ namespace filesync::core {
 
             if (fileExistsLocally(entry)) {
                 if (fileExistsRemotely(entry)) {
-                    DEBUG("File exists locally and on remote server. Downloading remote to buffer...");
-                    getProtocolClient().download( 
-                        std::get<std::filesystem::path>(entry->getRemoteBufferHandle()),
-                        entry->getRemotePath());
+                    DEBUG("File exists locally and on remote server. "\
+                        "Downloading remote to buffer...");
+                    getProtocolClient().download(
+                        entry->getRemoteBufferHandle(), entry->getRemotePath());
                     if (entry->localDifferentThanPrev()) {
                         DEBUG("Local file changed.");
                         if (entry->remoteDifferentThanPrev()) {

@@ -8,6 +8,7 @@
 #include <libfilesync/utility/Logger.hpp>
 
 #include <fstream>
+#include <sstream>
 #include <utility>
 
 using namespace filesync::utility;
@@ -90,7 +91,7 @@ namespace filesync::core::sync_data {
         return !std::visit(buffer::visitor::IsEqualTo{file}, bufferForPrevious);
     }
 
-    buffer::HandleType Entry::getRemoteBufferHandle() {
+    protocol::HandleOrFilePath Entry::getRemoteBufferHandle() {
         return std::visit(buffer::visitor::GetHandle{}, bufferForRemote);
     }
 
@@ -99,15 +100,9 @@ namespace filesync::core::sync_data {
     }
 
     bool Entry::doRemoteDifferentThanPrev() {
-        std::ifstream file(std::get<std::filesystem::path>(
-            std::visit(buffer::visitor::GetHandle{}, bufferForRemote)));
-
-        if (!file.is_open()) {
-            throw data::Exception("Cannot open file '" + getPath().string() + "' for comparing.",
-                __FILE__, __LINE__);
-        }
-        
-        return !std::visit(buffer::visitor::IsEqualTo{file}, bufferForPrevious);
+        std::stringstream stream;
+        std::visit(buffer::visitor::WriteContentTo{stream},bufferForRemote);
+        return !std::visit(buffer::visitor::IsEqualTo{stream}, bufferForPrevious);
     }
 
     void Entry::writeRemoteBufferToLocal() {

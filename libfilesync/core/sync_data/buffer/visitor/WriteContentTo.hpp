@@ -13,6 +13,7 @@ namespace filesync::core::sync_data::buffer::visitor {
      * to an outstream.
      * 
      * Patterns:
+     * 
      *  - Visitor
      */
     class WriteContentTo {
@@ -20,8 +21,8 @@ namespace filesync::core::sync_data::buffer::visitor {
         public:
             explicit WriteContentTo(std::ostream& out);
 
-            bool operator()(FileBuffer& buffer);
-            bool operator()(ProtocolMemoryBuffer& buffer);
+            std::ostream& operator()(FileBuffer& buffer);
+            std::ostream& operator()(ProtocolMemoryBuffer& buffer);
 
         private:
             std::ostream& out;

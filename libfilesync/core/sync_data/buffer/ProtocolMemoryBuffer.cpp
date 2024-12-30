@@ -3,31 +3,33 @@
 
 namespace filesync::core::sync_data::buffer {
 
-    ProtocolMemoryBuffer::ProtocolMemoryBuffer(std::unique_ptr<protocol::memory::Handle<char>> data) :
+    ProtocolMemoryBuffer::ProtocolMemoryBuffer(
+        std::unique_ptr<protocol::memory::Handle<char>> data) :
         data{std::move(data)} {
 
     }
 
-    std::unique_ptr<protocol::memory::Handle<char>> ProtocolMemoryBuffer::getHandle() {
+    std::unique_ptr<protocol::memory::Handle<char>>& ProtocolMemoryBuffer::getHandle() {
         if (!data) {
-            throw data::Exception("Cannot retrieve handle, because does not own a handle",
+            throw data::Exception("Cannot retrieve handle, "\
+                "because this buffer does not own a handle",
                 __FILE__, __LINE__);
         }
-        return std::move(data);
+        return data;
     }
 
     void ProtocolMemoryBuffer::store(std::unique_ptr<protocol::memory::Handle<char>> in) {
         data = std::move(in);
     }
 
-    bool ProtocolMemoryBuffer::extractContentTo(std::ostream& out) {
+    std::ostream& ProtocolMemoryBuffer::extractContentTo(std::ostream& out) {
         if (!data) {
-            return false;
+            return out;
         }
         for (auto i : data->data()) {
             out.put(i);
         }
-        return true;
+        return out;
     }
 
     bool ProtocolMemoryBuffer::isEqualTo(std::istream& in) const {

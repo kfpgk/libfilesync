@@ -19,22 +19,28 @@ namespace filesync::protocol {
         download(local, local);
     }
 
-    /*void Client::download(
-        HandleType local,
+    void Client::download(
+        HandleOrFilePath local,
         const std::filesystem::path& remote) {
 
-        if (std::holds_alternative<std::reference_wrapper<std::filesystem::path>>(local)) {
-            download(std::get<std::reference_wrapper<std::filesystem::path>>(local), remote);
+        DEBUG_ENTER(); 
+
+        if (std::holds_alternative<std::reference_wrapper<const std::filesystem::path>>(local)) {
+            download(std::get<
+                std::reference_wrapper<const std::filesystem::path>>(local).get(), remote);
         } else if (std::holds_alternative<
             std::reference_wrapper<std::unique_ptr<memory::Handle<char>>>>(local)) {
+
             download(std::get<
-                std::reference_wrapper<std::unique_ptr<memory::Handle<char>>>>(local), remote);
+                std::reference_wrapper<std::unique_ptr<memory::Handle<char>>>>(local).get(), remote);
         } else {
-            throw FileSyncException("Cannot handle local handle type.",
+            throw FileSyncException("std::variant holds unexpected value.",
                 __FILE__, __LINE__);
         }
 
-    }*/
+        DEBUG_EXIT();
+
+    }
 
     void Client::download(
         const std::filesystem::path& local,
@@ -75,6 +81,22 @@ namespace filesync::protocol {
     }
 
     void Client::upload(
+        const char* local,
+        const std::filesystem::path& remote) {
+
+        upload(std::filesystem::path(local), remote);
+        
+    }
+
+    void Client::upload(
+        const std::string& local,
+        const std::filesystem::path& remote) {
+
+        upload(std::filesystem::path(local), remote);
+        
+    }
+
+    void Client::upload(
         const std::filesystem::path& local,
         const std::filesystem::path& remote) {
 
@@ -91,7 +113,7 @@ namespace filesync::protocol {
         DEBUG_EXIT(); 
     }
 
-    void Client::uploadFromMemory(
+    void Client::upload(
         std::span<char> local,
         const std::filesystem::path& remote) {
 

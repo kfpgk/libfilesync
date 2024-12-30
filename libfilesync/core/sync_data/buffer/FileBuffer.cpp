@@ -11,7 +11,7 @@ namespace filesync::core::sync_data::buffer {
 
     }
 
-    std::filesystem::path FileBuffer::getFilePath() const {
+    const std::filesystem::path& FileBuffer::getFilePath() const {
         return filePath;
     }
 
@@ -21,9 +21,9 @@ namespace filesync::core::sync_data::buffer {
         buffer << in.rdbuf();            
     }
 
-    bool FileBuffer::extractContentTo(std::ostream& out) {
+    std::ostream& FileBuffer::extractContentTo(std::ostream& out) {
         if (!std::filesystem::is_regular_file(filePath)) {
-            return false;
+            return out;
         }
         std::ifstream buffer(filePath);
         if (!buffer.is_open()) {
@@ -31,7 +31,7 @@ namespace filesync::core::sync_data::buffer {
                 __FILE__, __LINE__);
         }
         out << buffer.rdbuf();
-        return true;
+        return out;
     }
 
     bool FileBuffer::isEqualTo(std::istream& in) const {

@@ -21,9 +21,9 @@ namespace filesync::core::sync_data::buffer {
             ProtocolMemoryBuffer() = default;
             explicit ProtocolMemoryBuffer(std::unique_ptr<protocol::memory::Handle<char>> data);
 
-            [[nodiscard]] std::unique_ptr<protocol::memory::Handle<char>> getHandle();
+            [[nodiscard]] std::unique_ptr<protocol::memory::Handle<char>>& getHandle();
             void store(std::unique_ptr<protocol::memory::Handle<char>> in);
-            bool extractContentTo(std::ostream& out);
+            std::ostream& extractContentTo(std::ostream& out);
             bool isEqualTo(std::istream& in) const;
 
         private:

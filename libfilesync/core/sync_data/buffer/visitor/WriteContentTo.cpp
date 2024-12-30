@@ -12,11 +12,11 @@ namespace filesync::core::sync_data::buffer::visitor {
         }
     }
 
-    bool WriteContentTo::operator()(FileBuffer& buffer) {
+    std::ostream& WriteContentTo::operator()(FileBuffer& buffer) {
         return buffer.extractContentTo(out);
     }
 
-    bool WriteContentTo::operator()(ProtocolMemoryBuffer& buffer) {
+    std::ostream& WriteContentTo::operator()(ProtocolMemoryBuffer& buffer) {
         return buffer.extractContentTo(out);
     }
 

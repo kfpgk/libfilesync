@@ -47,6 +47,8 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         assert(!buffer.isEqualTo(inputStream));
 
+        Logger::getInstance().log(LogDomain::TestResult,
+            "is_equal_to_with_empty_buffer() passed");
     }
 
     void ProtocolMemoryBufferTest::is_equal_to() {
@@ -60,6 +62,9 @@ namespace filesync::core::sync_data::buffer::unit_test {
                     std::vector<char>{'H', 'e', 'l', 'l', 'o'})));
 
         assert(buffer.isEqualTo(inputStream));
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "is_equal_to() passed");
 
     }
 
@@ -75,6 +80,9 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         assert(!buffer.isEqualTo(inputStream));
 
+        Logger::getInstance().log(LogDomain::TestResult,
+            "is_not_equal_to() passed");
+
     }
 
     void ProtocolMemoryBufferTest::equal_start_but_input_is_larger() {
@@ -89,6 +97,9 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         assert(!buffer.isEqualTo(inputStream));
 
+        Logger::getInstance().log(LogDomain::TestResult,
+            "equal_start_but_input_is_larger() passed");
+
     }
 
     void ProtocolMemoryBufferTest::equal_start_but_buffer_is_larger() {
@@ -102,6 +113,9 @@ namespace filesync::core::sync_data::buffer::unit_test {
                     std::vector<char>{'H', 'e', 'l', 'l', 'o', ' ', 'A', 'g', 'a', 'i', 'n'})));
 
         assert(!buffer.isEqualTo(inputStream));
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "equal_start_but_buffer_is_larger() passed");
 
     }
 
@@ -118,6 +132,9 @@ namespace filesync::core::sync_data::buffer::unit_test {
         buffer.extractContentTo(dataStream);
         
         assert(buffer.isEqualTo(dataStream));
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "extract_content_to() passed");
 
     }
 
@@ -137,7 +154,10 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         assert(handle == nullptr);
         assert(buffer.isEqualTo(compareStream));        
-        
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "store_into_empty_buffer() passed");
+
     }
 
     void ProtocolMemoryBufferTest::store_into_filled_buffer() {
@@ -160,6 +180,9 @@ namespace filesync::core::sync_data::buffer::unit_test {
         assert(handle == nullptr);
         assert(buffer.isEqualTo(compareStream));  
 
+        Logger::getInstance().log(LogDomain::TestResult,
+            "store_into_filled_buffer() passed");
+
     }
 
     void ProtocolMemoryBufferTest::get_non_existing_handle() {
@@ -168,13 +191,17 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         bool exceptionThrown = false;
         try {
-            std::unique_ptr<protocol::memory::Handle<char>> handle =
+            std::unique_ptr<protocol::memory::Handle<char>>& handle =
                 buffer.getHandle();
         } catch (...) {
             exceptionThrown = true;
         }
         
         assert(exceptionThrown == true);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "get_non_existing_handle() passed");
+
     }
 
     void ProtocolMemoryBufferTest::get_valid_handle() {
@@ -185,7 +212,7 @@ namespace filesync::core::sync_data::buffer::unit_test {
             std::make_unique<protocol::memory::CharArrayHandle>(
                 std::make_unique<protocol::memory::CharArray>(dataVector)));
 
-        std::unique_ptr<protocol::memory::Handle<char>> handle =
+        std::unique_ptr<protocol::memory::Handle<char>>& handle =
             buffer.getHandle();
 
         std::span<char> dataSpan = handle->data();
@@ -195,27 +222,35 @@ namespace filesync::core::sync_data::buffer::unit_test {
             assert(dataSpan[i] == dataVector[i]);
         }
 
+        Logger::getInstance().log(LogDomain::TestResult,
+            "get_valid_handle() passed");
+
     }
 
     void ProtocolMemoryBufferTest::get_handle_twice() {
 
+        std::vector<char> dataVector{'H', 'e', 'l', 'l', 'o'};
+
         ProtocolMemoryBuffer buffer(
             std::make_unique<protocol::memory::CharArrayHandle>(
-                std::make_unique<protocol::memory::CharArray>(
-                    std::vector<char>{'H', 'e', 'l', 'l', 'o'})));
+                std::make_unique<protocol::memory::CharArray>(dataVector)));
 
-        std::unique_ptr<protocol::memory::Handle<char>> handle =
+        std::unique_ptr<protocol::memory::Handle<char>>& handle1 =
             buffer.getHandle();
 
-        bool exceptionThrown = false;
-        try {
-            std::unique_ptr<protocol::memory::Handle<char>> handle =
-                buffer.getHandle();
-        } catch (...) {
-            exceptionThrown = true;
+        std::unique_ptr<protocol::memory::Handle<char>>& handle2 =
+            buffer.getHandle();
+
+        std::span<char> dataSpan = handle2->data();
+
+        assert(dataSpan.size() == dataVector.size());
+        for (int i = 0; i < dataSpan.size(); i++) {
+            assert(dataSpan[i] == dataVector[i]);
         }
-        
-        assert(exceptionThrown == true);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "get_handle_twice() passed");
+
     }
 
 }

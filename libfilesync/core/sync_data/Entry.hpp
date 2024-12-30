@@ -5,6 +5,7 @@
 #include <libfilesync/observer/Observer.hpp>
 #include <libfilesync/core/sync_data/RemoteEntry.hpp>
 #include <libfilesync/core/sync_data/buffer/Buffer.hpp>
+#include <libfilesync/protocol/HandleOrFilePath.hpp>
 
 #include <filesystem>
 #include <memory>
@@ -43,14 +44,15 @@ namespace filesync::core::sync_data {
              */
             [[nodiscard]] bool localDifferentThanPrev();
             /**
-             * @brief Get owning handle to the data in remote buffer.
+             * @brief Get file pathhandle or to the data in 
+             * remote buffer.
              * 
              * This can be used to write to a buffer.
              * 
              * @returns a value of variable type depending on the 
              * underlying buffer that is used.
              */
-            buffer::HandleType getRemoteBufferHandle();
+            protocol::HandleOrFilePath getRemoteBufferHandle();
             /**
              * @brief Check if content in remote buffer is different
              * compared to content in previous buffer.

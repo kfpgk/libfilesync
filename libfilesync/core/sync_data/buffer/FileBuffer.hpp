@@ -18,9 +18,9 @@ namespace filesync::core::sync_data::buffer {
         public:
             FileBuffer();
 
-            std::filesystem::path getFilePath() const;
+            const std::filesystem::path&  getFilePath() const;
             void store(std::istream& in);
-            bool extractContentTo(std::ostream& out);
+            std::ostream& extractContentTo(std::ostream& out);
             bool isEqualTo(std::istream& in) const;
 
         private:

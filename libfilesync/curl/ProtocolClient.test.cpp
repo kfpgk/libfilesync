@@ -48,21 +48,24 @@ namespace filesync::curl::unit_test {
     }
 
     void ProtocolClientTest::set_valid_remote_file() {
-        Logger::getInstance().log(LogDomain::TestResult, "Running set_valid_remote_file()", __FILE__, __LINE__);
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running set_valid_remote_file()", __FILE__, __LINE__);
         ProtocolClientConcrete client(dummyServerAddress,
             std::make_unique<wrapper::unit_test::EasyStub>());
         client.setRemoteFile("dir-path/file");
     }
 
     void ProtocolClientTest::set_remote_file_with_special_chars() {
-        Logger::getInstance().log(LogDomain::TestResult, "Running set_remote_file_with_special_chars()", __FILE__, __LINE__);
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running set_remote_file_with_special_chars()", __FILE__, __LINE__);
         ProtocolClientConcrete client(dummyServerAddress,
             std::make_unique<wrapper::unit_test::EasyStub>());
         client.setRemoteFile("!./%/:kla");
     }
 
     void ProtocolClientTest::set_non_existing_local_file_for_upload() {
-        Logger::getInstance().log(LogDomain::TestResult, "Running set_non_existing_local_file_for_upload()", __FILE__, __LINE__);
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running set_non_existing_local_file_for_upload()", __FILE__, __LINE__);
         ProtocolClientConcrete client(dummyServerAddress,
             std::make_unique<wrapper::unit_test::EasyStub>());
         bool curlExceptionThrown = false;
