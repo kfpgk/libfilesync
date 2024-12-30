@@ -40,7 +40,7 @@ namespace filesync::curl {
             void setInterface(std::unique_ptr<wrapper::Easy> interface);
             void setRemoteFile(const std::filesystem::path& path);
             void setLocalFileForUpload(const std::filesystem::path& path);
-            void setInMemoryDataForUpload(const std::span<char>& data);
+            void setInMemoryDataForUpload(std::span<char> data);
             void setRemoteDir(const std::filesystem::path& path);
             /**
              * @brief Creates an empty local file to which a download

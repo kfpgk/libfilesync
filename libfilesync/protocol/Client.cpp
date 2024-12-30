@@ -19,6 +19,23 @@ namespace filesync::protocol {
         download(local, local);
     }
 
+    /*void Client::download(
+        HandleType local,
+        const std::filesystem::path& remote) {
+
+        if (std::holds_alternative<std::reference_wrapper<std::filesystem::path>>(local)) {
+            download(std::get<std::reference_wrapper<std::filesystem::path>>(local), remote);
+        } else if (std::holds_alternative<
+            std::reference_wrapper<std::unique_ptr<memory::Handle<char>>>>(local)) {
+            download(std::get<
+                std::reference_wrapper<std::unique_ptr<memory::Handle<char>>>>(local), remote);
+        } else {
+            throw FileSyncException("Cannot handle local handle type.",
+                __FILE__, __LINE__);
+        }
+
+    }*/
+
     void Client::download(
         const std::filesystem::path& local,
         const std::filesystem::path& remote) {
@@ -36,7 +53,8 @@ namespace filesync::protocol {
         DEBUG_EXIT(); 
     }
 
-    std::unique_ptr<memory::Handle<char>> Client::downloadToMemory(
+    void Client::download(
+        std::unique_ptr<memory::Handle<char>>& local,
         const std::filesystem::path& remote) {
 
         DEBUG_ENTER(); 
@@ -46,10 +64,9 @@ namespace filesync::protocol {
         Logger::getInstance().log(LogDomain::Info, message.str());
 
         checkForEmptyPath(remote);
-        std::unique_ptr<memory::Handle<char>> data = doDownloadToMemory(remote);
+        doDownload(local, remote);
 
         DEBUG_EXIT(); 
-        return data;
 
     }
 
@@ -75,7 +92,7 @@ namespace filesync::protocol {
     }
 
     void Client::uploadFromMemory(
-        const std::span<char>& local,
+        std::span<char> local,
         const std::filesystem::path& remote) {
 
         DEBUG_ENTER();

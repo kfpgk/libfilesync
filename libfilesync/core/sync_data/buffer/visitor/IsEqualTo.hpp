@@ -2,7 +2,7 @@
 #define LIBFILESYNC_CORE_SYNC_DATA_BUFFER_VISITOR_IS_EQUAL_TO_HPP
 
 #include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
-#include <libfilesync/core/sync_data/buffer/MemoryBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 
 #include <istream>
 
@@ -18,10 +18,10 @@ namespace filesync::core::sync_data::buffer::visitor {
     class IsEqualTo {
 
         public:
-            IsEqualTo(std::istream& in);
+            explicit IsEqualTo(std::istream& in);
 
             bool operator()(const FileBuffer& buffer);
-            bool operator()(const MemoryBuffer& buffer);
+            bool operator()(const ProtocolMemoryBuffer& buffer);
 
         private:
             std::istream& in;

@@ -1,6 +1,6 @@
 target_sources(libfilesync
     PRIVATE
-        GetLocation.cpp
+        GetHandle.cpp
         IsEqualTo.cpp
         Store.cpp
         WriteContentTo.cpp

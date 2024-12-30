@@ -3,7 +3,7 @@
 namespace filesync::protocol::memory {
 
     template<typename ElementType>
-    std::span<ElementType> Handle<ElementType>::data() const {
+    std::span<ElementType> Handle<ElementType>::data() {
         return doData();
     }
 

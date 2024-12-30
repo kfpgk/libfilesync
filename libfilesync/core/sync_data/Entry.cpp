@@ -1,6 +1,6 @@
 #include <libfilesync/core/sync_data/Entry.hpp>
 #include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
-#include <libfilesync/core/sync_data/buffer/visitor/GetLocation.hpp>
+#include <libfilesync/core/sync_data/buffer/visitor/GetHandle.hpp>
 #include <libfilesync/core/sync_data/buffer/visitor/IsEqualTo.hpp>
 #include <libfilesync/core/sync_data/buffer/visitor/Store.hpp>
 #include <libfilesync/core/sync_data/buffer/visitor/WriteContentTo.hpp>
@@ -73,14 +73,15 @@ namespace filesync::core::sync_data {
             throw data::Exception("Cannot open file '" + getPath().string() + "' for storing.",
                 __FILE__, __LINE__);
         }
+
         std::visit(buffer::visitor::Store{file}, bufferForPrevious);
     }
 
-    bool Entry::localDifferentThanPrev() const {
+    bool Entry::localDifferentThanPrev() {
         return doLocalDifferentThanPrev();
     }
 
-    bool Entry::doLocalDifferentThanPrev() const {
+    bool Entry::doLocalDifferentThanPrev() {
         std::ifstream file(getPath());
         if (!file.is_open()) {
             throw data::Exception("Cannot open file '" + getPath().string() + "' for comparing.",
@@ -89,23 +90,23 @@ namespace filesync::core::sync_data {
         return !std::visit(buffer::visitor::IsEqualTo{file}, bufferForPrevious);
     }
 
-    buffer::DataLocation Entry::getRemoteBufferLocation() const {
-        return std::visit(buffer::visitor::GetLocation{}, bufferForRemote);
+    buffer::HandleType Entry::getRemoteBufferHandle() {
+        return std::visit(buffer::visitor::GetHandle{}, bufferForRemote);
     }
 
-    bool Entry::remoteDifferentThanPrev() const {
+    bool Entry::remoteDifferentThanPrev() {
         return doRemoteDifferentThanPrev();
     }
 
-    bool Entry::doRemoteDifferentThanPrev() const {
+    bool Entry::doRemoteDifferentThanPrev() {
         std::ifstream file(std::get<std::filesystem::path>(
-            std::visit(buffer::visitor::GetLocation{}, bufferForRemote)));
+            std::visit(buffer::visitor::GetHandle{}, bufferForRemote)));
 
         if (!file.is_open()) {
             throw data::Exception("Cannot open file '" + getPath().string() + "' for comparing.",
                 __FILE__, __LINE__);
         }
-
+        
         return !std::visit(buffer::visitor::IsEqualTo{file}, bufferForPrevious);
     }
 

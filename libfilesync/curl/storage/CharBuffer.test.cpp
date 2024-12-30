@@ -69,7 +69,12 @@ namespace filesync::curl::storage::unit_test {
         char byteArrayData[] {"test content"};
 
         data1.write(stringData);
-        data2.write(byteArrayData, 12);
+        
+        std::size_t remaining = 12;
+        while (remaining > 0) {
+            std::size_t written = data2.write(byteArrayData, remaining);
+            remaining -= written;
+        }
 
         assert(data1 == data2);
 

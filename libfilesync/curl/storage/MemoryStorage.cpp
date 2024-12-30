@@ -8,12 +8,12 @@
 
 namespace filesync::curl::storage {
 
-    MemoryStorage::MemoryStorage(const std::span<char>& data) :
+    MemoryStorage::MemoryStorage(std::span<char> data) :
         data{data} {
 
     }
 
-    std::span<char> MemoryStorage::getDataReference() const {
+    std::span<char> MemoryStorage::getDataReference() {
         return data.getSpan();
     }
 

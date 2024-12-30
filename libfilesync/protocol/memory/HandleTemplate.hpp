@@ -10,7 +10,7 @@ namespace filesync::protocol::memory {
 
     template <typename ContainterType, typename ElementType>
     concept data_extractable_as_span = requires(ContainterType container, ElementType element) {
-        { container.data() } -> std::convertible_to<std::span<ElementType>>;
+        { container.data() } -> std::convertible_to<std::span<const ElementType>>;
     };
 
     template<typename ContainterType, typename ElementType>
@@ -19,7 +19,7 @@ namespace filesync::protocol::memory {
 
         public:
             HandleTemplate(std::unique_ptr<ContainterType> dataPtr);
-            std::span<ElementType> doData() const override;
+            std::span<ElementType> doData() override;
 
         private:
             std::unique_ptr<ContainterType> dataPtr;

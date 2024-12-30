@@ -47,14 +47,14 @@ namespace filesync::curl::storage {
         this->data = ptr;
         position = this->data;
 
-        size_t remaining = dataSize;
+        std::size_t remaining = dataSize;
         while (remaining > 0) {
-            size_t written = write(data, dataSize);
+            std::size_t written = write(data, dataSize);
             remaining -= written;
         }
     }
 
-    CharBuffer::CharBuffer(const std::span<char>& data) :
+    CharBuffer::CharBuffer(std::span<char>& data) :
         data{data.data()},
         size{data.size()},
         position{this->data},
@@ -142,7 +142,7 @@ namespace filesync::curl::storage {
         resetPosition();
     }
 
-    std::span<char> CharBuffer::getSpan() const {
+    std::span<char> CharBuffer::getSpan() {
         return std::span{data, size};
     }
 

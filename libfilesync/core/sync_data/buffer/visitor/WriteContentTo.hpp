@@ -2,7 +2,7 @@
 #define LIBFILESYNC_CORE_SYNC_DATA_BUFFER_VISITOR_WRITE_CONTENT_TO_HPP
 
 #include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
-#include <libfilesync/core/sync_data/buffer/MemoryBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 
 #include <ostream>
 
@@ -18,10 +18,10 @@ namespace filesync::core::sync_data::buffer::visitor {
     class WriteContentTo {
 
         public:
-            WriteContentTo(std::ostream& out);
+            explicit WriteContentTo(std::ostream& out);
 
             bool operator()(FileBuffer& buffer);
-            bool operator()(MemoryBuffer& buffer);
+            bool operator()(ProtocolMemoryBuffer& buffer);
 
         private:
             std::ostream& out;

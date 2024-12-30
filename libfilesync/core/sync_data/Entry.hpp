@@ -41,17 +41,16 @@ namespace filesync::core::sync_data {
              * @returns true if contents are different. false
              * otherwise.
              */
-            [[nodiscard]] bool localDifferentThanPrev() const;
+            [[nodiscard]] bool localDifferentThanPrev();
             /**
-             * @brief Get location of the data in remote buffer.
+             * @brief Get owning handle to the data in remote buffer.
              * 
-             * This can be used to directly write into the buffer's
-             * location.
+             * This can be used to write to a buffer.
              * 
              * @returns a value of variable type depending on the 
              * underlying buffer that is used.
              */
-            buffer::DataLocation getRemoteBufferLocation() const;
+            buffer::HandleType getRemoteBufferHandle();
             /**
              * @brief Check if content in remote buffer is different
              * compared to content in previous buffer.
@@ -59,7 +58,7 @@ namespace filesync::core::sync_data {
              * @returns true if contents are different. false
              * otherwise.
              */
-            [[nodiscard]] bool remoteDifferentThanPrev() const;
+            [[nodiscard]] bool remoteDifferentThanPrev();
             /**
              * @brief Saves the current state of the local file
              * into a buffer for later comparison.
@@ -77,8 +76,8 @@ namespace filesync::core::sync_data {
             virtual void doSetSyncInProgress();
             virtual void doResetSyncInProgress();
             [[nodiscard]] virtual bool doGetSyncInProgress() const;
-            [[nodiscard]] virtual bool doLocalDifferentThanPrev() const;
-            [[nodiscard]] virtual bool doRemoteDifferentThanPrev() const;
+            [[nodiscard]] virtual bool doLocalDifferentThanPrev();
+            [[nodiscard]] virtual bool doRemoteDifferentThanPrev();
             virtual void doSetPrevious();
             virtual void doWriteRemoteBufferToLocal();
 

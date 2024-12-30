@@ -56,6 +56,12 @@ namespace filesync::integration_test::curl::storage::memory_storage {
             void performReUpload();
             void evaluateReUpload();
 
+            /**
+             * @brief Test reuse of memory object
+             */
+            void performReuseOfMemory();
+            void evaluateReuseOfMemory();
+
     };
 
 }

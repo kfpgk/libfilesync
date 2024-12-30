@@ -16,7 +16,7 @@ namespace filesync::core::sync_data::buffer::visitor {
         return buffer.isEqualTo(in);
     }
 
-    bool IsEqualTo::operator()(const MemoryBuffer& buffer) {
+    bool IsEqualTo::operator()(const ProtocolMemoryBuffer& buffer) {
         return buffer.isEqualTo(in);
     }
 

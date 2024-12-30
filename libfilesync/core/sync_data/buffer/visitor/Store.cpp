@@ -3,21 +3,24 @@
 
 namespace filesync::core::sync_data::buffer::visitor {
 
-    Store::Store(std::istream& in) :
-        in{in} {
+    Store::Store(BufferStoreType in) :
+        in{std::move(in)} {
 
-        if (!in.good()) {
-            throw data::Exception("Input stream is in fail state. Cannot store to buffer.",
-            __FILE__, __LINE__);
+        if (std::holds_alternative<std::reference_wrapper<std::istream>>(in)) {
+            if (!std::get<std::reference_wrapper<std::istream>>(in).get().good()) {
+                throw data::Exception("Input stream is in fail state. Cannot store to buffer.",
+                __FILE__, __LINE__);
+            }
         }
+
     }
 
     void Store::operator()(FileBuffer& buffer) {
-        buffer.store(in);
+        buffer.store(std::get<std::reference_wrapper<std::istream>>(in));
     }
 
-    void Store::operator()(MemoryBuffer& buffer) {
-        buffer.store(in);
+    void Store::operator()(ProtocolMemoryBuffer& buffer) {
+        buffer.store(std::move(std::get<std::unique_ptr<protocol::memory::Handle<char>>>(in)));
     }
 
 }

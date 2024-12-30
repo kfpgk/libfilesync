@@ -22,8 +22,8 @@ namespace filesync::core::sync_data {
             void doSetSyncInProgress() override;
             void doResetSyncInProgress() override;
             [[nodiscard]] bool doGetSyncInProgress() const override;
-            [[nodiscard]] bool doLocalDifferentThanPrev() const override;
-            [[nodiscard]] bool doRemoteDifferentThanPrev() const override;
+            [[nodiscard]] bool doLocalDifferentThanPrev() override;
+            [[nodiscard]] bool doRemoteDifferentThanPrev() override;
             void doSetPrevious() override;
             void doWriteRemoteBufferToLocal() override;
 

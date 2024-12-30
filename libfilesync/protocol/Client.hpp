@@ -4,11 +4,18 @@
 #include <libfilesync/protocol/memory/Handle.hpp>
 
 #include <filesystem>
+#include <functional>
 #include <memory>
 #include <span>
 #include <string>
+#include <variant>
 
 namespace filesync::protocol {
+
+    using HandleType = std::variant<
+        std::reference_wrapper<const std::filesystem::path>, 
+        std::reference_wrapper<std::unique_ptr<memory::Handle<char>>>
+    >;
 
     /**
      * @brief: Protocol interface class
@@ -25,14 +32,18 @@ namespace filesync::protocol {
             void download(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
-            [[nodiscard]] std::unique_ptr<memory::Handle<char>> downloadToMemory(
+            void download(
+                std::unique_ptr<memory::Handle<char>>& local,
                 const std::filesystem::path& remote);
+            /*void download(
+                HandleType local,
+                const std::filesystem::path& remote);*/
             void upload(const std::filesystem::path& local);
             void upload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
             void uploadFromMemory(
-                const std::span<char>& local,
+                std::span<char> local,
                 const std::filesystem::path& remote);
             void setRemoteRootPath(
                 const std::filesystem::path& remoteRoot);
@@ -55,13 +66,14 @@ namespace filesync::protocol {
             virtual void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) = 0;
-            [[nodiscard]] virtual std::unique_ptr<memory::Handle<char>> doDownloadToMemory(
-                const std::filesystem::path& remote) = 0;          
+            virtual void doDownload(
+                std::unique_ptr<memory::Handle<char>>& local,
+                const std::filesystem::path& remote) = 0;        
             virtual void doUpload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) = 0;
             virtual void doUploadFromMemory(
-                const std::span<char>& local,
+                std::span<char> local,
                 const std::filesystem::path& remote) = 0;
             [[nodiscard]] virtual bool doExistsOnServer(
                 const std::filesystem::path& remote) = 0;

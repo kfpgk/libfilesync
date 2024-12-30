@@ -9,10 +9,10 @@ namespace filesync::protocol::memory {
     class Handle {
 
         public:
-            std::span<ElementType> data() const;
+            std::span<ElementType> data();
 
         private:
-            virtual std::span<ElementType> doData() const = 0;
+            virtual std::span<ElementType> doData() = 0;
 
     };
 

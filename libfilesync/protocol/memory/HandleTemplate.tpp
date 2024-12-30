@@ -9,7 +9,7 @@ namespace filesync::protocol::memory {
     }
 
     template<typename ContainterType, typename ElementType>
-    std::span<ElementType> HandleTemplate<ContainterType,ElementType>::doData() const {
+    std::span<ElementType> HandleTemplate<ContainterType,ElementType>::doData() {
         return dataPtr->data();
     }
 

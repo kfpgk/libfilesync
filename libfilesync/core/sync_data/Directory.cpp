@@ -52,7 +52,7 @@ namespace filesync::core::sync_data {
         return syncInProgress;
     }
 
-    bool Directory::doLocalDifferentThanPrev() const {
+    bool Directory::doLocalDifferentThanPrev() {
         bool changed = Entry::doLocalDifferentThanPrev();
         for(auto it = components.begin(); it != components.end(); it++) {
             if (it->get()->localDifferentThanPrev()) {
@@ -62,7 +62,7 @@ namespace filesync::core::sync_data {
         return changed;
     }
 
-    bool Directory::doRemoteDifferentThanPrev() const {
+    bool Directory::doRemoteDifferentThanPrev() {
         bool changed = Entry::doRemoteDifferentThanPrev();
         for(auto it = components.begin(); it != components.end(); it++) {
             if (it->get()->remoteDifferentThanPrev()) {

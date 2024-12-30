@@ -15,13 +15,14 @@ namespace filesync::protocol::unit_test {
             void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override {};
-            [[nodiscard]] std::unique_ptr<memory::Handle<char>> doDownloadToMemory(
-                const std::filesystem::path& remote) override { return nullptr; };          
+            void doDownload(
+                std::unique_ptr<memory::Handle<char>>& local,
+                const std::filesystem::path& remote) override {};          
             void doUpload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override {};
             void doUploadFromMemory(
-                const std::span<char>& local,
+                std::span<char> local,
                 const std::filesystem::path& remote) override {};
             [[nodiscard]] bool doExistsOnServer(
                 const std::filesystem::path& remote) override { return true; };

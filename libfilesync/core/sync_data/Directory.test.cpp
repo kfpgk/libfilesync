@@ -8,12 +8,11 @@
 #include <cassert>
 
 using namespace filesync;
-using namespace filesync::core::sync_data::unittest;
 using namespace filesync::utility;
 
 int main(int argc, char* argv[]) {
 
-    DirectoryTest test;
+    filesync::core::sync_data::unittest::DirectoryTest test;
 
     test.add_file();
     test.add_directory();
@@ -24,7 +23,8 @@ int main(int argc, char* argv[]) {
     test.set_remotes_with_deep_hierarchy();
     test.set_remotes_with_gap_hierarchy();
 
-    Logger::getInstance().log(LogDomain::TestResult, "Class SyncDirectory: passed", __FILE__, __LINE__);
+    Logger::getInstance().log(LogDomain::TestResult, 
+        "Class SyncDirectory: passed", __FILE__, __LINE__);
     return 0;
 
 }

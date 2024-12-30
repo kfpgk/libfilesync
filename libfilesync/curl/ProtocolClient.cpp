@@ -63,7 +63,7 @@ namespace filesync::curl {
         uploadFileStorage->setupRead(optionFactory);
     }
 
-    void ProtocolClient::setInMemoryDataForUpload(const std::span<char>& data) {
+    void ProtocolClient::setInMemoryDataForUpload(std::span<char> data) {
         DEBUG("Setting up memory storage for upload.");
         uploadMemoryStorage = std::make_unique<storage::MemoryStorage>(data);
         uploadMemoryStorage->setupRead(optionFactory);        

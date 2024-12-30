@@ -3,7 +3,7 @@
 
 namespace filesync::curl::storage {
 
-    std::span<char> MemoryStorageHandle::data() const {
+    std::span<char> MemoryStorageHandle::data() {
         return storage->getDataReference();
     }
 

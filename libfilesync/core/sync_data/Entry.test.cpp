@@ -80,7 +80,7 @@ namespace filesync::core::sync_data::unit_test {
         Entry entry("dummy");
 
         bool isFileSystemPath = 
-            std::holds_alternative<std::filesystem::path>(entry.getRemoteBufferLocation());
+            std::holds_alternative<std::filesystem::path>(entry.getRemoteBufferHandle());
 
         assert(true == isFileSystemPath);
 
