@@ -189,15 +189,10 @@ namespace filesync::core::sync_data::buffer::unit_test {
         
         ProtocolMemoryBuffer buffer;
 
-        bool exceptionThrown = false;
-        try {
-            std::unique_ptr<protocol::memory::Handle<char>>& handle =
-                buffer.getHandle();
-        } catch (...) {
-            exceptionThrown = true;
-        }
+        std::unique_ptr<protocol::memory::Handle<char>>& handle =
+            buffer.getHandle();
         
-        assert(exceptionThrown == true);
+        assert(handle == nullptr);
 
         Logger::getInstance().log(LogDomain::TestResult,
             "get_non_existing_handle() passed");

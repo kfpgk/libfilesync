@@ -16,6 +16,10 @@ namespace filesync::core::sync_data::buffer {
     }
 
     void FileBuffer::store(std::istream& in) {
+        if (in.fail()) {
+            throw data::Exception("Cannot store. Input stream is in fail state.",
+                __FILE__, __LINE__);
+        }
         std::ofstream buffer(filePath);
         in.seekg(std::ios::beg);
         buffer << in.rdbuf();            

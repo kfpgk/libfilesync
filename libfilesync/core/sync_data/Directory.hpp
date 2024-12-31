@@ -2,6 +2,7 @@
 #define LIBFILESYNC_CORE_SYNC_DATA_DIRECTORY_HPP
 
 #include <libfilesync/core/sync_data/Entry.hpp>
+#include <libfilesync/core/sync_data/buffer/Buffer.hpp>
 #include <libfilesync/data/Directory.hpp>
 #include <libfilesync/observer/Observer.hpp>
 
@@ -15,6 +16,9 @@ namespace filesync::core::sync_data {
 
         public:
             explicit Directory(const std::filesystem::path& path);
+            Directory(const std::filesystem::path& path,
+                buffer::Buffer&& bufferForRemote,
+                buffer::Buffer&& bufferForPrevious);
 
         private:
             void doPrint() const override; 

@@ -10,9 +10,15 @@
 namespace filesync::core::sync_data::buffer {
 
     /**
-     * @brief Buffer that stores data in memory.
+     * @brief Buffer that stores data in memory
+     * and is compatible to the protocol package.
+     * 
+     * It can be handed to protocol instances for
+     * uploading from and downloading into this 
+     * buffer. It cannot be written manually. 
      * 
      * Patterns:
+     * 
      *  - Element of visitor pattern
      */
     class ProtocolMemoryBuffer {

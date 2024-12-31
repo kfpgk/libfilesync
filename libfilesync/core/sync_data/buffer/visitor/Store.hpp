@@ -1,6 +1,7 @@
 #ifndef LIBFILESYNC_CORE_SYNC_DATA_BUFFER_VISITOR_STORE_HPP
 #define LIBFILESYNC_CORE_SYNC_DATA_BUFFER_VISITOR_STORE_HPP
 
+#include <libfilesync/core/sync_data/buffer/CharArrayMemoryBuffer.hpp>
 #include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
 #include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 #include <libfilesync/protocol/memory/Handle.hpp>
@@ -27,6 +28,7 @@ namespace filesync::core::sync_data::buffer::visitor {
         public:
             explicit Store(BufferStoreType in);
 
+            void operator()(CharArrayMemoryBuffer& buffer);
             void operator()(FileBuffer& buffer);
             void operator()(ProtocolMemoryBuffer& buffer);
 

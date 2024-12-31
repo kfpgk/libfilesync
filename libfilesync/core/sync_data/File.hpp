@@ -2,6 +2,7 @@
 #define LIBFILESYNC_CORE_SYNC_DATA_FILE_HPP
 
 #include <libfilesync/core/sync_data/Entry.hpp>
+#include <libfilesync/core/sync_data/buffer/Buffer.hpp>
 #include <libfilesync/data/File.hpp>
 
 #include <filesystem>
@@ -12,6 +13,9 @@ namespace filesync::core::sync_data {
 
         public:
             explicit File(const std::filesystem::path& path);
+            File(const std::filesystem::path& path,
+                buffer::Buffer&& bufferForRemote,
+                buffer::Buffer&& bufferForPrevious);
 
     };
 

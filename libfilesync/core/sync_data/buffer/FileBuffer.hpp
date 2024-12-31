@@ -11,6 +11,7 @@ namespace filesync::core::sync_data::buffer {
      * file.
      * 
      * Patterns:
+     * 
      *  - Element of visitor pattern
      */
     class FileBuffer {

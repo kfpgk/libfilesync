@@ -57,6 +57,20 @@ namespace filesync::integration_test::core::buffered_sync {
             void performSyncWithLocalAndRemoteChanges();
             void evaluateSyncWithLocalAndRemoteChanges();
 
+            /**
+             * @brief Test syncing with file buffers
+             * with local and remote changes
+             */
+            void performSyncWithFileBuffers();
+            void evaluateSyncWithFileBuffers();
+
+            /**
+             * @brief Test syncing with in memory 
+             * buffers with local and remote changes
+             */
+            void performSyncWithMemoryBuffers();
+            void evaluateSyncWithMemoryBuffers();
+
     };
 
 }

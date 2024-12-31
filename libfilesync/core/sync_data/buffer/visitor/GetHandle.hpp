@@ -1,12 +1,13 @@
 #ifndef LIBFILESYNC_CORE_SYNC_DATA_BUFFER_VISITOR_GET_HANDLE_HPP
 #define LIBFILESYNC_CORE_SYNC_DATA_BUFFER_VISITOR_GET_HANDLE_HPP
 
+#include <libfilesync/core/sync_data/buffer/CharArrayMemoryBuffer.hpp>
 #include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
 #include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
-
 #include <libfilesync/protocol/HandleOrFilePath.hpp>
 
 #include <filesystem>
+#include <span>
 #include <variant>
 
 namespace filesync::core::sync_data::buffer::visitor {
@@ -22,6 +23,7 @@ namespace filesync::core::sync_data::buffer::visitor {
     class GetHandle {
 
         public:
+            [[nodiscard]] std::span<char> operator()(CharArrayMemoryBuffer& buffer);
             [[nodiscard]] protocol::HandleOrFilePath operator()(const FileBuffer& buffer);
             [[nodiscard]] protocol::HandleOrFilePath operator()(ProtocolMemoryBuffer& buffer);
 

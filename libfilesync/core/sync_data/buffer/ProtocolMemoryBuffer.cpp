@@ -10,11 +10,6 @@ namespace filesync::core::sync_data::buffer {
     }
 
     std::unique_ptr<protocol::memory::Handle<char>>& ProtocolMemoryBuffer::getHandle() {
-        if (!data) {
-            throw data::Exception("Cannot retrieve handle, "\
-                "because this buffer does not own a handle",
-                __FILE__, __LINE__);
-        }
         return data;
     }
 

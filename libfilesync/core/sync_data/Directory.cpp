@@ -9,6 +9,15 @@ namespace filesync::core::sync_data {
 
     }
 
+    Directory::Directory(const std::filesystem::path& path,
+        buffer::Buffer&& bufferForRemote,
+        buffer::Buffer&& bufferForPrevious) :
+            DirectoryBase{path},
+            Entry{path, std::move(bufferForRemote), std::move(bufferForPrevious)},
+            EntryBase{path} {
+
+    }        
+
     void Directory::doPrint() const {
         Entry::doPrint();
         for(auto it = components.begin(); it != components.end(); it++) {

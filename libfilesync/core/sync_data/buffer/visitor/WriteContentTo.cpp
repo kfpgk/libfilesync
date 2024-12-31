@@ -12,6 +12,10 @@ namespace filesync::core::sync_data::buffer::visitor {
         }
     }
 
+    std::ostream& WriteContentTo::operator()(CharArrayMemoryBuffer& buffer) {
+        return buffer.extractContentTo(out);
+    }
+
     std::ostream& WriteContentTo::operator()(FileBuffer& buffer) {
         return buffer.extractContentTo(out);
     }

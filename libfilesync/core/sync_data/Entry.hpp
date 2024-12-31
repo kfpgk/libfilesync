@@ -29,6 +29,9 @@ namespace filesync::core::sync_data {
 
         public:
             explicit Entry(const std::filesystem::path& path);
+            Entry(const std::filesystem::path& path,
+                buffer::Buffer&& bufferForRemote,
+                buffer::Buffer&& bufferForPrevious);
 
             void setRemoteEntry(const std::filesystem::path& path);
             [[nodiscard]] std::filesystem::path getRemotePath() const;
@@ -87,8 +90,11 @@ namespace filesync::core::sync_data {
             bool syncInProgress = false;
 
             std::unique_ptr<RemoteEntry> remoteEntry;
-            buffer::Buffer bufferForRemote;
-            buffer::Buffer bufferForPrevious;
+            std::unique_ptr<buffer::Buffer> bufferForRemote;
+            std::unique_ptr<buffer::Buffer> bufferForPrevious;
+
+            bool bufferTypeSupportsRemoteBuffer(const buffer::Buffer& buffer) const;
+            bool bufferTypeSupportsPreviousBuffer(const buffer::Buffer& buffer) const;
 
     };
 

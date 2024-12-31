@@ -2,6 +2,7 @@ add_subdirectory(visitor)
 
 target_sources(libfilesync
     PRIVATE
+        CharArrayMemoryBuffer.cpp
         FileBuffer.cpp
         ProtocolMemoryBuffer.cpp
 )

@@ -15,6 +15,10 @@ namespace filesync::core::sync_data::buffer::visitor {
 
     }
 
+    void Store::operator()(CharArrayMemoryBuffer& buffer) {
+        buffer.store(std::get<std::reference_wrapper<std::istream>>(in));
+    }
+
     void Store::operator()(FileBuffer& buffer) {
         buffer.store(std::get<std::reference_wrapper<std::istream>>(in));
     }

@@ -12,6 +12,10 @@ namespace filesync::core::sync_data::buffer::visitor {
         }
     }
 
+    bool IsEqualTo::operator()(const CharArrayMemoryBuffer& buffer) {
+        return buffer.isEqualTo(in);
+    }
+
     bool IsEqualTo::operator()(const FileBuffer& buffer) {
         return buffer.isEqualTo(in);
     }

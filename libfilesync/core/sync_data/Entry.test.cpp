@@ -1,24 +1,34 @@
 #include <libfilesync/core/sync_data/Entry.test.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
+#include <libfilesync/core/sync_data/buffer/Buffer.hpp>
+#include <libfilesync/core/sync_data/buffer/CharArrayMemoryBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 #include <libfilesync/utility/Logger.hpp>
 
 #include <cassert>
 #include <variant>
 
-using namespace filesync::core::sync_data::unit_test;
+using namespace filesync::utility;
 
 int main(int argc, char* argv[]) {
 
-    EntryTest entryTest;
+    filesync::core::sync_data::unit_test::EntryTest test;
 
-    entryTest.set_and_get_remote_entry();
-    entryTest.get_default_remote_entry();
-    entryTest.get_default_sync_in_progress();
-    entryTest.set_sync_in_progress();
-    entryTest.reset_sync_in_progress();
-    entryTest.verify_remote_buf_location_type();
-    entryTest.equality_operator_with_equals();
-    entryTest.equality_operator_with_not_equals();
+    test.set_and_get_remote_entry();
+    test.get_default_remote_entry();
+    test.get_default_sync_in_progress();
+
+    test.set_sync_in_progress();
+    test.reset_sync_in_progress();
+
+    test.equality_operator_with_equals();
+    test.equality_operator_with_not_equals();
+
+    test.construct_with_file_buffers();
+    test.construct_with_memory_buffers();
+    test.construct_remote_with_char_array_buffer();
+    test.construct_previous_with_protocol_buffer();
 
     Logger::getInstance().log(LogDomain::TestResult, "Class core::sync_data::Entry: passed",
         __FILE__, __LINE__);
@@ -76,20 +86,6 @@ namespace filesync::core::sync_data::unit_test {
             "reset_sync_in_progress() passed");
     }
 
-    void EntryTest::verify_remote_buf_location_type() {
-        Entry entry("dummy");
-
-        bool isFileSystemPath = 
-            std::holds_alternative<
-                std::reference_wrapper<const std::filesystem::path>>
-                    (entry.getRemoteBufferHandle());
-
-        assert(true == isFileSystemPath);
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "verify_remote_buf_location_type() passed");
-    }
-
     void EntryTest::equality_operator_with_equals() {
         Entry entry("dummy");
         Entry entry2("dummy");
@@ -108,6 +104,58 @@ namespace filesync::core::sync_data::unit_test {
 
         Logger::getInstance().log(LogDomain::TestResult,
             "equality_operator_with_not_equals() passed");
+    }
+
+    void EntryTest::construct_with_file_buffers() {
+
+        Entry("dummy1", buffer::FileBuffer{}, buffer::FileBuffer{});
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "construct_with_file_buffers() passed");
+    }
+
+    void EntryTest::construct_with_memory_buffers() {
+
+        Entry("dummy1", 
+            buffer::ProtocolMemoryBuffer{},
+            buffer::CharArrayMemoryBuffer{});
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "construct_with_protocol_memory_buffers() passed");
+    }
+
+    void EntryTest::construct_remote_with_char_array_buffer() {
+
+        bool exceptionThrown = false;
+        try {
+            Entry("dummy1", 
+                buffer::CharArrayMemoryBuffer{},
+                buffer::CharArrayMemoryBuffer{});
+        } catch (...) {
+            exceptionThrown = true;
+        }
+
+        assert(exceptionThrown == true);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "construct_remote_with_char_array_buffer() passed");
+    }
+
+    void EntryTest::construct_previous_with_protocol_buffer() {
+
+        bool exceptionThrown = false;
+        try {
+            Entry("dummy1", 
+                buffer::ProtocolMemoryBuffer{},
+                buffer::ProtocolMemoryBuffer{});
+        } catch (...) {
+            exceptionThrown = true;
+        }
+
+        assert(exceptionThrown == true);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "construct_previous_with_protocol_buffer() passed");
     }
 
 }
