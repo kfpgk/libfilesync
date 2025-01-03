@@ -4,6 +4,7 @@
 #include <tests/template/IntegrationTest.hpp>
 #include <libfilesync/curl/storage/MemoryStorageHandle.hpp>
 
+#include <cstddef>
 #include <memory>
 #include <span>
 #include <string>
@@ -24,8 +25,10 @@ namespace filesync::integration_test::curl::storage::memory_storage {
 
             std::string file1Name;
             std::string file1Content;
+            std::size_t file1Size;
             std::string file2Name;
             std::string file2Content;
+            std::size_t file2Size;
 
             std::string testCase2Content;
 
@@ -61,6 +64,22 @@ namespace filesync::integration_test::curl::storage::memory_storage {
              */
             void performReuseOfMemory();
             void evaluateReuseOfMemory();
+
+            /**
+             * @brief Test download of large
+             * file to memory to test handling
+             * of multiple transfers.
+             */
+            void performLargeDownload();
+            void evaluateLargeDownload();
+
+            /**
+             * @brief Test upload of large
+             * data from memory to test handling
+             * of multiple transfers.
+             */
+            void performLargeUpload();
+            void evaluateLargeUpload();
 
     };
 
