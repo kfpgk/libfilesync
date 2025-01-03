@@ -11,6 +11,7 @@ namespace filesync {
     enum class ProtocolType {None, FTP};
     enum class ConflictResolveStrategy {None, LocalFirst, RemoteFirst, Interactive};
     enum class SyncStrategy {None, UnBuffered, Buffered, OneWay};
+    enum class BufferType {Default, MemoryBased, FileBased};
 
     class FileSyncLocks;
 
@@ -33,6 +34,7 @@ namespace filesync {
             void setSyncStrategy(enum SyncStrategy syncStrategy);
             void setSyncContent(const std::filesystem::path& path);
             void setSyncInvertal(std::chrono::milliseconds seconds);
+            void setBufferType(enum BufferType bufferType);
             /**
              * @brief Start syncing blocking
              */

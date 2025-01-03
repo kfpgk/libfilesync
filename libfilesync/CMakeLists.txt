@@ -62,4 +62,21 @@ if(BUILD_UNIT_TESTS)
         NAME "UT FileSyncException"
         COMMAND FileSyncException_test
     )
+
+    add_executable(FileSync_test
+        FileSync.test.cpp
+    )
+    target_include_directories(FileSync_test 
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}
+            ${CMAKE_BINARY_DIR}
+    )
+    target_link_libraries(FileSync_test
+        PRIVATE
+            libfilesync
+    )
+    add_test(
+        NAME "UT FileSync"
+        COMMAND FileSync_test
+    )
 endif()

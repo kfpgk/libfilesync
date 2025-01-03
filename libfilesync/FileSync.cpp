@@ -3,6 +3,9 @@
 #include <libfilesync/FileSyncLocks.hpp>
 #include <libfilesync/core/sync_data/Entry.hpp>
 #include <libfilesync/core/sync_data/EntryFactory.hpp>
+#include <libfilesync/core/sync_data/buffer/CharArrayMemoryBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
+#include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 #include <libfilesync/core/FileSyncer.hpp>
 #include <libfilesync/core/BufferedSyncer.hpp>
 #include <libfilesync/core/UnBufferedSyncer.hpp>
@@ -51,6 +54,7 @@ namespace filesync {
             void setSyncStrategy(enum SyncStrategy syncStrategy);
             void setSyncContent(const std::filesystem::path& path);
             void setSyncInvertal(std::chrono::milliseconds seconds);
+            void setBufferType(enum BufferType bufferType);
             void startSyncing();
             void startSyncing(std::shared_ptr<FileSyncLocks> locks);
             void stopSyncing();
@@ -61,6 +65,7 @@ namespace filesync {
             enum ProtocolType protocolType = ProtocolType::None;
             enum ConflictResolveStrategy conflictResolveStrategy = ConflictResolveStrategy::None;
             enum SyncStrategy syncStrategy = SyncStrategy::None;
+            enum BufferType bufferType = BufferType::Default;
             std::chrono::milliseconds interval = 5s;
             std::shared_ptr<protocol::Client> protocolClient = nullptr;
             std::unique_ptr<core::sync_data::Entry> entry = nullptr;
@@ -113,9 +118,13 @@ namespace filesync {
         this->syncStrategy = syncStrategy;
     }
 
+    void FileSync::Impl::setBufferType(enum BufferType bufferType) {
+        this->bufferType = bufferType;
+    }
+
     void FileSync::Impl::setSyncContent(const std::filesystem::path& path) {
         try {
-            entry = filesync::core::sync_data::createSyncEntryRecursively(path);       
+            entry = filesync::core::sync_data::createSyncEntryRecursively(path);   
             Logger::getInstance().log(LogDomain::Info, "Added following files for syncing:");
             entry->print();
             Logger::getInstance().log(LogDomain::Info, "----------------------------------");  
@@ -320,6 +329,10 @@ namespace filesync {
         pImpl->setSyncStrategy(syncStrategy);
     }
     
+    void FileSync::setBufferType(enum BufferType bufferType) {
+        pImpl->setBufferType(bufferType);
+    }
+
     void FileSync::setSyncContent(const std::filesystem::path& path) {
         pImpl->setSyncContent(path);
     }

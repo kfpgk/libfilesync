@@ -7,18 +7,17 @@
 #include <sstream>
 #include <cassert>
 
-using namespace filesync;
-using namespace filesync::unit_test;
 using namespace filesync::utility;
 
 int main(int argc, char* argv[]) {
 
-    FileSyncExceptionTest fileSyncExceptionTest;
+    filesync::unit_test::FileSyncExceptionTest test;
 
-    fileSyncExceptionTest.add_multiple_contexts();
-    fileSyncExceptionTest.overwrite_error_message();
+    test.add_multiple_contexts();
+    test.overwrite_error_message();
 
-    Logger::getInstance().log(LogDomain::TestResult, "FileSyncException: passed", __FILE__, __LINE__);
+    Logger::getInstance().log(LogDomain::TestResult, 
+        "FileSyncException: passed", __FILE__, __LINE__);
     return 0;
 
 }
@@ -59,6 +58,9 @@ namespace filesync::unit_test {
 
         assert(expectedMessage.str() == message);
 
+        Logger::getInstance().log(LogDomain::TestResult,
+            "add_multiple_contexts() passed");
+
     }
 
     void FileSyncExceptionTest::overwrite_error_message() {
@@ -85,6 +87,9 @@ namespace filesync::unit_test {
         }
 
         assert(expectedMessage.str() == message);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "overwrite_error_message() passed");
 
     }
 
