@@ -1,3 +1,5 @@
+add_subdirectory(error_handling)
+
 enable_testing()
 add_executable(test_file_sync
     file_sync.cpp
