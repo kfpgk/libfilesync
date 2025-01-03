@@ -33,6 +33,9 @@ namespace filesync::core::sync_data {
                 buffer::Buffer&& bufferForRemote,
                 buffer::Buffer&& bufferForPrevious);
 
+            void setBuffers(
+                buffer::Buffer&& bufferForRemote,
+                buffer::Buffer&& bufferForPrevious);
             void setRemoteEntry(const std::filesystem::path& path);
             [[nodiscard]] std::filesystem::path getRemotePath() const;
             void setSyncInProgress();

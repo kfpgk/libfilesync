@@ -30,6 +30,11 @@ int main(int argc, char* argv[]) {
     test.construct_remote_with_char_array_buffer();
     test.construct_previous_with_protocol_buffer();
 
+    test.set_file_buffers();
+    test.set_memory_buffers();
+    test.set_previous_with_protocol_buffer();
+    test.set_remote_with_char_array_buffer();
+
     Logger::getInstance().log(LogDomain::TestResult, "Class core::sync_data::Entry: passed",
         __FILE__, __LINE__);
     return 0;
@@ -108,7 +113,7 @@ namespace filesync::core::sync_data::unit_test {
 
     void EntryTest::construct_with_file_buffers() {
 
-        Entry("dummy1", buffer::FileBuffer{}, buffer::FileBuffer{});
+        Entry entry("dummy1", buffer::FileBuffer{}, buffer::FileBuffer{});
 
         Logger::getInstance().log(LogDomain::TestResult,
             "construct_with_file_buffers() passed");
@@ -116,7 +121,7 @@ namespace filesync::core::sync_data::unit_test {
 
     void EntryTest::construct_with_memory_buffers() {
 
-        Entry("dummy1", 
+        Entry entry("dummy1", 
             buffer::ProtocolMemoryBuffer{},
             buffer::CharArrayMemoryBuffer{});
 
@@ -128,7 +133,7 @@ namespace filesync::core::sync_data::unit_test {
 
         bool exceptionThrown = false;
         try {
-            Entry("dummy1", 
+            Entry entry("dummy1", 
                 buffer::CharArrayMemoryBuffer{},
                 buffer::CharArrayMemoryBuffer{});
         } catch (...) {
@@ -145,7 +150,7 @@ namespace filesync::core::sync_data::unit_test {
 
         bool exceptionThrown = false;
         try {
-            Entry("dummy1", 
+            Entry entry("dummy1", 
                 buffer::ProtocolMemoryBuffer{},
                 buffer::ProtocolMemoryBuffer{});
         } catch (...) {
@@ -156,6 +161,66 @@ namespace filesync::core::sync_data::unit_test {
 
         Logger::getInstance().log(LogDomain::TestResult,
             "construct_previous_with_protocol_buffer() passed");
+    }
+
+    void EntryTest::set_file_buffers() {
+
+        Entry entry("dummy1");
+        entry.setBuffers(
+            buffer::FileBuffer{},
+            buffer::FileBuffer{});
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "set_file_buffers() passed");
+    }
+
+    void EntryTest::set_memory_buffers() {
+
+        Entry entry("dummy1");
+        entry.setBuffers(
+            buffer::ProtocolMemoryBuffer{},
+            buffer::CharArrayMemoryBuffer{});
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "set_memory_buffers() passed");
+    }
+
+    void EntryTest::set_remote_with_char_array_buffer() {
+
+        Entry entry("dummy1");
+
+        bool exceptionThrown = false;
+        try {
+            entry.setBuffers(
+                buffer::CharArrayMemoryBuffer{},
+                buffer::CharArrayMemoryBuffer{});
+        } catch (...) {
+            exceptionThrown = true;
+        }
+
+        assert(exceptionThrown == true);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "set_remote_with_char_array_buffer() passed");
+    }
+
+    void EntryTest::set_previous_with_protocol_buffer() {
+
+        Entry entry("dummy1");
+
+        bool exceptionThrown = false;
+        try {
+            entry.setBuffers(
+                buffer::ProtocolMemoryBuffer{},
+                buffer::ProtocolMemoryBuffer{});
+        } catch (...) {
+            exceptionThrown = true;
+        }
+
+        assert(exceptionThrown == true);
+
+        Logger::getInstance().log(LogDomain::TestResult,
+            "set_previous_with_protocol_buffer() passed");
     }
 
 }

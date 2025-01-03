@@ -21,6 +21,11 @@ namespace filesync::core::sync_data::unit_test {
             void construct_remote_with_char_array_buffer();
             void construct_previous_with_protocol_buffer();
 
+            void set_file_buffers();
+            void set_memory_buffers();
+            void set_remote_with_char_array_buffer();
+            void set_previous_with_protocol_buffer();
+
     };
 
 }

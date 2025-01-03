@@ -32,6 +32,14 @@ namespace filesync::core::sync_data {
         EntryBase{path},
         remoteEntry{std::make_unique<RemoteEntry>(path)} {
 
+        setBuffers(std::move(bufferForRemote), std::move(bufferForPrevious));
+
+    }
+
+    void Entry::setBuffers(
+        buffer::Buffer&& bufferForRemote,
+        buffer::Buffer&& bufferForPrevious) {
+
         if (bufferTypeSupportsRemoteBuffer(bufferForRemote)) {
             
             this->bufferForRemote = std::make_unique<buffer::Buffer>(
@@ -50,7 +58,7 @@ namespace filesync::core::sync_data {
             throw data::Exception("This buffer type cannot be used for the buffer "\
                 "holding previous data.",
                 __FILE__, __LINE__);
-        }
+        }        
 
     }
 
