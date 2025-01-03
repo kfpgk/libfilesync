@@ -83,6 +83,13 @@ namespace filesync::protocol {
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote);
             /**
+             * @brief Upload from memory buffer (handle)
+             * to remote file.
+             */
+            void upload(
+                std::unique_ptr<memory::Handle<char>>& local,
+                const std::filesystem::path& remote);
+            /**
              * @brief Upload from memory (char array)
              * to remote file.
              */

@@ -114,6 +114,18 @@ namespace filesync::protocol {
     }
 
     void Client::upload(
+        std::unique_ptr<memory::Handle<char>>& local,
+        const std::filesystem::path& remote) {
+
+        if (!local) {
+            throw FileSyncException("Memory handle is empty. Cannot upload",
+                __FILE__, __LINE__);            
+        }
+        upload(local->data(), remote);
+
+    }
+
+    void Client::upload(
         std::span<char> local,
         const std::filesystem::path& remote) {
 
