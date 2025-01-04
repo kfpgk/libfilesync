@@ -1,6 +1,5 @@
 #include <libfilesync/curl/wrapper/Url.hpp>
 #include <libfilesync/curl/Exception.hpp>
-#include <libfilesync/utility/Debug.hpp>
 
 #include <cstring>
 

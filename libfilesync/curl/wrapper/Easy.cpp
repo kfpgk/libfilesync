@@ -1,13 +1,13 @@
 #include <libfilesync/curl/wrapper/Easy.hpp>
 #include <libfilesync/curl/Exception.hpp>
-#include <libfilesync/utility/Debug.hpp>
+#include <libfilesync/curl/utility/Debug.hpp>
 
 #include <curl/curl.h>
 
 namespace filesync::curl::wrapper {
 
     Easy::Easy() {
-        DEBUG("Running curl_easy_init()");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Running curl_easy_init()");
         handle = curl_easy_init();
         if (!handle) {
             throw Exception("curl_easy_init() failed", __FILE__, __LINE__);
@@ -22,12 +22,12 @@ namespace filesync::curl::wrapper {
     }
 
     Easy::~Easy() {
-        DEBUG("Running curl_easy_cleanup()");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Running curl_easy_cleanup()");
         curl_easy_cleanup(handle);
     }
 
     Easy::Easy(const Easy& rhs) {
-        DEBUG("Running curl_easy_duphandle()");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Running curl_easy_duphandle()");
         handle = curl_easy_duphandle(rhs.handle);
     }
 
@@ -53,7 +53,7 @@ namespace filesync::curl::wrapper {
     }
 
     void Easy::run() const {
-        DEBUG("Running curl_easy_perform()");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Running curl_easy_perform()");
         CURLcode rc = curl_easy_perform(handle);
         if (rc != CURLE_OK) {
             throw Exception("curl_easy_perform() failed:", \

@@ -2,15 +2,13 @@
 #include <libfilesync/curl/Exception.hpp>
 #include <libfilesync/curl/option/Nobody.hpp>
 #include <libfilesync/curl/option/Upload.hpp>
-#include <libfilesync/utility/Debug.hpp>
+#include <libfilesync/curl/utility/Debug.hpp>
 
 #include <curl/curl.h>
 
 #include <cstdio>
 #include <sstream>
 #include <vector>
-
-using namespace filesync::utility;
 
 namespace filesync::curl {
 
@@ -44,7 +42,7 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::setRemoteFile(const std::filesystem::path& path) {
-        DEBUG("Setting file '" + path.string() + "' as remote file.");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Setting file '" + path.string() + "' as remote file.");
         activeUrl.setPath(path.string());
         activeUrl.validate();
         std::unique_ptr<option::Option> option = 
@@ -54,7 +52,7 @@ namespace filesync::curl {
     }
     
     void ProtocolClient::setLocalFileForUpload(const std::filesystem::path& path) {
-        DEBUG("Setting file '" + path.string() + "' for upload.");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Setting file '" + path.string() + "' for upload.");
         if (!std::filesystem::is_regular_file(path)) {
             throw Exception(std::string("Local file not found: '" \
                 + path.string() + "'"), __FILE__, __LINE__);  
@@ -64,7 +62,7 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::setInMemoryDataForUpload(std::span<char> data) {
-        DEBUG("Setting up memory storage for upload.");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Setting up memory storage for upload.");
         uploadMemoryStorage = std::make_unique<storage::MemoryStorage>(data);
         uploadMemoryStorage->setupRead(optionFactory);        
     }
@@ -75,7 +73,8 @@ namespace filesync::curl {
         if (path.string().back() != path::preferred_separator) {
             remoteDirPath += path::preferred_separator;
         }
-        DEBUG("Setting directory '" + remoteDirPath.string() + "' as remote directory.");
+        LIBFILESYNC_CURL_UTILITY_DEBUG(
+            "Setting directory '" + remoteDirPath.string() + "' as remote directory.");
         activeUrl.setPath(remoteDirPath.string());
         activeUrl.validate();
         std::unique_ptr<option::Option> option = 
@@ -84,14 +83,22 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::createLocalFileForDownload(const std::filesystem::path& path) {
-        DEBUG("Setting file '" + path.string() + "' as download destination.");
+        LIBFILESYNC_CURL_UTILITY_DEBUG(
+            "Setting file '" + path.string() + "' as download destination.");
         downloadFileStorage = std::make_unique<storage::FileStorage>(path);
         downloadFileStorage->setupWrite(optionFactory);
     }
 
     void ProtocolClient::prepareDownloadToMemory() {
-        DEBUG("Setting up memory storage as download destination");
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Setting up memory storage as download destination");
         downloadMemoryStorage = std::make_unique<storage::MemoryStorage>();
+        downloadMemoryStorage->setupWrite(optionFactory);        
+    }
+
+    void ProtocolClient::prepareDownloadToMemory(std::size_t bufferSize) {
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Setting up memory storage of initial size "\
+            << bufferSize << "B as download destination");
+        downloadMemoryStorage = std::make_unique<storage::MemoryStorage>(bufferSize);
         downloadMemoryStorage->setupWrite(optionFactory);        
     }
 
@@ -110,13 +117,13 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::upload() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
 
         validateLocalUploadSource();
         validateRemoteFilePath();
         doUpload();
 
-        DEBUG_EXIT();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
     }
 
     void ProtocolClient::doUpload() {
@@ -132,13 +139,13 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::download() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
 
         validateLocalDownloadDestination();
         validateRemoteFilePath();
         doDownload();
 
-        DEBUG_EXIT();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
     }
 
     void ProtocolClient::doDownload() {
@@ -157,12 +164,12 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::deleteRemoteFile() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
 
         validateRemoteFilePath();
         doDeleteRemoteFile();
 
-        DEBUG_EXIT();       
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();       
     }
 
     bool ProtocolClient::remoteEntryExists() const {
@@ -187,21 +194,21 @@ namespace filesync::curl {
     }
 
     void ProtocolClient::createRemoteDir() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
 
         validateRemoteDirPath();    
         doCreateRemoteDir();
 
-        DEBUG_EXIT();  
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();  
     }
 
     void ProtocolClient::deleteRemoteDir() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
 
         validateRemoteDirPath();    
         doDeleteRemoteDir();
 
-        DEBUG_EXIT();  
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();  
     }
 
     void ProtocolClient::silentOutput() {

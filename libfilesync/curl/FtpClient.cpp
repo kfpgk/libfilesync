@@ -5,7 +5,7 @@
 #include <libfilesync/curl/option/Generic.hpp>
 #include <libfilesync/curl/option/Option.hpp>
 #include <libfilesync/curl/option/Collection.hpp>
-#include <libfilesync/utility/Debug.hpp>
+#include <libfilesync/curl/utility/Debug.hpp>
 
 #define FILESYNC_CURL_URL_FTP_PREFIX "ftp"
 
@@ -23,7 +23,7 @@ namespace filesync::curl {
     }
 
     void FtpClient::init(const std::string& serverAddress) {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
         try {
 
             std::unique_ptr<option::Collection> options = optionFactory.createCollection();
@@ -40,17 +40,17 @@ namespace filesync::curl {
             options->set();
             interface->run();
 
-            DEBUG("Successfully connected to '" << activeUrl.getUrl() << "'");
+            LIBFILESYNC_CURL_UTILITY_DEBUG("Successfully connected to '" << activeUrl.getUrl() << "'");
 
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
         }
-        DEBUG_EXIT();   
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();   
     }
 
     void FtpClient::doDeleteRemoteFile() {
-        DEBUG_ENTER(); 
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER(); 
         try {
             std::unique_ptr<option::Collection> options = optionFactory.createCollection();
             
@@ -73,7 +73,7 @@ namespace filesync::curl {
             e.addContext(__FILE__, __LINE__);
             throw e;
         }        
-        DEBUG_EXIT();       
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();       
     }
 
     void FtpClient::doSetCreateMissingDirs(bool value) {
@@ -87,7 +87,7 @@ namespace filesync::curl {
     }
 
     void FtpClient::doCreateRemoteDir() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
         try {
             std::unique_ptr<option::Collection> options = optionFactory.createCollection();
             
@@ -110,11 +110,11 @@ namespace filesync::curl {
             e.addContext(__FILE__, __LINE__);
             throw e;
         }
-        DEBUG_EXIT();            
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();            
     }
 
     void FtpClient::doDeleteRemoteDir() {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
         try {
             std::unique_ptr<option::Collection> options = optionFactory.createCollection();
             
@@ -137,21 +137,21 @@ namespace filesync::curl {
             e.addContext(__FILE__, __LINE__);
             throw e;
         }   
-        DEBUG_EXIT();         
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();         
     }
 
     bool FtpClient::doRemoteEntryExists() const {
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
         try {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileNobody();
             option->set();
             interface->run();
         } catch(Exception& e) {
-            DEBUG_EXIT();
+            LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
             return false;
         }
-        DEBUG_EXIT();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
         return true;       
     }
 
