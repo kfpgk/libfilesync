@@ -2,7 +2,6 @@
 #define LIBFILESYNC_TESTS_PROTOCOL_FTP_DELETE_REMOTE_FILE_HPP
 
 #include <tests/protocol/ftp/ServerAccess.hpp>
-#include <libfilesync/protocol/FtpClient.hpp>
 
 namespace filesync::integration_test::protocol::ftp {
 

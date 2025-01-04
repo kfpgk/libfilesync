@@ -1,4 +1,5 @@
 #include <tests/protocol/ftp/DeleteRemoteFile.hpp>
+#include <libfilesync/protocol/FtpClient.hpp>
 #include <libfilesync/FileSyncException.hpp>
 
 #include <fstream>
