@@ -132,7 +132,7 @@ namespace filesync::protocol {
         DEBUG_ENTER();
 
         std::stringstream message;
-        message << "Upload: char buffer of size '" << local.size() << "' to "
+        message << "Upload: char buffer of size '" << local.size() << "B' to "
             << getCompleteRemoteFilePath(remote); 
         Logger::getInstance().log(LogDomain::Info, message.str());
 
