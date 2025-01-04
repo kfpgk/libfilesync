@@ -2,26 +2,29 @@
 #include <libfilesync/curl/storage/Charbuffer.hpp>
 #include <libfilesync/utility/Logger.hpp>
 #include <libfilesync/utility/Literals.hpp>
-#include <libfilesync/utility/Debug.hpp>
 
 #include <cassert>
+#include <chrono>
 #include <cstddef>
 #include <iostream>
+#include <ratio>
 #include <span>
 #include <string>
 
-using namespace filesync::curl;
 using namespace filesync::utility;
 using namespace filesync::utility::literals;
 
 int main(int argc, char* argv[]) {
 
-    storage::unit_test::CharBufferTest charBufferTest;
+    filesync::curl::storage::unit_test::CharBufferTest test;
 
-    charBufferTest.test_clear();
-    charBufferTest.test_get_size();
-    charBufferTest.test_byte_array_and_string_write();
-    charBufferTest.test_get_span();
+    test.test_clear();
+    test.test_get_size();
+    test.test_byte_array_and_string_write();
+    test.test_get_span();
+
+    test.write_1MB_in_1KB_chunks_no_pre_alloc();
+    test.write_1MB_in_1KB_chunks_with_pre_alloc();
 
     Logger::getInstance().log(LogDomain::TestResult,
         "curl::storage::CharBuffer: passed", __FILE__, __LINE__);
@@ -105,6 +108,64 @@ namespace filesync::curl::storage::unit_test {
         assert(span[10] == 'n');
         assert(span[11] == 't');
         assert((void*)span.data() == (void*)data1.data);
+
+    }
+
+    void CharBufferTest::write_1MB_in_1KB_chunks_no_pre_alloc() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running write_1MB_in_1KB_chunks_no_pre_alloc()", __FILE__, __LINE__);
+        
+        CharBuffer buffer;
+
+        char byteArrayData[1024] {"test content"};
+        
+        using namespace std::chrono;
+        auto start = steady_clock::now();
+
+        for (std::size_t i = 0; i < 1024; i++) {
+            std::size_t remaining = 1024;
+            while (remaining > 0) {
+                std::size_t written = buffer.write(byteArrayData, remaining);
+                remaining -= written;
+            }
+        }
+
+        auto end = steady_clock::now();
+        duration<float, std::milli> executionTime = end - start;
+
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Test time: " + std::to_string(executionTime.count()) + "ms");
+
+        assert(executionTime < 200ms);
+
+    }
+
+    void CharBufferTest::write_1MB_in_1KB_chunks_with_pre_alloc() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running write_1MB_in_1KB_chunks_with_pre_alloc()", __FILE__, __LINE__);
+        
+        CharBuffer buffer(1_MB);
+
+        char byteArrayData[1024] {"test content"};
+        
+        using namespace std::chrono;
+        auto start = steady_clock::now();
+
+        for (std::size_t i = 0; i < 1024; i++) {
+            std::size_t remaining = 1024;
+            while (remaining > 0) {
+                std::size_t written = buffer.write(byteArrayData, remaining);
+                remaining -= written;
+            }
+        }
+
+        auto end = steady_clock::now();
+        duration<float, std::milli> executionTime = end - start;
+
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Test time: " + std::to_string(executionTime.count()) + "ms");
+
+        assert(executionTime < 10ms);
 
     }
 

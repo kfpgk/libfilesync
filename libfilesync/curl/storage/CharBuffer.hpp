@@ -24,6 +24,7 @@ namespace filesync::curl::storage {
 
         public:
             CharBuffer();
+            explicit CharBuffer(std::size_t size);
             explicit CharBuffer(std::string data);
             CharBuffer(char* data, std::size_t dataSize);
             CharBuffer(std::span<char>& data);
@@ -40,12 +41,17 @@ namespace filesync::curl::storage {
             bool hasMemoryOwnership() const;
 
         private:
-            char* data;
-            std::size_t size;
-            char* position;
+            char* data = nullptr;
+            std::size_t dataSize = 0;
+            std::size_t bufferSize = 0;
+            char* position = nullptr;
             bool owning = false;
+            std::size_t reallocations = 0;
 
             void checkOwnership() const;
+            void changeBufferSize(std::size_t size);
+            void changeBufferSizeToAtLeast(std::size_t size);
+            void monitorReallocation(std::size_t newSize);
 
         friend bool operator==(const CharBuffer& lhs, const CharBuffer& rhs);
         friend bool operator!=(const CharBuffer& lhs, const CharBuffer& rhs);
