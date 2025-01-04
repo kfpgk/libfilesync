@@ -68,9 +68,6 @@ namespace filesync::integration_test {
     }
 
     void IntegrationTest::addTestCase(TestCase testCase) {
-
-        Logger::getInstance().log(LogDomain::Info,
-            "Adding testcase.");
         testCases.push_back(testCase);
     }
 
@@ -82,7 +79,7 @@ namespace filesync::integration_test {
         for (auto&& it = testCases.begin(); it != testCases.end(); it++) {
             count++;
             std::stringstream message;
-            message << "--- Running testcase " << count << "/" << noOfTestCases;
+            message << "--- Running testcase " << count << "/" << noOfTestCases << " ---";
             Logger::getInstance().log(LogDomain::Info, message.str());
             wrapPerform(*it);
             wrapEvaluate(*it);
