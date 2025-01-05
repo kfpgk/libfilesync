@@ -3,6 +3,8 @@
 
 #include <libfilesync/curl/config/config.h>
 
+#include <iostream>
+
 #ifdef LIBFILESYNC_CURL_UTILITY_DEBUG_BUILD
 #   define LIBFILESYNC_CURL_UTILITY_DEBUG(x) do { \
                 std::cerr << x << std::endl; \
