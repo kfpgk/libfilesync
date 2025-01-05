@@ -10,6 +10,7 @@
 
 #include <curl/curl.h>
 
+#include <cstddef>
 #include <string>
 #include <filesystem>
 #include <memory>
@@ -47,7 +48,19 @@ namespace filesync::curl {
              * will be written.
              */
             void createLocalFileForDownload(const std::filesystem::path& path);
+            /**
+             * @brief Prepare a chunk of memory as download destination.
+             * 
+             * For large downloads this may result in multiple reallocations.
+             * If possible use the overload including bufferSize to 
+             * reduce number of reallocations.
+             */
             void prepareDownloadToMemory();
+            /**
+             * @brief Prepare a chunk of memory of size `buffersize`
+             * as download destination.
+             */
+            void prepareDownloadToMemory(std::size_t bufferSize);
             /**
              * @brief Returns a copy of the most recently downloaded memory
              * 
