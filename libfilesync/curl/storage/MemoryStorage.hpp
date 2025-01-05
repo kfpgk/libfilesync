@@ -4,6 +4,7 @@
 #include <libfilesync/curl/storage/CharBuffer.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
 
+#include <cstddef>
 #include <span>
 
 namespace filesync::curl::storage {
@@ -54,6 +55,7 @@ namespace filesync::curl::storage {
 
         public:
             MemoryStorage() = default;
+            explicit MemoryStorage(std::size_t bufferSize);
             explicit MemoryStorage(std::span<char> data);
 
             std::span<char> getDataReference();

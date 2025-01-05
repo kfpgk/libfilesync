@@ -1,12 +1,17 @@
 #include <libfilesync/curl/storage/MemoryStorage.hpp>
 #include <libfilesync/curl/Exception.hpp>
-#include <libfilesync/utility/Debug.hpp>
+#include <libfilesync/curl/utility/Debug.hpp>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 namespace filesync::curl::storage {
+
+    MemoryStorage::MemoryStorage(std::size_t bufferSize) :
+        data{bufferSize} {
+
+    }
 
     MemoryStorage::MemoryStorage(std::span<char> data) :
         data{data} {
@@ -30,7 +35,7 @@ namespace filesync::curl::storage {
         }
         optionFactory.createGeneric(CURLOPT_WRITEFUNCTION, &memoryStorageWriteCallback)->set();
         data.resetPosition();
-        DEBUG("Data address: " << &data);
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Data address: " << &data);
         optionFactory.createGeneric(CURLOPT_WRITEDATA, static_cast<void*>(&data))->set();
     }
 
@@ -52,7 +57,7 @@ namespace filesync::curl::storage {
     extern "C" size_t memoryStorageWriteCallback(char* contents,
         size_t size, size_t count, void* target) {
 
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
         size_t ret = 0;
 
         if (target) {
@@ -65,8 +70,8 @@ namespace filesync::curl::storage {
             ret = count;
         }
 
-        DEBUG("Return: " << ret);
-        DEBUG_EXIT();
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Return: " << ret);
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
         return ret;
     }
 
@@ -80,7 +85,7 @@ namespace filesync::curl::storage {
     extern "C" size_t memoryStorageReadCallback(char* buffer,
         size_t size, size_t count, void* contents) {
 
-        DEBUG_ENTER();
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
         size_t ret = 0;
 
         if (contents && buffer) {
@@ -93,8 +98,8 @@ namespace filesync::curl::storage {
             ret = 0;
         }
 
-        DEBUG("Return: " << ret);
-        DEBUG_EXIT();
+        LIBFILESYNC_CURL_UTILITY_DEBUG("Return: " << ret);
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
         return ret;
     }
 
