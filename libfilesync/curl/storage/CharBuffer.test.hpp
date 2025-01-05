@@ -18,7 +18,7 @@ namespace filesync::curl::storage::unit_test {
              * Memory will have to be reallocated multiple
              * times, resulting in high durations.
              * 
-             * 1MB is written in 1KB chunks.
+             * Write 1MB in 1KB chunks.
              */
             void write_1MB_in_1KB_chunks_no_pre_alloc();
             /**
@@ -27,9 +27,33 @@ namespace filesync::curl::storage::unit_test {
              * 
              * No reallocations needed, so very efficient.
              * 
-             * 1MB is written in 1KB chunks.
+             * Write 1MB in 1KB chunks.
              */
             void write_1MB_in_1KB_chunks_with_pre_alloc();
+
+            /**
+             * @brief Test byte array read speed.
+             * 
+             * Read 1MB in 1KB chunks.
+             */
+            void read_1MB_in_1KB_chunks();
+
+            /**
+             * @brief Test byte array write speed with
+             * preallocated memory.
+             * 
+             * No reallocations needed, so very efficient.
+             * 
+             * Write 1MB at once.
+             */
+            void write_1MB_at_once_with_pre_alloc();
+
+            /**
+             * @brief Test byte array read speed.
+             * 
+             * Read 1MB at once. 
+             */
+            void read_1MB_at_once();
             
     };
 

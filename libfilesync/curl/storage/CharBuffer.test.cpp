@@ -25,6 +25,9 @@ int main(int argc, char* argv[]) {
 
     test.write_1MB_in_1KB_chunks_no_pre_alloc();
     test.write_1MB_in_1KB_chunks_with_pre_alloc();
+    test.read_1MB_in_1KB_chunks();
+    test.write_1MB_at_once_with_pre_alloc();
+    test.read_1MB_at_once();
 
     Logger::getInstance().log(LogDomain::TestResult,
         "curl::storage::CharBuffer: passed", __FILE__, __LINE__);
@@ -117,13 +120,13 @@ namespace filesync::curl::storage::unit_test {
         
         CharBuffer buffer;
 
-        char byteArrayData[1024] {"test content"};
+        char byteArrayData[1_KB] {"test content"};
         
         using namespace std::chrono;
         auto start = steady_clock::now();
 
-        for (std::size_t i = 0; i < 1024; i++) {
-            std::size_t remaining = 1024;
+        for (std::size_t i = 0; i < 1_KB; i++) {
+            std::size_t remaining = 1_KB;
             while (remaining > 0) {
                 std::size_t written = buffer.write(byteArrayData, remaining);
                 remaining -= written;
@@ -146,13 +149,13 @@ namespace filesync::curl::storage::unit_test {
         
         CharBuffer buffer(1_MB);
 
-        char byteArrayData[1024] {"test content"};
+        char byteArrayData[1_KB] {"test content"};
         
         using namespace std::chrono;
         auto start = steady_clock::now();
 
-        for (std::size_t i = 0; i < 1024; i++) {
-            std::size_t remaining = 1024;
+        for (std::size_t i = 0; i < 1_KB; i++) {
+            std::size_t remaining = 1_KB;
             while (remaining > 0) {
                 std::size_t written = buffer.write(byteArrayData, remaining);
                 remaining -= written;
@@ -168,5 +171,99 @@ namespace filesync::curl::storage::unit_test {
         assert(executionTime < 10ms);
 
     }
+
+    void CharBufferTest::read_1MB_in_1KB_chunks() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running read_1MB_in_1KB_chunks()", __FILE__, __LINE__);
+        
+        CharBuffer buffer(1_MB);
+
+        char byteArrayData[1_KB] {"test content"};
+
+        for (std::size_t i = 0; i < 1_KB; i++) {
+            std::size_t remaining = 1_KB;
+            while (remaining > 0) {
+                std::size_t written = buffer.write(byteArrayData, remaining);
+                remaining -= written;
+            }
+        }
+
+        char* readToData = new char[1_MB];
+
+        using namespace std::chrono;
+        auto start = steady_clock::now();
+
+        std::size_t remaining = 1_MB;
+        std::size_t i = 0;
+        while (remaining > 0) {
+            std::size_t read = buffer.read(readToData + i * 1_KB, 1_KB);
+            remaining -= read;
+            i++;
+        }
+
+        auto end = steady_clock::now();
+        duration<float, std::milli> executionTime = end - start;
+
+        delete[] readToData;
+
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Test time: " + std::to_string(executionTime.count()) + "ms");
+
+        assert(executionTime < 10ms);
+
+    }
+
+    void CharBufferTest::write_1MB_at_once_with_pre_alloc() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running write_1MB_at_once_with_pre_alloc()", __FILE__, __LINE__);
+        
+        CharBuffer buffer(1_MB);
+
+        char* byteArrayData = new char[1_MB] {"test content"};
+
+        using namespace std::chrono;
+        auto start = steady_clock::now();
+
+        std::size_t written = buffer.write(byteArrayData, 1_MB);
+
+        auto end = steady_clock::now();
+        duration<float, std::milli> executionTime = end - start;
+
+        delete[] byteArrayData;
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Test time 1MB write: " + std::to_string(executionTime.count()) + "ms");
+
+        assert(executionTime < 10ms);
+
+    }
+
+    void CharBufferTest::read_1MB_at_once() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running read_1MB_at_once()", __FILE__, __LINE__);
+        
+        CharBuffer buffer(1_MB);
+
+        char* byteArrayData = new char[1_MB] {"test content"};
+
+        std::size_t written = buffer.write(byteArrayData, 1_MB);
+
+        char* readToData = new char[1_MB];
+
+        using namespace std::chrono;
+        auto start = steady_clock::now();
+
+        std::size_t read = buffer.read(readToData, 1_MB);
+
+        auto end = steady_clock::now();
+        duration<float, std::milli> executionTime = end - start;
+
+        delete[] byteArrayData;
+        delete[] readToData;
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Test time 1MB read: " + std::to_string(executionTime.count()) + "ms");
+
+        assert(executionTime < 10ms);
+
+    }    
 
 }
