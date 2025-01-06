@@ -8,7 +8,7 @@ namespace filesync::curl::wrapper::unit_test {
     class EasyStub : public Easy {
 
         private:
-            void run() const override;
+            void perform() const override;
 
     };
 

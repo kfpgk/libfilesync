@@ -131,7 +131,7 @@ namespace filesync::curl {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileUpload(true);
             option->set();
-            interface->run();
+            interface->perform();
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -153,7 +153,7 @@ namespace filesync::curl {
             std::unique_ptr<option::Option> option = 
                 optionFactory.createVolatileUpload(false);
             option->set();
-            interface->run();
+            interface->perform();
             if (downloadFileStorage) {
                 downloadFileStorage->flush();
             }           
@@ -178,10 +178,12 @@ namespace filesync::curl {
 
     bool ProtocolClient::doRemoteEntryExists() const {
         try {
-            std::unique_ptr<option::Option> option = 
-                optionFactory.createVolatileNobody();
-            option->set();
-            interface->run();
+            std::unique_ptr<option::Collection> options = optionFactory.createCollection();
+            
+            options->add(optionFactory.createVolatileNobody());
+            options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
+            options->set();
+            interface->perform();
             return true;
         } catch(Exception& e) {
             if (e.getCurlCode() == CURLE_REMOTE_FILE_NOT_FOUND) {

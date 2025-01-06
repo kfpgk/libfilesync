@@ -38,7 +38,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            interface->run();
+            interface->perform();
 
             LIBFILESYNC_CURL_UTILITY_DEBUG("Successfully connected to '" << activeUrl.getUrl() << "'");
 
@@ -68,7 +68,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            interface->run();      
+            interface->perform();      
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -105,7 +105,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            interface->run();      
+            interface->perform();      
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -132,7 +132,7 @@ namespace filesync::curl {
             options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
 
             options->set();
-            interface->run();      
+            interface->perform();      
         } catch(Exception& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
@@ -142,17 +142,19 @@ namespace filesync::curl {
 
     bool FtpClient::doRemoteEntryExists() const {
         LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
+        bool entryIsAccessible = true;
         try {
-            std::unique_ptr<option::Option> option = 
-                optionFactory.createVolatileNobody();
-            option->set();
-            interface->run();
+            std::unique_ptr<option::Collection> options = optionFactory.createCollection();
+            
+            options->add(optionFactory.createVolatileNobody());
+            options->add(optionFactory.createGeneric(CURLOPT_WRITEDATA, nullptr));
+            options->set();
+            interface->perform();
         } catch(Exception& e) {
-            LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
-            return false;
+            entryIsAccessible = false;
         }
         LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
-        return true;       
+        return entryIsAccessible;       
     }
 
 }

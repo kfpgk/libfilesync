@@ -52,7 +52,7 @@ namespace filesync::curl::wrapper {
         swap(lhs.handle, rhs.handle);        
     }
 
-    void Easy::run() const {
+    void Easy::perform() const {
         LIBFILESYNC_CURL_UTILITY_DEBUG("Running curl_easy_perform()");
         CURLcode rc = curl_easy_perform(handle);
         if (rc != CURLE_OK) {

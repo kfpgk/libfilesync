@@ -70,7 +70,7 @@ namespace filesync::curl::wrapper {
             template<typename... Args> 
             void setOption(CURLoption option, Args&&... args);
 
-            virtual void run() const;
+            virtual void perform() const;
 
         private:
             CURL* handle;
