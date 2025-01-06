@@ -16,7 +16,9 @@ namespace filesync::protocol {
     /**
      * @brief: Protocol interface class
      * 
-     * Non-virtual interface
+     * Patterns:
+     * 
+     *  - Non-virtual interface
      */
     class Client {
 
