@@ -5,6 +5,7 @@
 #include <libfilesync/curl/option/Generic.hpp>
 #include <libfilesync/curl/option/Option.hpp>
 #include <libfilesync/curl/option/Collection.hpp>
+#include <libfilesync/curl/parser/FtpNobody.hpp>
 #include <libfilesync/curl/utility/Debug.hpp>
 
 #define FILESYNC_CURL_URL_FTP_PREFIX "ftp"
@@ -13,12 +14,16 @@ namespace filesync::curl {
 
     FtpClient::FtpClient(const std::string& serverAddress,
         std::unique_ptr<wrapper::Easy> interface) :
-            ProtocolClient(std::move(interface)) {
+            ProtocolClient(
+                std::move(interface),
+                std::make_unique<parser::FtpNobody>()) {
     
         init(serverAddress);
     }
 
-    FtpClient::FtpClient(const std::string& serverAddress) {
+    FtpClient::FtpClient(const std::string& serverAddress) :
+        ProtocolClient(std::make_unique<parser::FtpNobody>()) {
+            
         init(serverAddress);
     }
 

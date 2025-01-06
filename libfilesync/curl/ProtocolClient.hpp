@@ -7,6 +7,7 @@
 #include <libfilesync/curl/storage/FileStorage.hpp>
 #include <libfilesync/curl/storage/MemoryStorage.hpp>
 #include <libfilesync/curl/storage/MemoryStorageHandle.hpp>
+#include <libfilesync/curl/parser/Nobody.hpp>
 
 #include <curl/curl.h>
 
@@ -32,8 +33,9 @@ namespace filesync::curl {
     class ProtocolClient {
 
         public:
-            ProtocolClient();
-            explicit ProtocolClient(std::unique_ptr<wrapper::Easy> interface);
+            explicit ProtocolClient(std::unique_ptr<parser::Nobody> nobodyParser);
+            ProtocolClient(std::unique_ptr<wrapper::Easy> interface,
+                std::unique_ptr<parser::Nobody> nobodyParser);
             virtual ~ProtocolClient() = default;
 
             [[nodiscard]] bool remoteEntryExists() const;
@@ -62,11 +64,15 @@ namespace filesync::curl {
              */
             void prepareDownloadToMemory(std::size_t bufferSize);
             /**
-             * @brief Returns a copy of the most recently downloaded memory
-             * 
-             * Copies the downloaded memory into a std::vector.
+             * @brief Returns a copy of the most recently downloaded
+             * memory as vector of chars.
              */
-            std::vector<char> getCopyOfDownloadMemory();
+            std::vector<char> getDownloadAsCharVector() const;
+            /**
+             * @brief Returns a copy of the most recently downloaded
+             * memory as a string.
+             */
+            std::string getDownloadAsString() const;
             /**
              * @brief Returns a handle which has ownership to the
              * most recently downloaded memory. 
@@ -82,6 +88,7 @@ namespace filesync::curl {
             void deleteRemoteFile();
             void createRemoteDir(); 
             void deleteRemoteDir();
+            [[nodiscard]] std::size_t getRemoteFileSize();
     
         protected:
             std::unique_ptr<wrapper::Easy> interface;
@@ -107,6 +114,8 @@ namespace filesync::curl {
             std::unique_ptr<storage::MemoryStorage> downloadMemoryStorage;
             std::unique_ptr<storage::MemoryStorage> uploadMemoryStorage;
 
+            std::unique_ptr<parser::Nobody> nobodyParser;
+
             void validateLocalDownloadDestination() const;
             void validateLocalUploadSource() const;
             void validateRemoteFilePath() const;
@@ -116,11 +125,12 @@ namespace filesync::curl {
             virtual void doUpload();
             virtual void doDownload();
             virtual bool doRemoteEntryExists() const;
+            virtual std::size_t doGetRemoteFileSize();
 
             virtual void doCreateRemoteDir() = 0;
             virtual void doDeleteRemoteFile() = 0;
             virtual void doSetCreateMissingDirs(bool value) = 0;  
-            virtual void doDeleteRemoteDir() = 0;        
+            virtual void doDeleteRemoteDir() = 0;
 
             friend class unit_test::ProtocolClientTest;
 

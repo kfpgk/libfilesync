@@ -81,7 +81,7 @@ namespace filesync::integration_test::curl::storage::memory_storage {
         curlProto.prepareDownloadToMemory();
         curlProto.setRemoteFile(pathOnServer + separator + file1Name);
         curlProto.download();
-        data1 = curlProto.getCopyOfDownloadMemory();
+        data1 = curlProto.getDownloadAsCharVector();
     }
 
     void MemoryStorage::evaluateDownload() {

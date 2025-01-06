@@ -1,4 +1,5 @@
 add_subdirectory(option)
+add_subdirectory(parser)
 add_subdirectory(storage)
 add_subdirectory(wrapper)
 
@@ -13,6 +14,7 @@ if(BUILD_UNIT_TESTS)
     enable_testing()
     add_executable(CurlProtocolClient_test
         wrapper/EasyStub.test.cpp
+        parser/NobodyStub.test.cpp
         ProtocolClient.test.cpp
     )
     target_include_directories(CurlProtocolClient_test

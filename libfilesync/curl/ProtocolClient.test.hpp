@@ -3,6 +3,7 @@
 
 #include <libfilesync/curl/ProtocolClient.hpp>
 #include <libfilesync/curl/wrapper/Easy.hpp>
+#include <libfilesync/curl/parser/NobodyStub.test.hpp>
 
 #include <memory>
 
@@ -13,7 +14,9 @@ namespace filesync::curl::unit_test {
         public:
             ProtocolClientConcrete(const std::string& serverAddress,
                 std::unique_ptr<wrapper::Easy> interface) :
-                    ProtocolClient(std::move(interface)) {
+                    ProtocolClient(
+                        std::move(interface),
+                        std::make_unique<parser::unit_test::NobodyStub>()) {
 
                 activeUrl.setHost(serverAddress);
                 activeUrl.setScheme("http");

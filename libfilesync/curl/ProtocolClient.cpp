@@ -12,14 +12,24 @@
 
 namespace filesync::curl {
 
-    ProtocolClient::ProtocolClient() :
-        ProtocolClient{std::make_unique<wrapper::Easy>()} {
+    ProtocolClient::ProtocolClient(std::unique_ptr<parser::Nobody> nobodyParser) :
+        ProtocolClient{
+            std::make_unique<wrapper::Easy>(),
+            std::move(nobodyParser)} {
 
     }
 
-    ProtocolClient::ProtocolClient(std::unique_ptr<wrapper::Easy> interface) :
-        interface{std::move(interface)},
-        optionFactory{*this->interface} {
+    ProtocolClient::ProtocolClient(
+        std::unique_ptr<wrapper::Easy> interface,
+        std::unique_ptr<parser::Nobody> nobodyParser) :
+            interface{std::move(interface)},
+            optionFactory{*this->interface},
+            nobodyParser{std::move(nobodyParser)} {
+
+        if (!this->nobodyParser) {
+            throw Exception("Invalid parser for 'Nobody' output",
+                __FILE__, __LINE__);            
+        }
 
         std::unique_ptr<option::Collection> options = optionFactory.createCollection();
 
@@ -102,9 +112,16 @@ namespace filesync::curl {
         downloadMemoryStorage->setupWrite(optionFactory);        
     }
 
-    std::vector<char> ProtocolClient::getCopyOfDownloadMemory() {
+    std::vector<char> ProtocolClient::getDownloadAsCharVector() const {
         validateDownloadMemoryStorage();
         return std::vector<char> {
+            downloadMemoryStorage->getDataReference().begin(),
+            downloadMemoryStorage->getDataReference().end()};
+    }
+
+    std::string ProtocolClient::getDownloadAsString() const {
+        validateDownloadMemoryStorage();
+        return std::string {
             downloadMemoryStorage->getDataReference().begin(),
             downloadMemoryStorage->getDataReference().end()};
     }
@@ -192,6 +209,34 @@ namespace filesync::curl {
                 e.addContext(__FILE__, __LINE__);
                 throw e;
             }
+        }       
+    }
+
+    std::size_t ProtocolClient::getRemoteFileSize() {
+        LIBFILESYNC_CURL_UTILITY_DEBUG_ENTER();
+   
+        std::size_t fileSize = doGetRemoteFileSize();
+
+        LIBFILESYNC_CURL_UTILITY_DEBUG(
+            "Remote file size is: " + std::to_string(fileSize) + "B");
+
+        LIBFILESYNC_CURL_UTILITY_DEBUG_EXIT();
+
+        return fileSize;       
+    }
+
+    std::size_t ProtocolClient::doGetRemoteFileSize() {
+        try {
+            std::unique_ptr<option::Option> option = 
+                optionFactory.createVolatileNobody();
+            option->set();
+            prepareDownloadToMemory();
+            interface->perform();
+            nobodyParser->parse(getDownloadAsString());
+            return nobodyParser->getFileSize();    
+        } catch(Exception& e) {
+            e.addContext(__FILE__, __LINE__);
+            throw e;
         }       
     }
 
