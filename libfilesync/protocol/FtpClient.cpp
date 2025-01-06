@@ -56,7 +56,8 @@ namespace filesync::protocol {
         try {
             curlClient.setRemoteDir(getCompleteRemoteFilePath(remote));
             if (!curlClient.remoteEntryExists()) {
-                throw FileSyncException("Remote directory '" + getCompleteRemoteFilePath(remote).string()  + "' not found.");                
+                throw FileSyncException("Remote directory '" 
+                    + getCompleteRemoteFilePath(remote).string()  + "' not found.");                
             }
             if (!std::filesystem::is_directory(local)) {
                 std::filesystem::create_directory(local);

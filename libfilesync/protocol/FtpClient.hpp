@@ -15,6 +15,7 @@ namespace filesync::protocol {
      * FTP adapter class
      * 
      * Patterns:
+     * 
      *  - Adapter
      */
     class FtpClient : public Client {
