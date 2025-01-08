@@ -187,6 +187,9 @@ namespace filesync::integration_test::protocol::ftp::performance {
             + std::to_string(std::filesystem::file_size(uploadFileName) / 1024 / 1024)
             + "MB file from memory took: " + std::to_string(executionTime.count()) + "ms");
 
+        using namespace std::chrono;
+        assert(executionTime < 5s);
+
     }
 
     void UploadDownloadPerformance::cleanUp() {
