@@ -66,7 +66,7 @@ namespace filesync::protocol {
         DEBUG_ENTER(); 
 
         std::stringstream message;
-        message << "Download: " << getCompleteRemoteFilePath(remote) << " to char buffer";
+        message << "Download: " << getCompleteRemoteFilePath(remote) << " to memory buffer";
         Logger::getInstance().log(LogDomain::Info, message.str());
 
         checkForEmptyPath(remote);
@@ -132,8 +132,7 @@ namespace filesync::protocol {
         DEBUG_ENTER();
 
         std::stringstream message;
-        message << "Upload: char buffer of size '" << local.size() << "B' to "
-            << getCompleteRemoteFilePath(remote); 
+        message << "Upload: Memory buffer to " << getCompleteRemoteFilePath(remote); 
         Logger::getInstance().log(LogDomain::Info, message.str());
 
         checkForEmptyPath(remote);

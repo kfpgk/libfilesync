@@ -91,15 +91,14 @@ namespace filesync::protocol {
         const std::filesystem::path& remote) {
 
         try {
-            curlClient.prepareDownloadToMemory();
             curlClient.setRemoteFile(getCompleteRemoteFilePath(remote));
+            curlClient.prepareDownloadToMemory(curlClient.getRemoteFileSize());
             curlClient.download();
             return std::make_unique<memory::CurlHandle>(curlClient.takeDownloadMemory());
         } catch (FileSyncException& e) {
             e.addContext(__FILE__, __LINE__);
             throw e;
         }
-
 
     }
 

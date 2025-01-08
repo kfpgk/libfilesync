@@ -29,8 +29,6 @@ namespace filesync::integration_test::protocol::ftp {
 
         private:
             void setup() override = 0;
-            void perform() override = 0;
-            void evaluate() override = 0;
             void cleanUp() override = 0;
 
     };

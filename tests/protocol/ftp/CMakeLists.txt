@@ -1,3 +1,5 @@
+add_subdirectory(performance)
+
 enable_testing()
 
 add_executable(test_ftp_upload_download_rel_paths
