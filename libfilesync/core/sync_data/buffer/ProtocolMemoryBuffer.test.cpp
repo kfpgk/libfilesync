@@ -40,18 +40,19 @@ int main(int argc, char* argv[]) {
 namespace filesync::core::sync_data::buffer::unit_test {
 
     void ProtocolMemoryBufferTest::is_equal_to_with_empty_buffer() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running is_equal_to_with_empty_buffer()", __FILE__, __LINE__);
 
         ProtocolMemoryBuffer buffer;
         std::string inputString("My input string");
         std::stringstream inputStream(inputString);
 
         assert(!buffer.isEqualTo(inputStream));
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "is_equal_to_with_empty_buffer() passed");
     }
 
     void ProtocolMemoryBufferTest::is_equal_to() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running is_equal_to()", __FILE__, __LINE__);
 
         std::string inputString("Hello");
         std::stringstream inputStream(inputString);
@@ -62,13 +63,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
                     std::vector<char>{'H', 'e', 'l', 'l', 'o'})));
 
         assert(buffer.isEqualTo(inputStream));
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "is_equal_to() passed");
-
     }
 
     void ProtocolMemoryBufferTest::is_not_equal_to() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running is_not_equal_to()", __FILE__, __LINE__);
 
         std::string inputString("Hello");
         std::stringstream inputStream(inputString);
@@ -79,13 +78,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
                     std::vector<char>{'O', 'l', 'l', 'a', 'o'})));
 
         assert(!buffer.isEqualTo(inputStream));
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "is_not_equal_to() passed");
-
     }
 
     void ProtocolMemoryBufferTest::equal_start_but_input_is_larger() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running equal_start_but_input_is_larger()", __FILE__, __LINE__);
 
         std::string inputString("Hello again");
         std::stringstream inputStream(inputString);
@@ -96,13 +93,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
                     std::vector<char>{'H', 'e', 'l', 'l', 'o'})));
 
         assert(!buffer.isEqualTo(inputStream));
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "equal_start_but_input_is_larger() passed");
-
     }
 
     void ProtocolMemoryBufferTest::equal_start_but_buffer_is_larger() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running equal_start_but_buffer_is_larger()", __FILE__, __LINE__);
 
         std::string inputString("Hello");
         std::stringstream inputStream(inputString);
@@ -113,13 +108,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
                     std::vector<char>{'H', 'e', 'l', 'l', 'o', ' ', 'A', 'g', 'a', 'i', 'n'})));
 
         assert(!buffer.isEqualTo(inputStream));
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "equal_start_but_buffer_is_larger() passed");
-
     }
 
     void ProtocolMemoryBufferTest::extract_content_to() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running extract_content_to()", __FILE__, __LINE__);
 
         std::string data;
         std::stringstream dataStream(data);
@@ -132,13 +125,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
         buffer.extractContentTo(dataStream);
         
         assert(buffer.isEqualTo(dataStream));
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "extract_content_to() passed");
-
     }
 
     void ProtocolMemoryBufferTest::store_into_empty_buffer() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running store_into_empty_buffer()", __FILE__, __LINE__);
 
         ProtocolMemoryBuffer buffer;
 
@@ -154,13 +145,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         assert(handle == nullptr);
         assert(buffer.isEqualTo(compareStream));        
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "store_into_empty_buffer() passed");
-
     }
 
     void ProtocolMemoryBufferTest::store_into_filled_buffer() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running store_into_filled_buffer()", __FILE__, __LINE__);
 
         ProtocolMemoryBuffer buffer(
             std::make_unique<protocol::memory::CharArrayHandle>(
@@ -179,27 +168,23 @@ namespace filesync::core::sync_data::buffer::unit_test {
 
         assert(handle == nullptr);
         assert(buffer.isEqualTo(compareStream));  
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "store_into_filled_buffer() passed");
-
     }
 
     void ProtocolMemoryBufferTest::get_non_existing_handle() {
-        
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running get_non_existing_handle()", __FILE__, __LINE__);
+
         ProtocolMemoryBuffer buffer;
 
         std::unique_ptr<protocol::memory::Handle<char>>& handle =
             buffer.getHandle();
         
         assert(handle == nullptr);
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "get_non_existing_handle() passed");
-
     }
 
     void ProtocolMemoryBufferTest::get_valid_handle() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running get_valid_handle()", __FILE__, __LINE__);
 
         std::vector<char> dataVector{'H', 'e', 'l', 'l', 'o'};
 
@@ -216,13 +201,11 @@ namespace filesync::core::sync_data::buffer::unit_test {
         for (int i = 0; i < dataSpan.size(); i++) {
             assert(dataSpan[i] == dataVector[i]);
         }
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "get_valid_handle() passed");
-
     }
 
     void ProtocolMemoryBufferTest::get_handle_twice() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running get_handle_twice()", __FILE__, __LINE__);
 
         std::vector<char> dataVector{'H', 'e', 'l', 'l', 'o'};
 
@@ -242,10 +225,6 @@ namespace filesync::core::sync_data::buffer::unit_test {
         for (int i = 0; i < dataSpan.size(); i++) {
             assert(dataSpan[i] == dataVector[i]);
         }
-
-        Logger::getInstance().log(LogDomain::TestResult,
-            "get_handle_twice() passed");
-
     }
 
 }
