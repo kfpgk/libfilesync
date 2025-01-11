@@ -47,7 +47,7 @@ namespace filesync::curl::wrapper {
         return *this;
     }
 
-    void swap(Easy& lhs, Easy& rhs) {
+    void swap(Easy& lhs, Easy& rhs) noexcept {
         using std::swap;
         swap(lhs.handle, rhs.handle);        
     }

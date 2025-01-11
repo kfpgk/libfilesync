@@ -59,7 +59,7 @@ namespace filesync::curl::wrapper {
             Easy(const Easy& rhs);
             Easy(Easy&& rhs) noexcept;
             Easy& operator=(Easy rhs);
-            friend void swap(Easy& lhs, Easy& rhs);
+            friend void swap(Easy& lhs, Easy& rhs) noexcept;
 
             friend size_t easyDefaultWriteCallback(
                 char *contents, size_t size, size_t count, FILE *target);  
