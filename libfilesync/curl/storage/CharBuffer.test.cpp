@@ -22,6 +22,13 @@ int main(int argc, char* argv[]) {
     test.test_get_size();
     test.test_byte_array_and_string_write();
     test.test_get_span();
+    test.test_get_string();
+
+    test.test_swap();
+    test.copy_construction();
+    test.move_construction();
+    test.copy_assignment();
+    test.move_assignment();
 
     test.write_1MB_in_1KB_chunks_no_pre_alloc();
     test.write_1MB_in_1KB_chunks_with_pre_alloc();
@@ -112,6 +119,79 @@ namespace filesync::curl::storage::unit_test {
         assert(span[11] == 't');
         assert((void*)span.data() == (void*)data1.data);
 
+    }
+
+    void CharBufferTest::test_get_string() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running test_get_string()", __FILE__, __LINE__);
+
+        std::string stringData {"Test content"};
+        CharBuffer data1(stringData);
+
+        data1.print();
+
+        assert(data1.getString() == "Test content");       
+    }
+
+    void CharBufferTest::test_swap() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running test_swap()", __FILE__, __LINE__);
+
+        CharBuffer data1{"data1"};
+        CharBuffer data2{"data2"};
+
+        swap(data1, data2);
+
+        assert(data1.getString() == "data2");
+        assert(data2.getString() == "data1");
+
+    }
+
+    void CharBufferTest::copy_construction() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running copy_construction()", __FILE__, __LINE__);
+
+        CharBuffer data1{"data1"};
+        CharBuffer data2{data1};
+
+        assert(data1.getString() == "data1");
+        assert(data2.getString() == "data1");
+    }
+
+    void CharBufferTest::move_construction() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running move_construction()", __FILE__, __LINE__);
+        
+        CharBuffer data1{"data1"};
+        CharBuffer data2{std::move(data1)};
+
+        assert(data1.getString() == "");
+        assert(data2.getString() == "data1");
+    }
+
+    void CharBufferTest::copy_assignment() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running copy_assignment()", __FILE__, __LINE__);
+
+        CharBuffer data1{"data1"};
+        CharBuffer data2{"data2"};
+        data2 = data1;
+
+        assert(data1.getString() == "data1");
+        assert(data2.getString() == "data1");
+
+    }
+
+    void CharBufferTest::move_assignment() {
+        Logger::getInstance().log(LogDomain::TestResult, 
+            "Running move_assignment()", __FILE__, __LINE__);
+
+        CharBuffer data1{"data1"};
+        CharBuffer data2{"data2"};
+        data2 = std::move(data1);
+
+        assert(data1.getString() == "");
+        assert(data2.getString() == "data1");
     }
 
     void CharBufferTest::write_1MB_in_1KB_chunks_no_pre_alloc() {

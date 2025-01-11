@@ -5,52 +5,85 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <utility>
 
 namespace filesync::curl::storage {
 
-    CharBuffer::CharBuffer() :
-        owning{true} {
+    CharBuffer::CharBuffer() {
 
         clear();
     }
 
-    CharBuffer::CharBuffer(std::size_t size) :
-        owning{true} {
+    CharBuffer::CharBuffer(std::size_t size) {
 
         changeBufferSize(size);
     }
 
-    CharBuffer::CharBuffer(std::string data) :
-        owning{true} {
+    CharBuffer::CharBuffer(std::string data) {
 
         clear();
         write(data);
     }
 
-    CharBuffer::CharBuffer(char* data, std::size_t dataSize) :
-        owning{true} {
+    CharBuffer::CharBuffer(char* data, std::size_t dataSize) {
 
         clear();
 
         std::size_t remaining = dataSize;
+        char* dataPtr = data;
         while (remaining > 0) {
-            std::size_t written = write(data, dataSize);
+            std::size_t written = write(dataPtr, remaining);
             remaining -= written;
+            dataPtr += written;
         }
     }
 
-    CharBuffer::CharBuffer(std::span<char>& data) :
-        data{data.data()},
-        dataSize{data.size()},
-        position{this->data},
-        owning{false} {
+    CharBuffer::CharBuffer(std::span<char>& data) {
 
+        clear();
+
+        std::size_t remaining = data.size();
+        char* dataPtr = data.data();
+        while (remaining > 0) {
+            std::size_t written = write(dataPtr, remaining);
+            remaining -= written;
+            dataPtr += written;
+        }
+
+    }
+
+    CharBuffer::CharBuffer(const CharBuffer& rhs) {
+        changeBufferSize(rhs.dataSize);
+        std::size_t remaining = rhs.dataSize;
+        char* dataPtr = rhs.data;
+        while (remaining > 0) {
+            std::size_t written = write(dataPtr, remaining);
+            remaining -= written;
+            dataPtr += written;
+        }
+    }
+
+    CharBuffer::CharBuffer(CharBuffer&& rhs) noexcept {
+        using std::swap;
+        swap(*this, rhs);
+    }
+
+    CharBuffer& CharBuffer::operator=(CharBuffer rhs) {
+        using std::swap;
+        swap(*this, rhs);
+        return *this;
     }
 
     CharBuffer::~CharBuffer() {
-        if (owning) {
-            std::free(data);
-        }
+        std::free(data);
+    }
+
+    void swap(CharBuffer& lhs, CharBuffer& rhs) noexcept {
+        lhs.data = std::exchange(rhs.data, lhs.data);
+        lhs.dataSize = std::exchange(rhs.dataSize, lhs.dataSize);
+        lhs.bufferSize = std::exchange(rhs.bufferSize, lhs.bufferSize);
+        lhs.position = std::exchange(rhs.position, lhs.position);
+        lhs.reallocations = std::exchange(rhs.reallocations, lhs.reallocations);
     }
 
     void CharBuffer::resetPosition() {
@@ -109,19 +142,11 @@ namespace filesync::curl::storage {
         return std::span{data, dataSize};
     }
 
-    bool CharBuffer::hasMemoryOwnership() const {
-        return owning;
-    }
-
-    void CharBuffer::checkOwnership() const {
-        if (!owning) {
-            throw Exception("Do not own underlying memory. Cannot write to this buffer",
-                __FILE__, __LINE__);            
-        }
+    std::string CharBuffer::getString() const {
+        return std::string{data, dataSize};
     }
 
     void CharBuffer::changeBufferSize(std::size_t size) {
-        checkOwnership();
         char* ptr = static_cast<char*>(std::realloc(data, size + 1));
         if(!ptr) {
             throw Exception("Out of memory. realloc() returned NULL",

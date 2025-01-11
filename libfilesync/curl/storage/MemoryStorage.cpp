@@ -29,10 +29,6 @@ namespace filesync::curl::storage {
     }
 
     void MemoryStorage::setupWrite(const option::Factory& optionFactory) {
-        if (!data.hasMemoryOwnership()) {
-            throw Exception("Do not own underlying memory. Cannot write to this buffer",
-                __FILE__, __LINE__);               
-        }
         optionFactory.createGeneric(CURLOPT_WRITEFUNCTION, &memoryStorageWriteCallback)->set();
         data.resetPosition();
         LIBFILESYNC_CURL_UTILITY_DEBUG("Data address: " << &data);

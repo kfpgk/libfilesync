@@ -18,7 +18,8 @@ namespace filesync::curl::storage {
      * 
      * This is a low level character buffer. It can
      * be used as a download destination or upload
-     * source for CURL transfers.
+     * source for CURL transfers. The buffer owns 
+     * the underlying memory.
      */
     class CharBuffer {
 
@@ -28,7 +29,11 @@ namespace filesync::curl::storage {
             explicit CharBuffer(std::string data);
             CharBuffer(char* data, std::size_t dataSize);
             CharBuffer(std::span<char>& data);
+            CharBuffer(const CharBuffer& rhs);
+            CharBuffer(CharBuffer&& rhs) noexcept;
+            CharBuffer& operator=(CharBuffer rhs);
             ~CharBuffer();
+            friend void swap(CharBuffer& lhs, CharBuffer& rhs) noexcept;
 
             void resetPosition();
             void print();
@@ -38,17 +43,15 @@ namespace filesync::curl::storage {
             [[nodiscard]] std::size_t read(char* buffer, std::size_t bufferSize);
             void clear();
             std::span<char> getSpan();
-            bool hasMemoryOwnership() const;
+            std::string getString() const;
 
         private:
             char* data = nullptr;
             std::size_t dataSize = 0;
             std::size_t bufferSize = 0;
             char* position = nullptr;
-            bool owning = false;
             std::size_t reallocations = 0;
 
-            void checkOwnership() const;
             void changeBufferSize(std::size_t size);
             void changeBufferSizeToAtLeast(std::size_t size);
             void monitorReallocation(std::size_t newSize);

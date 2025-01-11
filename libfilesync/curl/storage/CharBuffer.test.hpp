@@ -10,6 +10,13 @@ namespace filesync::curl::storage::unit_test {
             void test_get_size();
             void test_byte_array_and_string_write();
             void test_get_span();
+            void test_get_string();
+
+            void test_swap();
+            void copy_construction();
+            void move_construction();
+            void copy_assignment();
+            void move_assignment();
 
             /**
              * @brief Test byte array write speed with
