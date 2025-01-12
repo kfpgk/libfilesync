@@ -58,7 +58,7 @@ namespace filesync::curl::storage {
 
         if (target) {
             std::size_t dataSize = size * count;
-            struct CharBuffer* data = static_cast<CharBuffer*>(target);
+            struct char_buffer::ReadWriteBuffer* data = static_cast<char_buffer::ReadWriteBuffer*>(target);
             
             ret = data->write(contents, dataSize);
             
@@ -85,7 +85,7 @@ namespace filesync::curl::storage {
         size_t ret = 0;
 
         if (contents && buffer) {
-            struct CharBuffer* data = static_cast<CharBuffer*>(contents);
+            struct char_buffer::ReadWriteBuffer* data = static_cast<char_buffer::ReadWriteBuffer*>(contents);
 
             std::size_t bufferSize = size * count;
 

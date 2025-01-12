@@ -1,7 +1,8 @@
 #ifndef LIBFILESYNC_CURL_STORAGE_MEMORY_STORAGE_HPP
 #define LIBFILESYNC_CURL_STORAGE_MEMORY_STORAGE_HPP
 
-#include <libfilesync/curl/storage/CharBuffer.hpp>
+#include <libfilesync/curl/storage/char_buffer/ReadBuffer.hpp>
+#include <libfilesync/curl/storage/char_buffer/ReadWriteBuffer.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
 
 #include <cstddef>
@@ -64,13 +65,13 @@ namespace filesync::curl::storage {
             void flush();
             
         private:
-            CharBuffer data;
+            char_buffer::ReadWriteBuffer data;
 
-            friend size_t memoryStorageWriteCallback(
-                char* contents, size_t size, size_t count, void* target);  
+        friend size_t memoryStorageWriteCallback(
+            char* contents, size_t size, size_t count, void* target);  
 
-            friend size_t memoryStorageReadCallback(
-                char* buffer, size_t size, size_t count, void* contents);
+        friend size_t memoryStorageReadCallback(
+            char* buffer, size_t size, size_t count, void* contents);
 
     };
 
