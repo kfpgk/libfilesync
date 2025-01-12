@@ -6,7 +6,7 @@ namespace filesync::curl::storage::visitor {
         return storage.getPath();
     }
 
-    DataReference GetReference::operator()(const MemoryStorage& storage) {
+    DataReference GetReference::operator()(MemoryStorage& storage) {
         return storage.getDataReference();
     }
 

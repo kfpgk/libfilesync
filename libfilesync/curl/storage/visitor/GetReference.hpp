@@ -18,7 +18,7 @@ namespace filesync::curl::storage::visitor {
 
         public:
             [[nodiscard]] DataReference operator()(const FileStorage& storage);
-            [[nodiscard]] DataReference operator()(const MemoryStorage& storage);
+            [[nodiscard]] DataReference operator()(MemoryStorage& storage);
 
     };
 
