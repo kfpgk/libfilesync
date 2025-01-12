@@ -13,13 +13,47 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
             explicit FileBuffer(const std::string& testName);
 
         private:
-            const std::string file1Name;
-            const std::string file1Content;
-            const std::string file2Name;
-            const std::string file2Content;
+            const std::string inputFile1Name;
+            const std::string inputFile1Content;
+            const std::string inputFile2Name;
+            const std::string inputFile2Content;
+            const std::string flexibelFile1Name;
+            const std::string flexibelFile1Content;
+            bool result;
+            bool resultOfIsEmpty;
             bool resultOfIsEqual;
 
             void setup() override;
+
+            /**
+             * @brief Test swap
+             */
+            void performSwap();
+            void evaluateSwap();
+
+            /**
+             * @brief Test copy construction
+             */
+            void performCopyConstruction();
+            void evaluateCopyConstruction();
+
+            /**
+             * @brief Test move construction
+             */
+            void performMoveConstruction();
+            void evaluateMoveConstruction();
+
+            /**
+             * @brief Test copy assignment
+             */
+            void performCopyAssignment();
+            void evaluateCopyAssignment();
+
+            /**
+             * @brief Test move assignment
+             */
+            void performMoveAssignment();
+            void evaluateMoveAssignment();
 
             /**
              * @brief Test storing to and extracting from buffer.

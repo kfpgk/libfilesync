@@ -18,14 +18,21 @@ namespace filesync::core::sync_data::buffer {
 
         public:
             FileBuffer();
+            FileBuffer(const FileBuffer& rhs);
+            FileBuffer(FileBuffer&& rhs) noexcept;
+            FileBuffer& operator=(FileBuffer rhs);
+            ~FileBuffer();
+            friend void swap(FileBuffer& lhs, FileBuffer& rhs) noexcept;
 
+            bool isEmpty() const;
             const std::filesystem::path&  getFilePath() const;
             void store(std::istream& in);
             std::ostream& extractContentTo(std::ostream& out);
             bool isEqualTo(std::istream& in) const;
+            bool isEqualTo(FileBuffer& in) const;
 
         private:
-            const std::filesystem::path filePath;
+            std::filesystem::path filePath;
             
     };
 

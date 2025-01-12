@@ -11,10 +11,47 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
 
     FileBuffer::FileBuffer(const std::string& testName) :
         IntegrationTest(testName),
-        file1Name{"file1"},
-        file1Content{"file 1 content"},
-        file2Name{"file2"},
-        file2Content{"file 2 content"} {
+        inputFile1Name{"file1"},
+        inputFile1Content{"file 1 content"},
+        inputFile2Name{"file2"},
+        inputFile2Content{"file 2 content"},
+        flexibelFile1Name{"flexi_file1"},
+        flexibelFile1Content{"flexi file1 content"} {
+
+        TestCase swapTestCase {
+            .name = "Swap two buffers",
+            .perform = std::bind(&FileBuffer::performSwap, this),
+            .evaluate = std::bind(&FileBuffer::evaluateSwap, this)
+        };
+        addTestCase(swapTestCase);
+
+        TestCase copyConstruction {
+            .name = "Test copy construction",
+            .perform = std::bind(&FileBuffer::performCopyConstruction, this),
+            .evaluate = std::bind(&FileBuffer::evaluateCopyConstruction, this)
+        };
+        addTestCase(copyConstruction);
+
+        TestCase moveConstruction {
+            .name = "Test move construction",
+            .perform = std::bind(&FileBuffer::performMoveConstruction, this),
+            .evaluate = std::bind(&FileBuffer::evaluateMoveConstruction, this)
+        };
+        addTestCase(moveConstruction);
+
+        TestCase copyAssignment {
+            .name = "Test copy assignment",
+            .perform = std::bind(&FileBuffer::performCopyAssignment, this),
+            .evaluate = std::bind(&FileBuffer::evaluateCopyAssignment, this)
+        };
+        addTestCase(copyAssignment);
+
+        TestCase moveAssignment {
+            .name = "Test move assignment",
+            .perform = std::bind(&FileBuffer::performMoveAssignment, this),
+            .evaluate = std::bind(&FileBuffer::evaluateMoveAssignment, this)
+        };
+        addTestCase(moveAssignment);
 
         TestCase storeAndExtract {
             .name = "Store to buffer and extract back to another file",
@@ -61,29 +98,151 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
     }
 
     void FileBuffer::setup() {
-        std::ofstream file1(file1Name);
-        file1 << file1Content << std::endl;
+        std::ofstream file1(inputFile1Name);
+        file1 << inputFile1Content << std::endl;
+        std::ofstream file2(inputFile2Name);
+        file2 << inputFile2Content << std::endl;
+    }
+
+    void FileBuffer::performSwap() {
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer1;
+        filesync::FileBuffer buffer2;
+
+        std::ifstream file1(inputFile1Name);
+        buffer1.store(file1);
+
+        std::ifstream file2(inputFile2Name);
+        buffer2.store(file2);
+
+        swap(buffer1, buffer2);
+
+        result = 
+            buffer1.isEqualTo(file2) && 
+            buffer2.isEqualTo(file1);
+    }
+
+    void FileBuffer::evaluateSwap() {
+        if (!result) {
+            throw FileSyncException("Buffer content not as expected after swap",
+                __FILE__, __LINE__);          
+        }
+    }
+
+    void FileBuffer::performCopyConstruction() {
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer1;
+        
+        std::ifstream file1(inputFile1Name);
+        buffer1.store(file1);
+
+        filesync::FileBuffer buffer2{buffer1};
+
+        result = 
+            buffer2.isEqualTo(buffer1) && 
+            buffer2.isEqualTo(file1);
+    }
+
+    void FileBuffer::evaluateCopyConstruction() {
+        if (!result) {
+            throw FileSyncException("Buffer contents of buffer1 and buffer2 do not "\
+                "match file1 content after copy construction",
+                __FILE__, __LINE__);          
+        }
+    }
+
+    void FileBuffer::performMoveConstruction() {
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer1;
+        
+        std::ifstream file1(inputFile1Name);
+        buffer1.store(file1);
+
+        filesync::FileBuffer buffer2{std::move(buffer1)};
+
+        resultOfIsEqual = buffer2.isEqualTo(file1);
+        resultOfIsEmpty = buffer1.isEmpty();
+    }
+
+    void FileBuffer::evaluateMoveConstruction() {
+        if (!resultOfIsEqual) {
+            throw FileSyncException("buffer2 content does not match file1",
+                __FILE__, __LINE__);          
+        }
+        if (!resultOfIsEmpty) {
+            throw FileSyncException("buffer1 is not empty after being moved from.",
+                __FILE__, __LINE__);          
+        }
+    }
+
+    void FileBuffer::performCopyAssignment() {
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer1;
+        
+        std::ifstream file1(inputFile1Name);
+        buffer1.store(file1);
+
+        filesync::FileBuffer buffer2;
+        buffer2 = buffer1;
+
+        result = 
+            buffer2.isEqualTo(buffer1) && 
+            buffer2.isEqualTo(file1);
+    }
+
+    void FileBuffer::evaluateCopyAssignment() {
+        if (!result) {
+            throw FileSyncException("Copy assignment result not as expected",
+                __FILE__, __LINE__);          
+        }
+    }
+
+    void FileBuffer::performMoveAssignment() {
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer1;
+        
+        std::ifstream file1(inputFile1Name);
+        buffer1.store(file1);
+
+        filesync::FileBuffer buffer2;
+        buffer2 = std::move(buffer1);
+
+        resultOfIsEqual = buffer2.isEqualTo(file1);
+        resultOfIsEmpty = buffer1.isEmpty();
+    }
+
+    void FileBuffer::evaluateMoveAssignment() {
+        if (!resultOfIsEqual) {
+            throw FileSyncException("buffer2 content does not match file1",
+                __FILE__, __LINE__);          
+        }
+        if (!resultOfIsEmpty) {
+            throw FileSyncException("buffer1 is not empty after being moved from.",
+                __FILE__, __LINE__);          
+        }
     }
 
     void FileBuffer::performStoreAndExtract() {
-        filesync::core::sync_data::buffer::FileBuffer buffer;
-        std::ifstream readFile(file1Name);
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
+        std::ifstream readFile(inputFile1Name);
         buffer.store(readFile);
 
-        std::ofstream writeFile(file2Name);
+        std::ofstream writeFile(flexibelFile1Name);
         buffer.extractContentTo(writeFile);
     }
 
     void FileBuffer::evaluateStoreAndExtract() {
-        if (!filesync::data::areEqual(file1Name, file2Name)) {
+        if (!filesync::data::areEqual(inputFile1Name, flexibelFile1Name)) {
             throw FileSyncException("Data read from buffer is not equal to data that was stored"\
                 " to the buffer", __FILE__, __LINE__);          
         }
     }
 
     void FileBuffer::performCheckEqualityPositive() {
-        filesync::core::sync_data::buffer::FileBuffer buffer;
-        std::ifstream readFile(file1Name);
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
+        std::ifstream readFile(inputFile1Name);
         buffer.store(readFile);
 
         resultOfIsEqual = false;
@@ -98,12 +257,13 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
     }
 
     void FileBuffer::performCheckEqualityNegative() {
-        filesync::core::sync_data::buffer::FileBuffer buffer;
-        std::ifstream readFile(file1Name);
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
+        std::ifstream readFile(inputFile1Name);
         buffer.store(readFile);
 
-        std::fstream anotherFile(file2Name);
-        anotherFile << file2Content << std::endl;
+        std::fstream anotherFile(flexibelFile1Name);
+        anotherFile << flexibelFile1Content << std::endl;
 
         resultOfIsEqual = true;
         resultOfIsEqual = buffer.isEqualTo(anotherFile);
@@ -117,10 +277,11 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
     }
 
     void FileBuffer::performCheckEqualityEmptyBuffer() {
-        filesync::core::sync_data::buffer::FileBuffer buffer;
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
 
-        std::fstream anotherFile(file2Name);
-        anotherFile << file2Content << std::endl;
+        std::fstream anotherFile(flexibelFile1Name);
+        anotherFile << flexibelFile1Content << std::endl;
 
         resultOfIsEqual = true;
         resultOfIsEqual = buffer.isEqualTo(anotherFile);
@@ -135,12 +296,14 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
     }
 
     void FileBuffer::performCheckEqualityEmptyCompData() {
-        filesync::core::sync_data::buffer::FileBuffer buffer;
-        std::ifstream readFile(file1Name);
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
+
+        std::ifstream readFile(inputFile1Name);
         buffer.store(readFile);
 
-        std::fstream anotherFile(file2Name);
-        anotherFile << file2Content << std::endl;
+        std::fstream anotherFile(flexibelFile1Name);
+        anotherFile << flexibelFile1Content << std::endl;
 
         resultOfIsEqual = true;
         resultOfIsEqual = buffer.isEqualTo(anotherFile);
@@ -155,9 +318,10 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
     }
 
     void FileBuffer::performCheckEqualityEmptyBufferAndEmptyData() {
-        filesync::core::sync_data::buffer::FileBuffer buffer;
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
 
-        std::fstream anotherFile(file2Name);
+        std::fstream anotherFile(flexibelFile1Name);
 
         resultOfIsEqual = true;
         resultOfIsEqual = buffer.isEqualTo(anotherFile);

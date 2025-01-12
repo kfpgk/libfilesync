@@ -3,12 +3,49 @@
 
 #include <cstdio>
 #include <fstream>
+#include <utility>
 
 namespace filesync::core::sync_data::buffer {
 
     FileBuffer::FileBuffer() :
         filePath{std::tmpnam(nullptr)} {
 
+    }
+
+    FileBuffer::FileBuffer(const FileBuffer& rhs) :
+        filePath{std::tmpnam(nullptr)}  {
+        
+        if (std::filesystem::is_regular_file(rhs.filePath)) {
+            std::filesystem::copy_file(
+                rhs.filePath,
+                this->filePath);
+        }
+
+    }
+
+    FileBuffer::FileBuffer(FileBuffer&& rhs) noexcept {
+        using std::swap;
+        swap(*this, rhs);
+    }
+
+    FileBuffer& FileBuffer::operator=(FileBuffer rhs) {
+        using std::swap;
+        swap(*this, rhs);
+        return *this;
+    }
+
+    FileBuffer::~FileBuffer() {
+        if (std::filesystem::is_regular_file(filePath)) {           
+            std::filesystem::remove(filePath);
+        }
+    }
+
+    void swap(FileBuffer& lhs, FileBuffer& rhs) noexcept {
+        lhs.filePath = std::exchange(rhs.filePath, lhs.filePath);
+    }
+
+    bool FileBuffer::isEmpty() const {
+        return !std::filesystem::is_regular_file(filePath);
     }
 
     const std::filesystem::path& FileBuffer::getFilePath() const {
@@ -54,6 +91,12 @@ namespace filesync::core::sync_data::buffer {
             std::istreambuf_iterator<char>(),
             std::istreambuf_iterator<char>(in.rdbuf()));
 
+    }
+
+    bool FileBuffer::isEqualTo(FileBuffer& in) const {
+        std::stringstream stream;
+        in.extractContentTo(stream);
+        return isEqualTo(stream);
     }
     
 }
