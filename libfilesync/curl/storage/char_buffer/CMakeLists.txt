@@ -1,3 +1,5 @@
+add_subdirectory(visitor)
+
 target_sources(libfilesync
     PRIVATE
         ReadBuffer.cpp

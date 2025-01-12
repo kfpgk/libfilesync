@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <span>
+#include <variant>
 
 namespace filesync::curl::storage {
 
@@ -65,7 +66,10 @@ namespace filesync::curl::storage {
             void flush();
             
         private:
-            char_buffer::ReadWriteBuffer data;
+            std::variant<
+                char_buffer::ReadWriteBuffer,
+                char_buffer::ReadBuffer
+            > data;
 
         friend size_t memoryStorageWriteCallback(
             char* contents, size_t size, size_t count, void* target);  

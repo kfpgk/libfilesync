@@ -1,4 +1,6 @@
 #include <libfilesync/curl/storage/MemoryStorage.hpp>
+#include <libfilesync/curl/storage/char_buffer/visitor/GetSpan.hpp>
+#include <libfilesync/curl/storage/char_buffer/visitor/ResetPosition.hpp>
 #include <libfilesync/curl/Exception.hpp>
 #include <libfilesync/curl/utility/Debug.hpp>
 
@@ -9,28 +11,28 @@
 namespace filesync::curl::storage {
 
     MemoryStorage::MemoryStorage(std::size_t bufferSize) :
-        data{bufferSize} {
+        data{char_buffer::ReadWriteBuffer(bufferSize)} {
 
     }
 
     MemoryStorage::MemoryStorage(std::span<char> data) :
-        data{data} {
+        data{char_buffer::ReadBuffer(data)} {
 
     }
 
     std::span<char> MemoryStorage::getDataReference() {
-        return data.getSpan();
+        return std::visit(char_buffer::visitor::GetSpan{}, data);
     }
 
     void MemoryStorage::setupRead(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_READFUNCTION, &memoryStorageReadCallback)->set();
-        data.resetPosition();
+        std::visit(char_buffer::visitor::ResetPosition{}, data);
         optionFactory.createGeneric(CURLOPT_READDATA, static_cast<void*>(&data))->set();
     }
 
     void MemoryStorage::setupWrite(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_WRITEFUNCTION, &memoryStorageWriteCallback)->set();
-        data.resetPosition();
+        std::visit(char_buffer::visitor::ResetPosition{}, data);
         LIBFILESYNC_CURL_UTILITY_DEBUG("Data address: " << &data);
         optionFactory.createGeneric(CURLOPT_WRITEDATA, static_cast<void*>(&data))->set();
     }
