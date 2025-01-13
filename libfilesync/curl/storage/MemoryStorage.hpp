@@ -70,6 +70,7 @@ namespace filesync::curl::storage {
                 char_buffer::ReadWriteBuffer,
                 char_buffer::ReadBuffer
             > data;
+            std::size_t initialBufferSize = 0;
 
         friend size_t memoryStorageWriteCallback(
             char* contents, size_t size, size_t count, void* target);  

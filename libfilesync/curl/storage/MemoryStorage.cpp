@@ -11,7 +11,8 @@
 namespace filesync::curl::storage {
 
     MemoryStorage::MemoryStorage(std::size_t bufferSize) :
-        data{char_buffer::ReadWriteBuffer(bufferSize)} {
+        data{char_buffer::ReadWriteBuffer(bufferSize)},
+        initialBufferSize{bufferSize} {
 
     }
 
@@ -32,6 +33,9 @@ namespace filesync::curl::storage {
 
     void MemoryStorage::setupWrite(const option::Factory& optionFactory) {
         optionFactory.createGeneric(CURLOPT_WRITEFUNCTION, &memoryStorageWriteCallback)->set();
+        if (!std::holds_alternative<char_buffer::ReadWriteBuffer>(data)) {
+            data = char_buffer::ReadWriteBuffer{initialBufferSize};
+        }
         std::visit(char_buffer::visitor::ResetPosition{}, data);
         LIBFILESYNC_CURL_UTILITY_DEBUG("Data address: " << &data);
         optionFactory.createGeneric(CURLOPT_WRITEDATA, static_cast<void*>(&data))->set();
