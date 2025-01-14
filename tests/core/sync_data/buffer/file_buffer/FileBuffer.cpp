@@ -115,6 +115,7 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
         std::ifstream file2(inputFile2Name);
         buffer2.store(file2);
 
+        using std::swap;
         swap(buffer1, buffer2);
 
         result = 
