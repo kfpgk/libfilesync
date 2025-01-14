@@ -84,6 +84,7 @@ namespace filesync::curl::storage::char_buffer::unit_test {
         ReadWriteBuffer data1{"data1"};
         ReadWriteBuffer data2{"data2"};
 
+        using std::swap;
         swap(data1, data2);
 
         assert(data1.getString() == "data2");
