@@ -60,7 +60,11 @@ namespace filesync::curl::storage {
 
         public:
             explicit FileStorage(const std::filesystem::path& path);
+            FileStorage(const FileStorage& rhs);
+            FileStorage(FileStorage&& rhs);
+            FileStorage& operator=(FileStorage rhs);
             ~FileStorage();
+            friend void swap(FileStorage& lhs, FileStorage& rhs);
 
             std::filesystem::path getPath() const;
             void setupRead(const option::Factory& optionFactory);

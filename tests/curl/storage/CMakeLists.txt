@@ -1,1 +1,2 @@
+add_subdirectory(file_storage)
 add_subdirectory(memory_storage)

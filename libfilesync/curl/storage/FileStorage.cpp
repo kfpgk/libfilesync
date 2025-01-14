@@ -5,7 +5,10 @@
 #include <libfilesync/utility/Literals.hpp>
 
 #include <cstring>
+#include <filesystem>
 #include <memory>
+#include <string>
+#include <utility>
 
 namespace filesync::curl::storage {
 
@@ -14,11 +17,40 @@ namespace filesync::curl::storage {
 
     }
 
+    FileStorage::FileStorage(const FileStorage& rhs) {
+        path = 
+            std::string(rhs.path.stem()) + 
+            "_copy" + 
+            std::string(rhs.path.extension());
+        if (std::filesystem::is_regular_file(rhs.path)) {
+            std::filesystem::copy_file(
+                rhs.path,
+                this->path,
+                std::filesystem::copy_options::update_existing);
+        }
+    }
+
+    FileStorage::FileStorage(FileStorage&& rhs) {
+        using std::swap;
+        swap(*this, rhs);
+    }
+
+    FileStorage& FileStorage::operator=(FileStorage rhs) {
+        using std::swap;
+        swap(*this, rhs);
+        return *this;
+    }
+
     FileStorage::~FileStorage() {
         if (filePointer) {
             std::fflush(filePointer);
             std::fclose(filePointer);
         }
+    }
+
+    void swap(FileStorage& lhs, FileStorage& rhs) {
+        lhs.path = std::exchange(rhs.path, lhs.path);
+        lhs.filePointer = std::exchange(rhs.filePointer, lhs.filePointer);
     }
 
     std::filesystem::path FileStorage::getPath() const {
