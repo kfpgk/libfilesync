@@ -59,6 +59,11 @@ namespace filesync::curl::storage {
             MemoryStorage() = default;
             explicit MemoryStorage(std::size_t bufferSize);
             explicit MemoryStorage(std::span<char> data);
+            MemoryStorage(const MemoryStorage& rhs);
+            MemoryStorage(MemoryStorage&& rhs);
+            MemoryStorage& operator=(MemoryStorage rhs);
+            ~MemoryStorage();
+            friend void swap(MemoryStorage& lhs, MemoryStorage& rhs);
 
             std::span<char> getDataReference();
             void setupRead(const option::Factory& optionFactory);

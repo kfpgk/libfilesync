@@ -1,5 +1,7 @@
 #include <libfilesync/core/sync_data/Directory.hpp>
 
+#include <type_traits>
+
 namespace filesync::core::sync_data {
 
     Directory::Directory(const std::filesystem::path& path) :
@@ -23,6 +25,16 @@ namespace filesync::core::sync_data {
         for(auto it = components.begin(); it != components.end(); it++) {
             it->get()->print();        
         }        
+    }
+
+    void Directory::doSetBuffers(
+                const buffer::Buffer& bufferForRemote,
+                const buffer::Buffer& bufferForPrevious) {
+
+        Entry::doSetBuffers(bufferForRemote, bufferForPrevious);
+        for(auto it = components.begin(); it != components.end(); it++) {
+            it->get()->setBuffers(bufferForRemote, bufferForPrevious);
+        }
     }
 
     void Directory::doSetRemoteEntry(const std::filesystem::path& path) {

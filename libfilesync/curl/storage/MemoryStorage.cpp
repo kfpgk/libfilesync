@@ -21,6 +21,26 @@ namespace filesync::curl::storage {
 
     }
 
+    MemoryStorage::MemoryStorage(const MemoryStorage& rhs) {
+
+    }
+
+    MemoryStorage::MemoryStorage(MemoryStorage&& rhs) {
+
+    }
+
+    MemoryStorage& MemoryStorage::operator=(MemoryStorage rhs) {
+
+    }
+
+    MemoryStorage::~MemoryStorage() {
+
+    }
+
+    void swap(MemoryStorage& lhs, MemoryStorage& rhs) {
+
+    }
+
     std::span<char> MemoryStorage::getDataReference() {
         return std::visit(char_buffer::visitor::GetSpan{}, data);
     }

@@ -9,6 +9,28 @@ namespace filesync::core::sync_data::buffer {
 
     }
 
+    ProtocolMemoryBuffer::ProtocolMemoryBuffer(const ProtocolMemoryBuffer& rhs) {
+        if (rhs.data) {
+            //data = std::make_unique<protocol::memory::Handle<char>>();
+        }
+    }
+
+    ProtocolMemoryBuffer::ProtocolMemoryBuffer(ProtocolMemoryBuffer&& rhs) noexcept {
+        using std::swap;
+        swap(*this, rhs);
+    }
+
+    ProtocolMemoryBuffer& ProtocolMemoryBuffer::operator=(ProtocolMemoryBuffer rhs) {
+        using std::swap;
+        swap(*this, rhs);
+        return *this;
+    }
+
+    void swap(ProtocolMemoryBuffer& lhs, ProtocolMemoryBuffer& rhs) noexcept {
+        using std::swap;
+        swap(lhs.data, rhs.data);
+    }
+
     std::unique_ptr<protocol::memory::Handle<char>>& ProtocolMemoryBuffer::getHandle() {
         return data;
     }

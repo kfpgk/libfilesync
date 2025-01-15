@@ -10,6 +10,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <type_traits>
 #include <utility>
 
 using namespace filesync::utility;
@@ -19,7 +20,7 @@ namespace filesync::core::sync_data {
     Entry::Entry(const std::filesystem::path& path) :
         EntryBase{path},
         bufferForRemote{std::make_unique<buffer::Buffer>(
-            std::in_place_type<buffer::ProtocolMemoryBuffer>)},
+            std::in_place_type<buffer::FileBuffer>)},
         bufferForPrevious{std::make_unique<buffer::Buffer>(
             std::in_place_type<buffer::FileBuffer>)},
         remoteEntry{std::make_unique<RemoteEntry>(path)} {
@@ -27,23 +28,31 @@ namespace filesync::core::sync_data {
     }
 
     Entry::Entry(const std::filesystem::path& path,
-            buffer::Buffer&& bufferForRemote,
-            buffer::Buffer&& bufferForPrevious) :
+            const buffer::Buffer& bufferForRemote,
+            const buffer::Buffer& bufferForPrevious) :
         EntryBase{path},
         remoteEntry{std::make_unique<RemoteEntry>(path)} {
 
-        setBuffers(std::move(bufferForRemote), std::move(bufferForPrevious));
+        setBuffers(bufferForRemote, bufferForPrevious);
 
     }
 
     void Entry::setBuffers(
-        buffer::Buffer&& bufferForRemote,
-        buffer::Buffer&& bufferForPrevious) {
+        const buffer::Buffer& bufferForRemote,
+        const buffer::Buffer& bufferForPrevious) {
+    
+        doSetBuffers(bufferForRemote, bufferForPrevious);
+    }
+
+    void Entry::doSetBuffers(
+        const buffer::Buffer& bufferForRemote,
+        const buffer::Buffer& bufferForPrevious) {
+
 
         if (bufferTypeSupportsRemoteBuffer(bufferForRemote)) {
             
             this->bufferForRemote = std::make_unique<buffer::Buffer>(
-                std::move(bufferForRemote));
+                std::remove_reference<decltype(bufferForRemote)>::type{});
         } else {
             throw data::Exception("This buffer type cannot be used for the buffer "\
                 "that holds remote data.",
@@ -53,7 +62,7 @@ namespace filesync::core::sync_data {
         if (bufferTypeSupportsPreviousBuffer(bufferForPrevious)) {
             
             this->bufferForPrevious = std::make_unique<buffer::Buffer>(
-                std::move(bufferForPrevious));
+                std::remove_reference<decltype(bufferForPrevious)>::type{});
         } else {
             throw data::Exception("This buffer type cannot be used for the buffer "\
                 "holding previous data.",
@@ -138,7 +147,7 @@ namespace filesync::core::sync_data {
         } else if (auto buffer = std::get_if<buffer::ProtocolMemoryBuffer>(&*bufferForRemote)) {
             return buffer->getHandle();
         } else {
-            throw data::Exception("This buffer type cannot be used for the remote buffer ",
+            throw data::Exception("This buffer type cannot be used for the remote buffer.",
                 __FILE__, __LINE__);
         }
     }

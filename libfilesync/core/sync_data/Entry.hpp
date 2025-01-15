@@ -30,12 +30,12 @@ namespace filesync::core::sync_data {
         public:
             explicit Entry(const std::filesystem::path& path);
             Entry(const std::filesystem::path& path,
-                buffer::Buffer&& bufferForRemote,
-                buffer::Buffer&& bufferForPrevious);
+                const buffer::Buffer& bufferForRemote,
+                const buffer::Buffer& bufferForPrevious);
 
             void setBuffers(
-                buffer::Buffer&& bufferForRemote,
-                buffer::Buffer&& bufferForPrevious);
+                const buffer::Buffer& bufferForRemote,
+                const buffer::Buffer& bufferForPrevious);
             void setRemoteEntry(const std::filesystem::path& path);
             [[nodiscard]] std::filesystem::path getRemotePath() const;
             void setSyncInProgress();
@@ -80,6 +80,9 @@ namespace filesync::core::sync_data {
 
         protected:
             void doPrint() const override;
+            virtual void doSetBuffers(
+                const buffer::Buffer& bufferForRemote,
+                const buffer::Buffer& bufferForPrevious);
             virtual void doSetRemoteEntry(const std::filesystem::path& path);
             virtual void doSetSyncInProgress();
             virtual void doResetSyncInProgress();
