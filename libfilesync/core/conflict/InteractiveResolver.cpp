@@ -1,6 +1,5 @@
 #include <libfilesync/core/conflict/InteractiveResolver.hpp>
 #include <libfilesync/FileSyncException.hpp>
-#include <libfilesync/FileSyncMutex.hpp>
 #include <libfilesync/utility/Debug.hpp>
 
 #include <iostream>
