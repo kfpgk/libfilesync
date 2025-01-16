@@ -65,7 +65,7 @@ Use the `CMAKE_BUILD_TYPE` option to enable debug build.
 cd libfilesync
 mkdir -p build
 cd build
-cmake -DCMAKE_BUILD_TYPE=debug ..
+cmake -DCMAKE_BUILD_TYPE=DEBUG ..
 cmake --build .
 ```
 
