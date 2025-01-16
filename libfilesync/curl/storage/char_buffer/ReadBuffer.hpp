@@ -23,6 +23,17 @@ namespace filesync::curl::storage::char_buffer {
         public:
             ReadBuffer(char* data, std::size_t dataSize);
             explicit ReadBuffer(std::string& data);
+            /**
+             * @brief ReadBuffer constructor via a
+             * span<char>.
+             * 
+             * The class name suggests that we might use a
+             * const reference a.k.a. span<const char>
+             * We omit const due to two reasons:
+             *  - Avoid const member variables
+             *  - Derived classes that might also
+             *    write to `data`
+             */
             explicit ReadBuffer(std::span<char> data);
             explicit ReadBuffer(ReadBuffer& data);
             ReadBuffer(const ReadBuffer& rhs);
