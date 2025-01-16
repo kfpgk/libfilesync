@@ -16,9 +16,9 @@ namespace filesync::data {
 
         this->path = this->path.make_preferred();
         if (validate()) {
-            lastWriteTime = std::filesystem::last_write_time(path);
+            writeReferenceTime = std::filesystem::last_write_time(path);
         } else {
-            lastWriteTime = std::chrono::file_clock::now();
+            writeReferenceTime = std::chrono::file_clock::now();
         }           
     }
 
@@ -108,8 +108,7 @@ namespace filesync::data {
         bool changed = false;
         if (validate()) {
             using namespace std::filesystem;
-            file_time_type newLastWriteTime = last_write_time(path);
-            changed = lastWriteTime != newLastWriteTime; 
+            changed = writeReferenceTime != last_write_time(path); 
         }
         return changed;
     }
@@ -118,14 +117,14 @@ namespace filesync::data {
     void EntryBase<T>::resetChanged() {
         if (validate()) {
             using namespace std::filesystem;
-            file_time_type newLastWriteTime = last_write_time(path);
-            lastWriteTime = newLastWriteTime;
+            writeReferenceTime = last_write_time(path);
         }        
     }
 
     template<typename T>
     void EntryBase<T>::onChange() {
-        Logger::getInstance().logFileWriteAccess(LogDomain::Info, getPath(), lastWriteTime);
+        using namespace std::filesystem;
+        Logger::getInstance().logFileWriteAccess(LogDomain::Info, getPath(), last_write_time(path));
         this->notify();
         resetChanged();
     }

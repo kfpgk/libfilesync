@@ -52,7 +52,7 @@ namespace filesync::data
 
         private:
             std::filesystem::path path;
-            std::filesystem::file_time_type lastWriteTime;
+            std::filesystem::file_time_type writeReferenceTime;
 
             [[nodiscard]] std::string notFoundMessage() const;
             void onChange();
