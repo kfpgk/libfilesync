@@ -38,10 +38,6 @@ namespace filesync::curl::storage {
         return *this;
     }
 
-    MemoryStorage::~MemoryStorage() {
-
-    }
-
     void swap(MemoryStorage& lhs, MemoryStorage& rhs) {
         using std::swap;
         swap(lhs.data, rhs.data);

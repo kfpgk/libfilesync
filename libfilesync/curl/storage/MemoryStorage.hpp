@@ -66,7 +66,7 @@ namespace filesync::curl::storage {
             MemoryStorage(const MemoryStorage& rhs);
             MemoryStorage(MemoryStorage&& rhs);
             MemoryStorage& operator=(MemoryStorage rhs);
-            ~MemoryStorage();
+            ~MemoryStorage() = default;
             friend void swap(MemoryStorage& lhs, MemoryStorage& rhs);
 
             std::span<char> getDataReference();
