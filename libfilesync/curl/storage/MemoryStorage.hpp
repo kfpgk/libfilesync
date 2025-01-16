@@ -11,6 +11,10 @@
 
 namespace filesync::curl::storage {
 
+    namespace unit_test {
+        class MemoryStorageTest;
+    }
+
    /**
      * @brief Callback function for cURL WRITEFUNCTION option
      * which writes downloaded content to memory.
@@ -82,6 +86,8 @@ namespace filesync::curl::storage {
 
         friend size_t memoryStorageReadCallback(
             char* buffer, size_t size, size_t count, void* contents);
+
+        friend class unit_test::MemoryStorageTest;
 
     };
 

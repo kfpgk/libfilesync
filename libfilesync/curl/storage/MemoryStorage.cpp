@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <utility>
 
 namespace filesync::curl::storage {
 
@@ -22,15 +23,19 @@ namespace filesync::curl::storage {
     }
 
     MemoryStorage::MemoryStorage(const MemoryStorage& rhs) {
-
+        data = rhs.data;
+        initialBufferSize = initialBufferSize;
     }
 
     MemoryStorage::MemoryStorage(MemoryStorage&& rhs) {
-
+        using std::swap;
+        swap(*this, rhs);
     }
 
     MemoryStorage& MemoryStorage::operator=(MemoryStorage rhs) {
-
+        using std::swap;
+        swap(*this, rhs);
+        return *this;
     }
 
     MemoryStorage::~MemoryStorage() {
@@ -38,7 +43,9 @@ namespace filesync::curl::storage {
     }
 
     void swap(MemoryStorage& lhs, MemoryStorage& rhs) {
-
+        using std::swap;
+        swap(lhs.data, rhs.data);
+        lhs.initialBufferSize = std::exchange(rhs.initialBufferSize, lhs.initialBufferSize);
     }
 
     std::span<char> MemoryStorage::getDataReference() {

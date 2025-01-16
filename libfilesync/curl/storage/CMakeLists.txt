@@ -27,6 +27,23 @@ if(BUILD_UNIT_TESTS)
         COMMAND FileStorage_test
     )
 
+    add_executable(MemoryStorage_test
+        MemoryStorage.test.cpp
+    )
+    target_include_directories(MemoryStorage_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}
+            ${CMAKE_BINARY_DIR}
+    )
+    target_link_libraries(MemoryStorage_test
+        PRIVATE
+            libfilesync
+    )
+    add_test(
+        NAME "UT curl::storage::MemoryStorage"
+        COMMAND MemoryStorage_test
+    )
+
     add_executable(MemoryStorageHandle_test
         MemoryStorageHandle.test.cpp
     )
