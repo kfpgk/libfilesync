@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     test.read_1MB_at_once();
 
     Logger::getInstance().log(LogDomain::TestResult,
-        "curl::storage::char_buffer::Owner: passed", __FILE__, __LINE__);
+        "curl::storage::char_buffer::ReadBuffer: passed", __FILE__, __LINE__);
     return 0;
 }
 
