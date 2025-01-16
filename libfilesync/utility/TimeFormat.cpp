@@ -7,6 +7,12 @@
 
 namespace filesync::utility {
 
+    /**
+     * @brief Convert a file_time_type to a string
+     * 
+     * A better implementation requires <format>.
+     * Not used due to inavailability.
+     */
     std::string timeFormat::timeToString(
         const std::filesystem::file_time_type& timeToPrint) {
 
