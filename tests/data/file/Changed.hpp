@@ -19,9 +19,20 @@ namespace filesync::integration_test::data::file {
             std::string fileName = "file1";
 
             void setup() override;
-            void perform() override;
 
-            void modifyFile();
+            void performInitialState();
+            void evaluateInitialState();
+
+            void performModifyFile();
+            void evaluateModifyFile();
+
+            void performReadChangedStateTwice();
+            void evaluateReadChangedStateTwice();
+
+            void performResetChanged();
+            void evaluateResetChanged();
+
+            void modifyFile(const std::string& fileName);
             void evaluateFileChanged(bool expected);
 
     };

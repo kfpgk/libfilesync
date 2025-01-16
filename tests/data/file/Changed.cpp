@@ -2,16 +2,44 @@
 #include <libfilesync/data/Data.hpp>
 #include <libfilesync/FileSyncException.hpp>
 
-#include <iostream>
+#include <chrono>
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <thread>
 
 namespace filesync::integration_test::data::file {
 
     Changed::Changed(const std::string& testName) :
         IntegrationTest(testName) {
 
+        TestCase initialState{
+            .name = "Tests initial changed() state of file",
+            .perform = std::bind(&Changed::performInitialState, this),
+            .evaluate = std::bind(&Changed::evaluateInitialState, this)
+        };
+        addTestCase(initialState);
+
+        TestCase modifyFile{
+            .name = "Tests changed() state after file modification",
+            .perform = std::bind(&Changed::performModifyFile, this),
+            .evaluate = std::bind(&Changed::evaluateModifyFile, this)
+        };
+        addTestCase(modifyFile);
+
+        TestCase readChangedStateTwice{
+            .name = "Tests changed() state when reading twice without",
+            .perform = std::bind(&Changed::performReadChangedStateTwice, this),
+            .evaluate = std::bind(&Changed::evaluateReadChangedStateTwice, this)
+        };
+        addTestCase(readChangedStateTwice);
+
+        TestCase resetChanged{
+            .name = "Tests resetting of changed() state",
+            .perform = std::bind(&Changed::performResetChanged, this),
+            .evaluate = std::bind(&Changed::evaluateResetChanged, this)
+        };
+        addTestCase(resetChanged);
     }
 
     void Changed::setup() {
@@ -21,19 +49,47 @@ namespace filesync::integration_test::data::file {
                 __FILE__, __LINE__);
         }
         fileStream << "Lorem ipsum dolor sit amet" << std::endl;
+        fileStream.close();
+        
+        using namespace std::chrono;
+        std::this_thread::sleep_for(10ms);
+
         file = std::make_unique<filesync::data::File>(fileName);
     }
 
-    void Changed::perform() {
-        evaluateFileChanged(false);
-        modifyFile();
-        evaluateFileChanged(true);
-        evaluateFileChanged(true);
-        file->resetChanged();
+    void Changed::performInitialState() {
+        /* Do nothing */
+    }
+
+    void Changed::evaluateInitialState() {
         evaluateFileChanged(false);
     }
 
-    void Changed::modifyFile() {
+    void Changed::performModifyFile() {
+        modifyFile(fileName);
+    }
+
+    void Changed::evaluateModifyFile() {
+        evaluateFileChanged(true);
+    }
+
+    void Changed::performReadChangedStateTwice() {
+        /* Do nothing */
+    }
+
+    void Changed::evaluateReadChangedStateTwice() {
+        evaluateFileChanged(true);
+    }
+
+    void Changed::performResetChanged() {
+        file->resetChanged();
+    }
+
+    void Changed::evaluateResetChanged() {
+        evaluateFileChanged(false);
+    }
+
+    void Changed::modifyFile(const std::string& fileName) {
         std::ofstream fileStream(fileName, std::ios_base::app);
         if (!fileStream.is_open()) {
             throw FileSyncException("Cannot open local file for writing.",
