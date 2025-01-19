@@ -3,6 +3,7 @@
 
 #include <libfilesync/curl/storage/char_buffer/ReadBuffer.hpp>
 #include <libfilesync/curl/storage/char_buffer/ReadWriteBuffer.hpp>
+#include <libfilesync/curl/storage/char_buffer/CharBufferStub.test.hpp>
 
 #include <span>
 
@@ -13,6 +14,7 @@ namespace filesync::curl::storage::char_buffer::visitor {
         public:
             std::span<char> operator()(ReadBuffer& buffer);
             std::span<char> operator()(ReadWriteBuffer& buffer);
+            std::span<char> operator()(unit_test::CharBufferStub& buffer);
 
     };
 

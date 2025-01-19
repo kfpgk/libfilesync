@@ -22,6 +22,12 @@ namespace filesync::curl::storage {
 
     }
 
+    MemoryStorage::MemoryStorage(
+        const char_buffer::unit_test::CharBufferStub& charBufferStub) :
+            data{charBufferStub} {
+
+    }
+
     MemoryStorage::MemoryStorage(const MemoryStorage& rhs) {
         data = rhs.data;
         initialBufferSize = initialBufferSize;

@@ -10,4 +10,8 @@ namespace filesync::curl::storage::char_buffer::visitor {
         return buffer.getSpan();
     }
 
+    std::span<char> GetSpan::operator()(unit_test::CharBufferStub& buffer) {
+        return buffer.getSpan();
+    }
+
 }

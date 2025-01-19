@@ -3,6 +3,7 @@
 
 #include <libfilesync/curl/storage/char_buffer/ReadBuffer.hpp>
 #include <libfilesync/curl/storage/char_buffer/ReadWriteBuffer.hpp>
+#include <libfilesync/curl/storage/char_buffer/CharBufferStub.test.hpp>
 #include <libfilesync/curl/option/Factory.hpp>
 
 #include <cstddef>
@@ -13,6 +14,7 @@ namespace filesync::curl::storage {
 
     namespace unit_test {
         class MemoryStorageTest;
+        class MemoryStorageHandleTest;
     }
 
    /**
@@ -77,9 +79,13 @@ namespace filesync::curl::storage {
         private:
             std::variant<
                 char_buffer::ReadWriteBuffer,
-                char_buffer::ReadBuffer
+                char_buffer::ReadBuffer,
+                char_buffer::unit_test::CharBufferStub
             > data;
             std::size_t initialBufferSize = 0;
+
+            explicit MemoryStorage(
+                const char_buffer::unit_test::CharBufferStub& charBufferStub);
 
         friend size_t memoryStorageWriteCallback(
             char* contents, size_t size, size_t count, void* target);  
@@ -88,6 +94,7 @@ namespace filesync::curl::storage {
             char* buffer, size_t size, size_t count, void* contents);
 
         friend class unit_test::MemoryStorageTest;
+        friend class unit_test::MemoryStorageHandleTest;
 
     };
 

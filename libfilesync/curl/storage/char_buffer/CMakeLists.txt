@@ -2,6 +2,7 @@ add_subdirectory(visitor)
 
 target_sources(libfilesync
     PRIVATE
+        CharBufferStub.test.cpp
         ReadBuffer.cpp
         ReadWriteBuffer.cpp
 )

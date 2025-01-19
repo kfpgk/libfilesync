@@ -10,4 +10,8 @@ namespace filesync::curl::storage::char_buffer::visitor {
         buffer.resetPosition();
     }
 
+    void ResetPosition::operator()(unit_test::CharBufferStub& buffer) {
+        buffer.resetPosition();
+    }
+
 }
