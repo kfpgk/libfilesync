@@ -26,7 +26,6 @@ namespace filesync::core::sync_data::buffer {
         public:
             ProtocolMemoryBuffer() = default;
             explicit ProtocolMemoryBuffer(std::unique_ptr<protocol::memory::Handle<char>> data);
-            ProtocolMemoryBuffer(const ProtocolMemoryBuffer& rhs);
             ProtocolMemoryBuffer(ProtocolMemoryBuffer&& rhs) noexcept;
             ProtocolMemoryBuffer& operator=(ProtocolMemoryBuffer rhs);
             ~ProtocolMemoryBuffer() = default;

@@ -9,12 +9,6 @@ namespace filesync::core::sync_data::buffer {
 
     }
 
-    ProtocolMemoryBuffer::ProtocolMemoryBuffer(const ProtocolMemoryBuffer& rhs) {
-        if (rhs.data) {
-            //data = std::make_unique<protocol::memory::Handle<char>>();
-        }
-    }
-
     ProtocolMemoryBuffer::ProtocolMemoryBuffer(ProtocolMemoryBuffer&& rhs) noexcept {
         using std::swap;
         swap(*this, rhs);
