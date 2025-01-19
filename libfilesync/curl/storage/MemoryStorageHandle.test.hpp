@@ -1,6 +1,11 @@
 #ifndef LIBFILESYNC_CURL_STORAGE_MEMORY_STORAGE_HANDLE_TEST_HPP
 #define LIBFILESYNC_CURL_STORAGE_MEMORY_STORAGE_HANDLE_TEST_HPP
 
+#include <libfilesync/curl/storage/MemoryStorageHandle.hpp>
+
+#include <memory>
+#include <string>
+
 namespace filesync::curl::storage::unit_test {
 
     /**
@@ -13,9 +18,18 @@ namespace filesync::curl::storage::unit_test {
     class MemoryStorageHandleTest {
 
         public:
+            void test_swap();
+            void copy_construction();
+            void move_construction();
+            void copy_assignment();
+            void move_assignment();
 
             void construct_from_friend();
             void construct_from_friend_with_make_unique();
+
+        private:
+            std::unique_ptr<MemoryStorageHandle> constructHandle(
+                const std::string& data);
 
     };
 

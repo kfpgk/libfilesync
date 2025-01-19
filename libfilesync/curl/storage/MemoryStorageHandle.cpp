@@ -10,20 +10,29 @@ namespace filesync::curl::storage {
     MemoryStorageHandle::MemoryStorageHandle(
         [[maybe_unused]] ConstructorPermission permission,
         std::unique_ptr<MemoryStorage> storage) :
-        
-        storage{std::move(storage)} {
+            storage{std::move(storage)} {
 
     }
 
-    /*MemoryStorageHandle::MemoryStorageHandle(const MemoryStorageHandle& rhs) {
-        if (rhs.storage) {
-            //std::make_unique<MemoryStorage>(rhs.storage->getDataReference());
-        }
-    }*/
+    MemoryStorageHandle::MemoryStorageHandle(const MemoryStorageHandle& rhs) {
+        storage = std::make_unique<MemoryStorage>(*rhs.storage);
+    }
 
-    /*MemoryStorageHandle& MemoryStorageHandle::operator=(const MemoryStorageHandle& rhs) {
+    MemoryStorageHandle::MemoryStorageHandle(MemoryStorageHandle&& rhs) {
+        using std::swap;
+        swap(*this, rhs);
+    }
+
+    MemoryStorageHandle& MemoryStorageHandle::operator=(MemoryStorageHandle rhs) {
+        using std::swap;
+        swap(*this, rhs);
         return *this;
-    }*/
+    }
+
+    void swap(MemoryStorageHandle& lhs, MemoryStorageHandle& rhs) {
+        using std::swap;
+        swap(lhs.storage, rhs.storage);
+    }
 
     std::unique_ptr<MemoryStorage> MemoryStorageHandle::extract() {
         if (!storage) {

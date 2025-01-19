@@ -41,14 +41,16 @@ namespace filesync::curl::storage {
              * @brief Constructor that should only be callable
              * from friend classes (equivalent to private).
              * 
-             * We need this to be able to construct object using
-             * std::make_unique.
+             * We need this and ConstructorPermission
+             * to be able to construct object using std::make_unique.
              */
             MemoryStorageHandle(ConstructorPermission token,
                 std::unique_ptr<MemoryStorage> storage);
-            //MemoryStorageHandle(const MemoryStorageHandle& rhs);
-            //MemoryStorageHandle& operator=(const MemoryStorageHandle& rhs);
+            MemoryStorageHandle(const MemoryStorageHandle& rhs);
+            MemoryStorageHandle(MemoryStorageHandle&& rhs);
+            MemoryStorageHandle& operator=(MemoryStorageHandle rhs);
             ~MemoryStorageHandle() = default;
+            friend void swap(MemoryStorageHandle& lhs, MemoryStorageHandle& rhs);
 
             std::span<char> data();
 
