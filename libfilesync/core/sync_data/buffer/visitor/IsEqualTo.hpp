@@ -6,6 +6,7 @@
 #include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 
 #include <istream>
+#include <memory>
 
 namespace filesync::core::sync_data::buffer::visitor {
 
@@ -21,9 +22,9 @@ namespace filesync::core::sync_data::buffer::visitor {
         public:
             explicit IsEqualTo(std::istream& in);
 
-            bool operator()(const CharArrayMemoryBuffer& buffer);
-            bool operator()(const FileBuffer& buffer);
-            bool operator()(const ProtocolMemoryBuffer& buffer);
+            bool operator()(const std::unique_ptr<CharArrayMemoryBuffer>& buffer);
+            bool operator()(const std::unique_ptr<FileBuffer>& buffer);
+            bool operator()(const std::unique_ptr<ProtocolMemoryBuffer>& buffer);
 
         private:
             std::istream& in;

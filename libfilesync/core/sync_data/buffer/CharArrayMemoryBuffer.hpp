@@ -2,6 +2,7 @@
 #define LIBFILESYNC_CORE_SYNC_DATA_BUFFER_CHAR_ARRAY_MEMORY_BUFFER_HPP
 
 #include <istream>
+#include <memory>
 #include <span>
 #include <vector>
 
@@ -20,6 +21,7 @@ namespace filesync::core::sync_data::buffer {
         public:
             CharArrayMemoryBuffer() = default;
 
+            std::unique_ptr<CharArrayMemoryBuffer> cloneType() const;
             std::span<char> getData();
             void store(std::istream& in);
             std::ostream& extractContentTo(std::ostream& out);

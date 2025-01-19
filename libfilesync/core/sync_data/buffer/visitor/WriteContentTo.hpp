@@ -5,6 +5,7 @@
 #include <libfilesync/core/sync_data/buffer/FileBuffer.hpp>
 #include <libfilesync/core/sync_data/buffer/ProtocolMemoryBuffer.hpp>
 
+#include <memory>
 #include <ostream>
 
 namespace filesync::core::sync_data::buffer::visitor {
@@ -22,9 +23,9 @@ namespace filesync::core::sync_data::buffer::visitor {
         public:
             explicit WriteContentTo(std::ostream& out);
 
-            std::ostream& operator()(CharArrayMemoryBuffer& buffer);
-            std::ostream& operator()(FileBuffer& buffer);
-            std::ostream& operator()(ProtocolMemoryBuffer& buffer);
+            std::ostream& operator()(std::unique_ptr<CharArrayMemoryBuffer>& buffer);
+            std::ostream& operator()(std::unique_ptr<FileBuffer>& buffer);
+            std::ostream& operator()(std::unique_ptr<ProtocolMemoryBuffer>& buffer);
 
         private:
             std::ostream& out;

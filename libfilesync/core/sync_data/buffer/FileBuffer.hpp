@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include <istream>
+#include <memory>
 
 namespace filesync::core::sync_data::buffer {
 
@@ -24,6 +25,7 @@ namespace filesync::core::sync_data::buffer {
             ~FileBuffer();
             friend void swap(FileBuffer& lhs, FileBuffer& rhs) noexcept;
 
+            std::unique_ptr<FileBuffer> cloneType() const;
             bool isEmpty() const;
             const std::filesystem::path&  getFilePath() const;
             void store(std::istream& in);

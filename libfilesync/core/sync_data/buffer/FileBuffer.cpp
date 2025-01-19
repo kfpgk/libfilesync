@@ -44,6 +44,10 @@ namespace filesync::core::sync_data::buffer {
         lhs.filePath = std::exchange(rhs.filePath, lhs.filePath);
     }
 
+    std::unique_ptr<FileBuffer> FileBuffer::cloneType() const {
+        return std::make_unique<FileBuffer>();
+    }
+
     bool FileBuffer::isEmpty() const {
         return !std::filesystem::is_regular_file(filePath);
     }

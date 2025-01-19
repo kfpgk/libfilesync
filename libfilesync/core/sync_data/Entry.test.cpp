@@ -7,6 +7,7 @@
 #include <libfilesync/utility/Logger.hpp>
 
 #include <cassert>
+#include <memory>
 #include <variant>
 
 using namespace filesync::utility;
@@ -113,7 +114,10 @@ namespace filesync::core::sync_data::unit_test {
 
     void EntryTest::construct_with_file_buffers() {
 
-        Entry entry("dummy1", buffer::FileBuffer{}, buffer::FileBuffer{});
+        Entry entry(
+            "dummy1", 
+            std::make_unique<buffer::FileBuffer>(), 
+            std::make_unique<buffer::FileBuffer>());
 
         Logger::getInstance().log(LogDomain::TestResult,
             "construct_with_file_buffers() passed");
@@ -122,8 +126,8 @@ namespace filesync::core::sync_data::unit_test {
     void EntryTest::construct_with_memory_buffers() {
 
         Entry entry("dummy1", 
-            buffer::ProtocolMemoryBuffer{},
-            buffer::CharArrayMemoryBuffer{});
+            std::make_unique<buffer::ProtocolMemoryBuffer>(),
+            std::make_unique<buffer::CharArrayMemoryBuffer>());
 
         Logger::getInstance().log(LogDomain::TestResult,
             "construct_with_protocol_memory_buffers() passed");
@@ -134,8 +138,8 @@ namespace filesync::core::sync_data::unit_test {
         bool exceptionThrown = false;
         try {
             Entry entry("dummy1", 
-                buffer::CharArrayMemoryBuffer{},
-                buffer::CharArrayMemoryBuffer{});
+                std::make_unique<buffer::CharArrayMemoryBuffer>(),
+                std::make_unique<buffer::CharArrayMemoryBuffer>());
         } catch (...) {
             exceptionThrown = true;
         }
@@ -151,8 +155,8 @@ namespace filesync::core::sync_data::unit_test {
         bool exceptionThrown = false;
         try {
             Entry entry("dummy1", 
-                buffer::ProtocolMemoryBuffer{},
-                buffer::ProtocolMemoryBuffer{});
+                std::make_unique<buffer::ProtocolMemoryBuffer>(),
+                std::make_unique<buffer::ProtocolMemoryBuffer>());
         } catch (...) {
             exceptionThrown = true;
         }
@@ -167,8 +171,8 @@ namespace filesync::core::sync_data::unit_test {
 
         Entry entry("dummy1");
         entry.setBuffers(
-            buffer::FileBuffer{},
-            buffer::FileBuffer{});
+            std::make_unique<buffer::FileBuffer>(),
+            std::make_unique<buffer::FileBuffer>());
 
         Logger::getInstance().log(LogDomain::TestResult,
             "set_file_buffers() passed");
@@ -178,8 +182,8 @@ namespace filesync::core::sync_data::unit_test {
 
         Entry entry("dummy1");
         entry.setBuffers(
-            buffer::ProtocolMemoryBuffer{},
-            buffer::CharArrayMemoryBuffer{});
+            std::make_unique<buffer::ProtocolMemoryBuffer>(),
+            std::make_unique<buffer::CharArrayMemoryBuffer>());
 
         Logger::getInstance().log(LogDomain::TestResult,
             "set_memory_buffers() passed");
@@ -192,8 +196,8 @@ namespace filesync::core::sync_data::unit_test {
         bool exceptionThrown = false;
         try {
             entry.setBuffers(
-                buffer::CharArrayMemoryBuffer{},
-                buffer::CharArrayMemoryBuffer{});
+                std::make_unique<buffer::CharArrayMemoryBuffer>(),
+                std::make_unique<buffer::CharArrayMemoryBuffer>());
         } catch (...) {
             exceptionThrown = true;
         }
@@ -211,8 +215,8 @@ namespace filesync::core::sync_data::unit_test {
         bool exceptionThrown = false;
         try {
             entry.setBuffers(
-                buffer::ProtocolMemoryBuffer{},
-                buffer::ProtocolMemoryBuffer{});
+                std::make_unique<buffer::ProtocolMemoryBuffer>(),
+                std::make_unique<buffer::ProtocolMemoryBuffer>());
         } catch (...) {
             exceptionThrown = true;
         }

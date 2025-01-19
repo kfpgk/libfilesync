@@ -96,12 +96,12 @@ namespace filesync::core::sync_data {
             bool syncInProgress = false;
 
             std::unique_ptr<RemoteEntry> remoteEntry;
-            std::unique_ptr<buffer::Buffer> bufferForRemote;
-            std::unique_ptr<buffer::Buffer> bufferForPrevious;
+            buffer::Buffer bufferForRemote;
+            buffer::Buffer bufferForPrevious;
 
             bool bufferTypeSupportsRemoteBuffer(const buffer::Buffer& buffer) const;
             bool bufferTypeSupportsPreviousBuffer(const buffer::Buffer& buffer) const;
-
+            
     };
 
     inline bool operator==(

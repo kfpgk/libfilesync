@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <istream>
+#include <memory>
 #include <variant>
 
 namespace filesync::core::sync_data::buffer::visitor {
@@ -28,9 +29,9 @@ namespace filesync::core::sync_data::buffer::visitor {
         public:
             explicit Store(BufferStoreType in);
 
-            void operator()(CharArrayMemoryBuffer& buffer);
-            void operator()(FileBuffer& buffer);
-            void operator()(ProtocolMemoryBuffer& buffer);
+            void operator()(std::unique_ptr<CharArrayMemoryBuffer>& buffer);
+            void operator()(std::unique_ptr<FileBuffer>& buffer);
+            void operator()(std::unique_ptr<ProtocolMemoryBuffer>& buffer);
 
         private:
             BufferStoreType in;

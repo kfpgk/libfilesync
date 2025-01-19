@@ -7,6 +7,10 @@ namespace filesync::core::sync_data::buffer {
         return data;
     }
 
+    std::unique_ptr<CharArrayMemoryBuffer> CharArrayMemoryBuffer::cloneType() const {
+        return std::make_unique<CharArrayMemoryBuffer>();
+    }
+
     void CharArrayMemoryBuffer::store(std::istream& in) {
         if (in.fail()) {
             throw data::Exception("Cannot store. Input stream is in fail state.",

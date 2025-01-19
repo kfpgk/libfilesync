@@ -13,6 +13,7 @@
 
 #include <functional>
 #include <fstream>
+#include <memory>
 
 namespace filesync::integration_test::core::buffered_sync {
 
@@ -269,8 +270,8 @@ namespace filesync::integration_test::core::buffered_sync {
 
         filesync::core::conflict::LocalFirstResolver resolver(proto);
         filesync::core::sync_data::File file(file1Name,
-            filesync::core::sync_data::buffer::FileBuffer{},
-            filesync::core::sync_data::buffer::FileBuffer{});
+            std::make_unique<filesync::core::sync_data::buffer::FileBuffer>(),
+            std::make_unique<filesync::core::sync_data::buffer::FileBuffer>());
         filesync::core::BufferedSyncer syncer(file, proto, resolver);
     
         syncer.update(&file);
@@ -316,8 +317,8 @@ namespace filesync::integration_test::core::buffered_sync {
 
         filesync::core::conflict::LocalFirstResolver resolver(proto);
         filesync::core::sync_data::File file(file1Name,
-            filesync::core::sync_data::buffer::ProtocolMemoryBuffer{},
-            filesync::core::sync_data::buffer::CharArrayMemoryBuffer{});
+            std::make_unique<filesync::core::sync_data::buffer::ProtocolMemoryBuffer>(),
+            std::make_unique<filesync::core::sync_data::buffer::CharArrayMemoryBuffer>());
         filesync::core::BufferedSyncer syncer(file, proto, resolver);
     
         syncer.update(&file);

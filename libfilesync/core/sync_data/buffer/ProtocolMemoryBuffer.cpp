@@ -31,6 +31,10 @@ namespace filesync::core::sync_data::buffer {
         swap(lhs.data, rhs.data);
     }
 
+    std::unique_ptr<ProtocolMemoryBuffer> ProtocolMemoryBuffer::cloneType() const {
+        return std::make_unique<ProtocolMemoryBuffer>();
+    }
+
     std::unique_ptr<protocol::memory::Handle<char>>& ProtocolMemoryBuffer::getHandle() {
         return data;
     }

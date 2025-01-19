@@ -32,6 +32,7 @@ namespace filesync::core::sync_data::buffer {
             ~ProtocolMemoryBuffer() = default;
             friend void swap(ProtocolMemoryBuffer& lhs, ProtocolMemoryBuffer& rhs) noexcept;
 
+            std::unique_ptr<ProtocolMemoryBuffer> cloneType() const;
             [[nodiscard]] std::unique_ptr<protocol::memory::Handle<char>>& getHandle();
             void store(std::unique_ptr<protocol::memory::Handle<char>> in);
             std::ostream& extractContentTo(std::ostream& out);

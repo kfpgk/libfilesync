@@ -12,16 +12,16 @@ namespace filesync::core::sync_data::buffer::visitor {
         }
     }
 
-    bool IsEqualTo::operator()(const CharArrayMemoryBuffer& buffer) {
-        return buffer.isEqualTo(in);
+    bool IsEqualTo::operator()(const std::unique_ptr<CharArrayMemoryBuffer>& buffer) {
+        return buffer->isEqualTo(in);
     }
 
-    bool IsEqualTo::operator()(const FileBuffer& buffer) {
-        return buffer.isEqualTo(in);
+    bool IsEqualTo::operator()(const std::unique_ptr<FileBuffer>& buffer) {
+        return buffer->isEqualTo(in);
     }
 
-    bool IsEqualTo::operator()(const ProtocolMemoryBuffer& buffer) {
-        return buffer.isEqualTo(in);
+    bool IsEqualTo::operator()(const std::unique_ptr<ProtocolMemoryBuffer>& buffer) {
+        return buffer->isEqualTo(in);
     }
 
 }

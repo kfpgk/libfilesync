@@ -7,6 +7,7 @@
 #include <libfilesync/protocol/HandleOrFilePath.hpp>
 
 #include <filesystem>
+#include <memory>
 #include <span>
 #include <variant>
 
@@ -23,9 +24,12 @@ namespace filesync::core::sync_data::buffer::visitor {
     class GetHandle {
 
         public:
-            [[nodiscard]] std::span<char> operator()(CharArrayMemoryBuffer& buffer);
-            [[nodiscard]] protocol::HandleOrFilePath operator()(const FileBuffer& buffer);
-            [[nodiscard]] protocol::HandleOrFilePath operator()(ProtocolMemoryBuffer& buffer);
+            [[nodiscard]] std::span<char> operator()(
+                std::unique_ptr<CharArrayMemoryBuffer>& buffer);
+            [[nodiscard]] protocol::HandleOrFilePath operator()(const 
+            std::unique_ptr<FileBuffer>& buffer);
+            [[nodiscard]] protocol::HandleOrFilePath operator()(
+                std::unique_ptr<ProtocolMemoryBuffer>& buffer);
 
     };
 
