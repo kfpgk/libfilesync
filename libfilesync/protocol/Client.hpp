@@ -26,6 +26,9 @@ namespace filesync::protocol {
             Client() = default;
             explicit Client(const std::string& remoteRoot);
             virtual ~Client() = default;
+
+            std::string getProtocolUrlPrefix() const;
+
             /**
              * @brief Download from remote file (or directory)
              * to local file (or directory).
@@ -116,6 +119,7 @@ namespace filesync::protocol {
         private: 
             std::filesystem::path remoteRoot = "";
 
+            virtual std::string doGetProtocolUrlPrefix() const = 0;
             virtual void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) = 0;

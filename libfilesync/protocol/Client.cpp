@@ -15,6 +15,10 @@ namespace filesync::protocol {
 
     }
 
+    std::string Client::getProtocolUrlPrefix() const {
+        return doGetProtocolUrlPrefix();
+    }
+
     void Client::download(const std::filesystem::path& local) {
         download(local, local);
     }

@@ -195,6 +195,9 @@ namespace filesync {
                     __FILE__, __LINE__); 
         }
 
+        Logger::getInstance().log(LogDomain::Info, 
+            "Syncing to " + protocolClient->getProtocolUrlPrefix() + "://" + 
+            serverAddress + ":/" + remoteRoot + "/");
         DEBUG_EXIT();       
     }
 

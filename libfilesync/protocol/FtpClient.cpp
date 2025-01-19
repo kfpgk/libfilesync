@@ -17,6 +17,10 @@ namespace filesync::protocol {
 
     }
 
+    std::string FtpClient::doGetProtocolUrlPrefix() const {
+        return "ftp";
+    }
+
     void FtpClient::doDownload(
         const std::filesystem::path& local,
         const std::filesystem::path& remote) {

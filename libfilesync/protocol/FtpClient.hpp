@@ -46,6 +46,8 @@ namespace filesync::protocol {
             filesync::data::EntryType getRemoteEntryType(
                 const std::filesystem::path& remote);   
 
+            std::string doGetProtocolUrlPrefix() const override;
+
             void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override;
