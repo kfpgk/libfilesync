@@ -12,6 +12,7 @@ namespace filesync::protocol::unit_test {
     class ConcreteClient : public Client {
 
         private:
+            std::string doGetProtocolUrlPrefix() const override {return "Stub"; };
             void doDownload(
                 const std::filesystem::path& local,
                 const std::filesystem::path& remote) override {};
