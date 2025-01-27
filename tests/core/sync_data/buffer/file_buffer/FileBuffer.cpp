@@ -3,9 +3,10 @@
 #include <libfilesync/data/Data.hpp>
 #include <libfilesync/FileSyncException.hpp>
 
-#include <iostream>
-#include <fstream>
 #include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
 
@@ -73,6 +74,13 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
             .evaluate = std::bind(&FileBuffer::evaluateCheckEqualityNegative, this)
         };
         addTestCase(checkEqualityNegative);
+
+        TestCase checkEqualityNegativeAppendedData {
+            .name = "Check equality with appended data",
+            .perform = std::bind(&FileBuffer::performCheckEqualityNegativeAppendedData, this),
+            .evaluate = std::bind(&FileBuffer::evaluateCheckEqualityNegativeAppendedData, this)
+        };
+        addTestCase(checkEqualityNegativeAppendedData);
 
         TestCase checkEqualityEmptyBuffer {
             .name = "Check equality with empty buffer",
@@ -272,7 +280,31 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
 
     void FileBuffer::evaluateCheckEqualityNegative() {
         if (resultOfIsEqual == true) {
-            throw FileSyncException("Equality has been reported as true, while content was not equal",
+            throw FileSyncException(
+                "Equality has been reported as true, while content was not equal",
+                __FILE__, __LINE__);          
+        }        
+    }
+
+    void FileBuffer::performCheckEqualityNegativeAppendedData() {
+        namespace filesync = filesync::core::sync_data::buffer;
+        filesync::FileBuffer buffer;
+        std::ifstream readFile(inputFile1Name);
+        buffer.store(readFile);
+
+        std::string stringBuffer;
+        std::stringstream compareStream(stringBuffer);
+        compareStream << inputFile1Content << "\n";
+        compareStream << "More content\n";
+
+        resultOfIsEqual = true;
+        resultOfIsEqual = buffer.isEqualTo(compareStream);
+    }
+
+    void FileBuffer::evaluateCheckEqualityNegativeAppendedData() {
+        if (resultOfIsEqual == true) {
+            throw FileSyncException(
+                "Equality has been reported as true, while content was not equal",
                 __FILE__, __LINE__);          
         }        
     }
@@ -304,7 +336,6 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
         buffer.store(readFile);
 
         std::fstream anotherFile(flexibelFile1Name);
-        anotherFile << flexibelFile1Content << std::endl;
 
         resultOfIsEqual = true;
         resultOfIsEqual = buffer.isEqualTo(anotherFile);

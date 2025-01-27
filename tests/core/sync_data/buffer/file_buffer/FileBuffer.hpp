@@ -77,6 +77,14 @@ namespace filesync::integration_test::core::sync_data::buffer::file_buffer {
 
             /**
              * @brief Test the check for equality 
+             * with not equal content. Content differs only
+             * by additional appended data.
+             */
+            void performCheckEqualityNegativeAppendedData();
+            void evaluateCheckEqualityNegativeAppendedData();
+
+            /**
+             * @brief Test the check for equality 
              * with empty buffer.
              */
             void performCheckEqualityEmptyBuffer();
