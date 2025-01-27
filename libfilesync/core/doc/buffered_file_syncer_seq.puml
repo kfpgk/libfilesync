@@ -1,0 +1,50 @@
+@startuml buffered-file-syncer-sequence-diagram
+
+title Buffered File Syncer Sequence Diagram
+
+box "Client"
+    participant "Local File" as local
+    participant "Buffer for Remote" as remoteBuf
+    participant "Buffer holding Previous" as prevBuf
+    participant "Conflict Resolver" as conflictResolver
+end box
+
+box "Server"
+    participant "Remote File" as remote
+end box
+
+== Local and Remote are Equal ==
+remote -> remoteBuf: transfer
+local <--> remoteBuf: compare = <b>equal</b>
+local -> prevBuf: transfer
+
+== New Local Content ==
+remote -> remoteBuf: transfer
+local <--> remoteBuf: compare = <b>not equal</b>
+local <--> prevBuf: compare = <b>not equal</b>
+remoteBuf <--> prevBuf: compare = <b>equal</b>
+local -> remote: transfer
+local -> prevBuf: transfer
+
+== New Remote Content ==
+remote -> remoteBuf: transfer
+local <--> remoteBuf: compare <b>not equal/b>
+local <--> prevBuf: compare = <b>equal</b>
+remoteBuf <--> prevBuf: compare = <b>not equal</b>
+remoteBuf -> local: transfer
+local -> prevBuf: transfer
+
+== New Local and Remote Content ==
+remote -> remoteBuf: transfer
+local <--> remoteBuf: compare <b>not equal/b>
+local <--> prevBuf: compare = <b>not equal</b>
+remoteBuf <--> prevBuf: compare = <b>not equal</b>
+[-> conflictResolver ++ : resolve() 
+conflictResolver -> remote
+remote -> conflictResolver 
+conflictResolver -> local
+local -> conflictResolver
+deactivate conflictResolver
+local -> prevBuf: transfer
+
+@enduml

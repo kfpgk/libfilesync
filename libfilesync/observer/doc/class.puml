@@ -1,0 +1,20 @@
+@startuml observer-class-diagram
+
+title Observer Class Diagram\n---\nObserver Pattern
+
+package "observer" {
+    abstract class "Observer<T>" as Observer {
+        + update(T*)
+    }
+
+    abstract class "Subject<T>" as Subject {
+        - observers : Observer[]
+        + registerObserver(Observer<T>): void
+        + unregisterObserver(Observer<T>): void
+        - notify(): void 
+    }
+}
+
+Subject o- "*" Observer
+ 
+@enduml

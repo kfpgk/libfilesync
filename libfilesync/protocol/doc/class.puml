@@ -1,0 +1,48 @@
+@startuml protocol-class-diagram
+
+title Protocol Class Diagram
+
+abstract class FileSyncer {
+    + update(Entry) : void
+}
+
+package protocol {
+    interface Client {
+        + upload(string local, string remote) : void
+        + download(string local, string remote) : void
+        + existsOnServer(string remote) : bool
+        + deleteOnServer(string remote) : void
+    }
+
+    class "FtpClient" as FtpClient
+}
+
+class Entry {
+    + validate(): void
+    + performOnChanged(): void
+    + hasChanged(): bool
+    + registerObserver(): void
+    - notify() : void
+    - observers[]
+}
+
+package "curl" {
+
+    interface CurlProtocolClient {
+        + setLocalFileForUpload(string) : void
+        + createLocalFileForDownload(string) : void
+        + setRemoteFile(string) : void
+        + download() : void
+        + upload() : void
+        + remoteFileExists() : bool
+        + deleteRemote() : void
+    }
+}
+
+FileSyncer o- "1" Client
+Entry o- "*" FileSyncer
+
+Client <|.. FtpClient
+CurlProtocolClient "1" -o "1" FtpClient
+
+@enduml

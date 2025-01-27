@@ -1,0 +1,35 @@
+@startuml libfilesync-component-diagram
+
+title libfilesync Component Diagram
+
+package libfilesync {
+    component filesyncer
+
+    component resolver
+    interface resolve
+
+    component protocol
+    interface "upload/download" as updwnload 
+
+    component syncEntry
+    interface access
+
+    component curl
+    interface "upload/download" as sndrcv
+}
+component libcurl
+interface "server communication" as srvcomm
+
+syncEntry - access
+access <- filesyncer
+updwnload - protocol
+filesyncer -> updwnload
+filesyncer --> resolve
+resolve - resolver
+updwnload <-- resolver
+sndrcv --  curl
+protocol --> sndrcv
+srvcomm - libcurl
+curl -> srvcomm
+
+@enduml

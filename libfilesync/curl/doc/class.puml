@@ -1,0 +1,177 @@
+@startuml curl-class-diagram
+
+title CURL Class Diagram
+
+package client {
+
+    interface ProtocolClient
+    class FtpClient
+
+}
+
+package curl {
+    abstract class "ProtocolClient" as CurlProtocolClient {
+        - localDownloadFilePath : filesystem::path
+        - localUploadFilePath : filesystem::path 
+        - remoteFilePath : filesystem::path 
+        - remoteDirPath : filesystem::path
+        - filePointer : FILE*
+        + remoteEntryExists() : bool
+        + setInterface(interface::Easy*) : void
+        + setRemoteFile(filesystem::path) : void
+        + setLocalFileForUpload(filesystem::path) : void
+        + setInMemoryDataForUpload(char[]&) : void
+        + setRemoteDir(filesystem::path) : void
+        + createLocalFileForDownload(filesystem::path) : void
+        + prepareDownloadToMemory() : void
+        + getReferenceToDownloadMemory() : char[]&
+        + getCopyOfDownloadMemory() : char[]
+        + takeDownloadMemory() : MemoryStorageHandle
+        + setCreateMissingDirs(bool) : void
+        + resetPaths() : void
+        + upload() : void
+        + download() : void
+        + deleteRemoteFile() : void
+        + createRemoteDir() : void
+        + deleteRemoteDir() : void       
+    }
+    class "CurlFtpClient" as CurlFtpClient {
+        + createRemoteDir() : void
+        + deleteRemoteFile() : void
+        + setCreateMissingDirs(bool) : void
+        + deleteRemoteDir() : void
+        + remoteEntryExists() : bool
+        + init() : void
+    }
+    package storage {
+        interface "Storage" as Storage {
+            + {abstract} setupWrite(option::Factory&) : void
+            + {abstract} setupRead(option::Factory&) : void
+            + {abstract} flush() : void
+        }
+        class "FileStorage" as FileStorage {
+            - path : string
+            - filePointer : FILE*
+            + setupWrite(option::Factory&) : void
+            + setupRead(option::Factory&) : void
+            + flush() : void
+        }
+        class "MemoryStorage" as MemoryStorage {
+            - buffer: CharBuffer
+            + setupWrite(option::Factory&) : void
+            + setupRead(option::Factory&) : void
+            + flush() : void
+        }
+        class "CharBuffer" as CharBuffer {
+            + write(string) : void
+            + write(char*, size_t) : size_t
+            + read(char*, size_t) : size_t
+            + clear() : void
+            + getSpan() : char[]&           
+        }
+        class "MemoryStorageHandle" as MemoryStorageHandle {
+            - storage: MemoryStorage
+        }
+        package visitor {
+            class SetupWrite {
+                + operator()(MemoryStorage&) : void
+                + operator()(FileStorage&) : void
+            }
+            class SetupRead {
+                + operator()(MemoryStorage&) : void
+                + operator()(FileStorage&) : void
+            }
+            class Flush {
+                + operator()(MemoryStorage&) : void
+                + operator()(FileStorage&) : void
+            }
+        }
+    }
+    package wrapper {
+        class "Url" as CurlUrl {
+            - handle : CURLU*
+            - urlPointer : char*
+            + getUrl() : char*
+            + getHost() : char*
+            + getScheme() : char*
+            + getPath() : char*
+            + setHost(string) : void
+            + setScheme(string) : void
+            + setPath(string) : void
+            + validate() : void
+        }
+        class "SList" as CurlSList {
+            - handle : curl_slist*
+            - contents : string[]
+            + isEmpty() : bool
+            + getSListPointer() : curl_slist*
+            + append(string) : void
+        }
+        class "Easy" as CurlEasy {
+            - handle : CURL*
+            - rc : CURLcode
+            - errorBuffer char[];
+            + setOption(CURLoption, Args&&...) : void
+            + run() : void
+        }
+        class "GlobalSetup\n<<Singleton>>" as CurlGlobalSetup {
+            + init() : void static
+        }
+        class "Base" as CurlBase
+    }
+
+    package option {
+        class "Factory" as Factory {
+            - interface : Easy&
+            + create...Option : ...Option*
+        }
+        interface "Option" as CurlOption {
+            - interface : Easy&
+            + set() : void
+        }
+    }
+
+}
+
+
+package "<<external/third_party>>\nlibcurl" as libcurl {
+
+}
+
+CurlBase <|-- CurlEasy  
+CurlBase <|-- CurlUrl
+CurlBase <|-- CurlSList
+CurlBase -> CurlGlobalSetup : init()
+
+ProtocolClient <|-- FtpClient
+
+FtpClient "1" o-- "1" CurlFtpClient
+CurlFtpClient --|> CurlProtocolClient
+CurlProtocolClient "1" o-- "1" CurlUrl
+CurlProtocolClient o-- "2" FileStorage
+CurlProtocolClient o-- "2" MemoryStorage
+Storage <|.. MemoryStorage
+Storage <|.. FileStorage
+MemoryStorage "1" o-- "1" CharBuffer
+MemoryStorageHandle "1" o-- "1" MemoryStorage
+FtpClient --> MemoryStorageHandle 
+
+FileStorage <-- visitor
+MemoryStorage <-- visitor
+
+MemoryStorageHandle <- "<<friend>>" CurlProtocolClient 
+
+Factory -> CurlEasy
+
+Storage --> Factory
+CurlOption --> CurlEasy
+CurlProtocolClient "1" o-- "*" CurlOption
+
+CurlProtocolClient "1" o-- "1" CurlEasy
+
+CurlUrl --> libcurl
+CurlSList --> libcurl
+CurlEasy --> libcurl
+CurlGlobalSetup --> libcurl : curl_global_init()\ncurl_global_cleanup()
+
+@enduml

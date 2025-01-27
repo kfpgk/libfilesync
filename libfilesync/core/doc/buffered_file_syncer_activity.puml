@@ -1,0 +1,53 @@
+@startuml buffered-file-syncer-activity-diagram
+
+title Buffered File Syncer Activity Diagram
+
+start
+
+:Set <b>prev</b> to empty/non existing;
+
+repeat
+
+    partition Update {
+
+        if (local exists) then (yes)
+            if (remote exists) then (yes)
+                if (local == prev) then (yes)
+                    if (remote == prev) then (yes)
+                        :do nothing;
+                    else (no)
+                        :pull remote;
+                    endif
+                else (no)
+                    if (remote == prev) then (yes)
+                        :push local;
+                    else (no)
+                        #palegreen:<b>resolver.resolve()</b>;
+                        note right
+                        Custom
+                        endnote
+                    endif   
+                endif
+            else (no)
+                :push local;
+            endif
+        else (no)
+            if (remote exists) then (yes)
+                :pull remote;
+            endif
+        endif
+
+
+
+    :Save file state to <b>prev</b>;
+
+    }
+
+:Wait syncinterval;
+
+repeat while (stopSyncing) is (no)
+->yes;
+
+stop
+
+@enduml

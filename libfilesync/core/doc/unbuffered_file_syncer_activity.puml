@@ -1,0 +1,44 @@
+@startuml unbuffered-file-syncer-activity-diagram
+
+title Unbuffered File Syncer Activity Diagram
+
+start
+
+repeat
+
+    partition Update {
+
+        if (local exists) then (yes)
+            if (remote exists) then (yes)
+                if (local changed) then (yes)
+                    :push local;
+                else (no)
+                    if (first_run) then (yes)
+                        #palegreen:<b>resolver.resolve()</b>;
+                        note left
+                        Custom
+                        endnote
+                    else (no)
+                        :pull remote;
+                    endif
+                endif
+            else (no)
+                :push local;
+            endif
+        else (no)
+            if (remote exists) then (yes)
+                :pull remote;
+            endif
+        endif
+        :reset local changed;
+
+    }
+
+:Wait syncinterval;
+
+repeat while (stopSyncing) is (no)
+->yes;
+
+stop
+
+@enduml

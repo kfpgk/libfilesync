@@ -1,0 +1,12 @@
+target_sources(libfilesync 
+    PRIVATE
+        Option.cpp
+        UndoableOption.cpp
+        Invoker.cpp
+        Collection.cpp
+        Factory.cpp
+        Nobody.cpp
+        Quote.cpp
+        Upload.cpp
+        Verbose.cpp
+)

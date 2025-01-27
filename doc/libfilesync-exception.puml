@@ -1,0 +1,20 @@
+@startuml libfilesync-exception-class
+
+title libfilesync Exception Class Diagram
+
+package libfilesync {
+    class FileSyncException
+    class DataException
+    class CurlException
+}
+
+package external {
+    class "std::runtime_error" as runtimeError
+}
+
+runtimeError <|-- FileSyncException
+
+FileSyncException <|-- DataException
+FileSyncException <|-- CurlException
+
+@enduml

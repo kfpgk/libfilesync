@@ -1,0 +1,84 @@
+@startuml sync-data-class-diagram
+
+title Core Sync Data Class Diagram
+
+package "<<external>>\ndata {
+    abstract class "EntryBase<T>" as EntryBase {
+        - path : filesystem::path
+        - lastWriteTime : filesystem::file_time_type 
+        + performOnChange() : void
+        + getPath() : filesystem::path
+        + getAbsolutePath() : filesystem::path
+        + getEntry(filesystem::path&) : T* 
+        + hasChanged() : bool
+        + resetChanged() : void
+        + performOnChange() : void
+        + validate() : bool
+        + print() : void
+    }
+    abstract class "DirectoryBase<T>" as DirectoryBase {
+        - components : T*[]
+        + addEntry(T) : void
+        + removeEntry(T) : void
+        - getEntry(filesystem::path) : T
+        - performOnChange() : void
+        - validate() : bool
+        - print() : void
+    }
+    abstract class "FileBase<T>" as FileBase {
+
+    }
+}
+
+package "sync_data" {
+    class "Entry" as Entry {
+        - remoteEntry : RemoteEntry
+        - remoteBuffer : Buffer
+        - previousBuffer : Buffer
+        + setRemoteEntry(filesystem::path) : void
+        + getRemotePath() : filesystem::path
+    }
+    class "Directory" as Directory {
+        + setRemoteEntry(filesystem::path) : void
+        + getRemotePath() : filesystem::path 
+    }
+    class "File" as File {
+    }
+    class "RemoteEntry" as RemoteEntry {
+        - path : filesystem::path
+        + getPath() : filesystem::path
+    }
+    interface "Buffer" as Buffer {
+        + {abstract} store(istream&) : void
+        + {abstract} writeContentTo(ostream&) : bool 
+        + {abstract} isEqualTo(istream&) : bool
+    }
+    class "FileBuffer" as FileBuffer {
+        - filePath : string
+        + store(istream&) : void
+        + writeContentTo(ostream&) : bool
+        + isEqualTo(istream&) : bool 
+    }  
+}
+
+package client {
+    class FileSyncer
+}
+
+EntryBase <|-- DirectoryBase : virtual\nT=T
+EntryBase "*" --o DirectoryBase
+EntryBase <|-- FileBase : virtual \nT=T
+
+EntryBase <|-- Entry : virtual\nT=sync_data::Entry
+DirectoryBase <|-- Directory : T=sync_data::Entry
+Entry <|-- Directory
+FileBase <|-- File : T=sync_data::Entry
+Entry <|-- File
+Entry o-- "1" RemoteEntry
+Entry o-- "2" Buffer
+
+Buffer <|.. FileBuffer
+
+FileSyncer --> Entry : "<<observes>>"
+
+@enduml
