@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
         syncer.setProtocol(ProtocolType::FTP);
         syncer.setConflictResolveStrategy(ConflictResolveStrategy::Interactive);
-        syncer.setSyncStrategy(SyncStrategy::UnBuffered);
+        syncer.setSyncStrategy(SyncStrategy::Buffered);
 
         syncer.setServer(CmdLineArgs::server);
         syncer.setRemoteRoot(CmdLineArgs::serverRoot);
