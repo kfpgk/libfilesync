@@ -35,6 +35,10 @@ namespace filesync::core::sync_data::buffer {
 
         private:
             std::filesystem::path filePath;
+
+            void resetInputStream(std::istream& in) const;
+            bool hasStreamReachedEnd(std::istream& in) const;
+            void printContentOfBufferAnd(std::istream& in) const;
             
     };
 
