@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
         auto cinMutex = std::make_shared<std::mutex>();
 
         syncer.setProtocol(ProtocolType::FTP);
-        syncer.setConflictResolveStrategy(ConflictResolveStrategy::Interactive);
+        syncer.setConflictResolveStrategy(ConflictResolveStrategy::LocalFirst);
         syncer.setSyncStrategy(SyncStrategy::Buffered);
 
         syncer.setServer(CmdLineArgs::server);
